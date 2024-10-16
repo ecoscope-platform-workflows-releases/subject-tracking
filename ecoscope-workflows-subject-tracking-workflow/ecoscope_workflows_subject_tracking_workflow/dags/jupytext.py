@@ -1,6 +1,6 @@
 # [generated]
 # by = { compiler = "ecoscope-workflows-core", version = "9999" }
-# from-spec-sha256 = "a8da9c6930f79ea3449ff2e1bef5c89a1f402130227220b42ff54a0eef30e707"
+# from-spec-sha256 = "c8d17ad4f61776c0ce922a6d115c0afca2531810a955140fff1f05d1d295e343"
 
 
 # ruff: noqa: E402
