@@ -60,3 +60,6 @@ docker-build = "docker buildx build -t ecoscope-workflows-subject-tracking-workf
 [pypi-dependencies.ecoscope-workflows-subject-tracking-workflow]
 path = "."
 editable = true
+
+[system-requirements]
+linux="4.4.0"
