@@ -1,5 +1,5 @@
 resource "google_service_account" "default" {
-  account_id = "workflow-subject-tracking"
+  account_id = "workflow-subject-tracking-${var.env}"
   project    = var.project_id
 }
 
