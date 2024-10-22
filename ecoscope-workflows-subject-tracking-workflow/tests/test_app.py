@@ -1,16 +1,19 @@
 # [generated]
 # by = { compiler = "ecoscope-workflows-core", version = "9999" }
-# from-spec-sha256 = "c8d17ad4f61776c0ce922a6d115c0afca2531810a955140fff1f05d1d295e343"
+# from-spec-sha256 = "15733638287ed166fb7706adc40dca61211435f381448c367ee9d87a9a11251a"
 
 
 from pathlib import Path
 
+import pytest
+import pydantic
 from fastapi.testclient import TestClient
-
 from ecoscope_workflows_core.testing import TestCase
 
+from ecoscope_workflows_subject_tracking_workflow.params import Params
 
-def test_app(
+
+def test_run(
     client: TestClient,
     execution_mode: str,
     mock_io: bool,
@@ -31,3 +34,34 @@ def test_app(
         headers=headers,
     )
     assert response.status_code == 200
+
+
+def test_get_params(client: TestClient):
+    response = client.get("/params")
+    assert response.status_code == 200
+    assert set(list(response.json())) == {
+        "title",
+        "properties",
+        "$defs",
+        "additionalProperties",
+        "uiSchema",
+    }
+
+
+def test_validate_formdata(client: TestClient, case: TestCase, formdata: dict):
+    invalid_request = client.post("/params", json={"invalid": "request"})
+    assert invalid_request.status_code == 422
+
+    response = client.post("/params", json=formdata)
+    assert response.status_code == 200
+
+    if set(formdata) != set(case.params):
+        # this workflow uses task groups, so make a few extra asserts
+        # task groups are not required, so these asserts are skipped
+        # for workflows that simply use a flat layout
+        assert set(response.json()) == set(case.params)
+
+        with pytest.raises(pydantic.ValidationError):
+            Params(**formdata)
+
+    assert Params(**response.json()) == Params(**case.params)
