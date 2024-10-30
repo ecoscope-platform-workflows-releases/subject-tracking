@@ -1,6 +1,6 @@
 # [generated]
 # by = { compiler = "ecoscope-workflows-core", version = "9999" }
-# from-spec-sha256 = "b4583b227f71252ff2f0fd354a3adbb8165ec08f4561e4f8107aa74567d62d40"
+# from-spec-sha256 = "0a6199d5374f203c35a73b4e9782d8097cee3bd534b3e3675e1691fe19936b57"
 
 
 # ruff: noqa: E402
@@ -13,6 +13,7 @@
 # ## Imports
 
 import os
+from ecoscope_workflows_core.tasks.config import set_workflow_details
 from ecoscope_workflows_core.tasks.groupby import set_groupers
 from ecoscope_workflows_core.tasks.filter import set_time_range
 from ecoscope_workflows_ext_ecoscope.tasks.io import get_subjectgroup_observations
@@ -40,6 +41,25 @@ from ecoscope_workflows_ext_ecoscope.tasks.analysis import get_day_night_ratio
 from ecoscope_workflows_core.tasks.analysis import dataframe_column_sum
 from ecoscope_workflows_ext_ecoscope.tasks.analysis import calculate_time_density
 from ecoscope_workflows_core.tasks.results import gather_dashboard
+
+# %% [markdown]
+# ## Set Workflow Details
+
+# %%
+# parameters
+
+workflow_details_params = dict(
+    name=...,
+    description=...,
+    image_url=...,
+)
+
+# %%
+# call the task
+
+
+workflow_details = set_workflow_details.partial(**workflow_details_params).call()
+
 
 # %% [markdown]
 # ## Set Groupers
@@ -1045,16 +1065,14 @@ td_grouped_map_widget = merge_widget_views.partial(
 # %%
 # parameters
 
-subject_tracking_dashboard_params = dict(
-    title=...,
-    description=...,
-)
+subject_tracking_dashboard_params = dict()
 
 # %%
 # call the task
 
 
 subject_tracking_dashboard = gather_dashboard.partial(
+    details=workflow_details,
     widgets=[
         traj_grouped_map_widget,
         mean_speed_grouped_sv_widget,
