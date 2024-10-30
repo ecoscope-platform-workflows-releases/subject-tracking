@@ -1,9 +1,10 @@
 # [generated]
 # by = { compiler = "ecoscope-workflows-core", version = "9999" }
-# from-spec-sha256 = "b4583b227f71252ff2f0fd354a3adbb8165ec08f4561e4f8107aa74567d62d40"
+# from-spec-sha256 = "0a6199d5374f203c35a73b4e9782d8097cee3bd534b3e3675e1691fe19936b57"
 import json
 import os
 
+from ecoscope_workflows_core.tasks.config import set_workflow_details
 from ecoscope_workflows_core.tasks.groupby import set_groupers
 from ecoscope_workflows_core.tasks.filter import set_time_range
 from ecoscope_workflows_ext_ecoscope.tasks.io import get_subjectgroup_observations
@@ -37,6 +38,12 @@ from ..params import Params
 
 def main(params: Params):
     params_dict = json.loads(params.model_dump_json(exclude_unset=True))
+
+    workflow_details = (
+        set_workflow_details.validate()
+        .partial(**params_dict["workflow_details"])
+        .call()
+    )
 
     groupers = set_groupers.validate().partial(**params_dict["groupers"]).call()
 
@@ -373,6 +380,7 @@ def main(params: Params):
     subject_tracking_dashboard = (
         gather_dashboard.validate()
         .partial(
+            details=workflow_details,
             widgets=[
                 traj_grouped_map_widget,
                 mean_speed_grouped_sv_widget,
