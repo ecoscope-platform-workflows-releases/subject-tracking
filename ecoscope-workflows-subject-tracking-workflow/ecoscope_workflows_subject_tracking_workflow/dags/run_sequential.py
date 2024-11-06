@@ -1,6 +1,6 @@
 # [generated]
 # by = { compiler = "ecoscope-workflows-core", version = "9999" }
-# from-spec-sha256 = "7059dc90b6bccb32cc0e0a6703d88a1260a95b6c697ccf1a539752afe60d3c14"
+# from-spec-sha256 = "ce99aa75b964ef05abbda6aaf04196155783e7be46b4194b23de1ec97f12a9ea"
 import json
 import os
 
@@ -18,7 +18,7 @@ from ecoscope_workflows_core.tasks.groupby import split_groups
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import apply_classification
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import apply_color_map
 from ecoscope_workflows_core.tasks.transformation import map_values_with_unit
-from ecoscope_workflows_ext_ecoscope.tasks.results import create_map_layer
+from ecoscope_workflows_ext_ecoscope.tasks.results import create_polyline_layer
 from ecoscope_workflows_ext_ecoscope.tasks.results import draw_ecomap
 from ecoscope_workflows_core.tasks.io import persist_text
 from ecoscope_workflows_core.tasks.results import create_map_widget_single_view
@@ -31,6 +31,9 @@ from ecoscope_workflows_core.tasks.analysis import dataframe_count
 from ecoscope_workflows_ext_ecoscope.tasks.analysis import get_day_night_ratio
 from ecoscope_workflows_core.tasks.analysis import dataframe_column_sum
 from ecoscope_workflows_ext_ecoscope.tasks.analysis import calculate_time_density
+from ecoscope_workflows_ext_ecoscope.tasks.results import create_polygon_layer
+from ecoscope_workflows_ext_ecoscope.tasks.results import draw_ecoplot
+from ecoscope_workflows_core.tasks.results import create_plot_widget_single_view
 from ecoscope_workflows_core.tasks.results import gather_dashboard
 
 from ..params import Params
@@ -41,41 +44,65 @@ def main(params: Params):
 
     workflow_details = (
         set_workflow_details.validate()
-        .partial(**params_dict["workflow_details"])
+        .partial(**(params_dict.get("workflow_details") or {}))
         .call()
     )
 
-    groupers = set_groupers.validate().partial(**params_dict["groupers"]).call()
+    groupers = (
+        set_groupers.validate().partial(**(params_dict.get("groupers") or {})).call()
+    )
 
-    time_range = set_time_range.validate().partial(**params_dict["time_range"]).call()
+    time_range = (
+        set_time_range.validate()
+        .partial(**(params_dict.get("time_range") or {}))
+        .call()
+    )
 
     subject_obs = (
         get_subjectgroup_observations.validate()
-        .partial(time_range=time_range, **params_dict["subject_obs"])
+        .partial(time_range=time_range, **(params_dict.get("subject_obs") or {}))
         .call()
     )
 
     subject_reloc = (
         process_relocations.validate()
-        .partial(observations=subject_obs, **params_dict["subject_reloc"])
+        .partial(
+            observations=subject_obs,
+            relocs_columns=["groupby_col", "fixtime", "junk_status", "geometry"],
+            filter_point_coords=[
+                {"x": 180.0, "y": 90.0},
+                {"x": 0.0, "y": 0.0},
+                {"x": 1.0, "y": 1.0},
+            ],
+            **(params_dict.get("subject_reloc") or {}),
+        )
         .call()
     )
 
     day_night_labels = (
         classify_is_night.validate()
-        .partial(relocations=subject_reloc, **params_dict["day_night_labels"])
+        .partial(
+            relocations=subject_reloc, **(params_dict.get("day_night_labels") or {})
+        )
         .call()
     )
 
     subject_traj = (
         relocations_to_trajectory.validate()
-        .partial(relocations=day_night_labels, **params_dict["subject_traj"])
+        .partial(
+            relocations=day_night_labels, **(params_dict.get("subject_traj") or {})
+        )
         .call()
     )
 
     traj_add_temporal_index = (
         add_temporal_index.validate()
-        .partial(df=subject_traj, **params_dict["traj_add_temporal_index"])
+        .partial(
+            df=subject_traj,
+            time_col="segment_start",
+            groupers=groupers,
+            **(params_dict.get("traj_add_temporal_index") or {}),
+        )
         .call()
     )
 
@@ -84,38 +111,48 @@ def main(params: Params):
         .partial(
             df=traj_add_temporal_index,
             groupers=groupers,
-            **params_dict["split_subject_traj_groups"],
+            **(params_dict.get("split_subject_traj_groups") or {}),
         )
         .call()
     )
 
     classify_traj_speed = (
         apply_classification.validate()
-        .partial(**params_dict["classify_traj_speed"])
+        .partial(**(params_dict.get("classify_traj_speed") or {}))
         .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
     )
 
     colormap_traj_speed = (
         apply_color_map.validate()
-        .partial(**params_dict["colormap_traj_speed"])
+        .partial(
+            colormap=["#1a9850", "#91cf60", "#d9ef8b", "#fee08b", "#fc8d59", "#d73027"],
+            **(params_dict.get("colormap_traj_speed") or {}),
+        )
         .mapvalues(argnames=["df"], argvalues=classify_traj_speed)
     )
 
     speedmap_legend_with_unit = (
         map_values_with_unit.validate()
-        .partial(**params_dict["speedmap_legend_with_unit"])
+        .partial(**(params_dict.get("speedmap_legend_with_unit") or {}))
         .mapvalues(argnames=["df"], argvalues=colormap_traj_speed)
     )
 
     traj_map_layers = (
-        create_map_layer.validate()
-        .partial(**params_dict["traj_map_layers"])
+        create_polyline_layer.validate()
+        .partial(
+            layer_style={"color_column": "speed_bins_colormap"},
+            legend={
+                "label_column": "speed_bins_formatted",
+                "color_column": "speed_bins_colormap",
+            },
+            **(params_dict.get("traj_map_layers") or {}),
+        )
         .mapvalues(argnames=["geodataframe"], argvalues=speedmap_legend_with_unit)
     )
 
     traj_ecomap = (
         draw_ecomap.validate()
-        .partial(**params_dict["traj_ecomap"])
+        .partial(**(params_dict.get("traj_ecomap") or {}))
         .mapvalues(argnames=["geo_layers"], argvalues=traj_map_layers)
     )
 
@@ -123,14 +160,14 @@ def main(params: Params):
         persist_text.validate()
         .partial(
             root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-            **params_dict["ecomap_html_urls"],
+            **(params_dict.get("ecomap_html_urls") or {}),
         )
         .mapvalues(argnames=["text"], argvalues=traj_ecomap)
     )
 
     traj_map_widgets_single_views = (
         create_map_widget_single_view.validate()
-        .partial(**params_dict["traj_map_widgets_single_views"])
+        .partial(**(params_dict.get("traj_map_widgets_single_views") or {}))
         .map(argnames=["view", "data"], argvalues=ecomap_html_urls)
     )
 
@@ -138,26 +175,33 @@ def main(params: Params):
         merge_widget_views.validate()
         .partial(
             widgets=traj_map_widgets_single_views,
-            **params_dict["traj_grouped_map_widget"],
+            **(params_dict.get("traj_grouped_map_widget") or {}),
         )
         .call()
     )
 
     colormap_traj_night = (
         apply_color_map.validate()
-        .partial(**params_dict["colormap_traj_night"])
+        .partial(
+            colormap=["#292965", "#e7a553"],
+            **(params_dict.get("colormap_traj_night") or {}),
+        )
         .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
     )
 
     traj_map_night_layers = (
-        create_map_layer.validate()
-        .partial(**params_dict["traj_map_night_layers"])
+        create_polyline_layer.validate()
+        .partial(
+            layer_style={"color_column": "is_night_colors"},
+            legend={"labels": ["Night", "Day"], "colors": ["#292965", "#e7a553"]},
+            **(params_dict.get("traj_map_night_layers") or {}),
+        )
         .mapvalues(argnames=["geodataframe"], argvalues=colormap_traj_night)
     )
 
     traj_daynight_ecomap = (
         draw_ecomap.validate()
-        .partial(**params_dict["traj_daynight_ecomap"])
+        .partial(**(params_dict.get("traj_daynight_ecomap") or {}))
         .mapvalues(argnames=["geo_layers"], argvalues=traj_map_night_layers)
     )
 
@@ -165,14 +209,14 @@ def main(params: Params):
         persist_text.validate()
         .partial(
             root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-            **params_dict["ecomap_daynight_html_urls"],
+            **(params_dict.get("ecomap_daynight_html_urls") or {}),
         )
         .mapvalues(argnames=["text"], argvalues=traj_daynight_ecomap)
     )
 
     traj_map_daynight_widgets_sv = (
         create_map_widget_single_view.validate()
-        .partial(**params_dict["traj_map_daynight_widgets_sv"])
+        .partial(**(params_dict.get("traj_map_daynight_widgets_sv") or {}))
         .map(argnames=["view", "data"], argvalues=ecomap_daynight_html_urls)
     )
 
@@ -180,72 +224,74 @@ def main(params: Params):
         merge_widget_views.validate()
         .partial(
             widgets=traj_map_daynight_widgets_sv,
-            **params_dict["traj_daynight_grouped_map_widget"],
+            **(params_dict.get("traj_daynight_grouped_map_widget") or {}),
         )
         .call()
     )
 
     mean_speed = (
         dataframe_column_mean.validate()
-        .partial(**params_dict["mean_speed"])
+        .partial(**(params_dict.get("mean_speed") or {}))
         .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
     )
 
     average_speed_converted = (
         with_unit.validate()
-        .partial(**params_dict["average_speed_converted"])
+        .partial(**(params_dict.get("average_speed_converted") or {}))
         .mapvalues(argnames=["value"], argvalues=mean_speed)
     )
 
     mean_speed_sv_widgets = (
         create_single_value_widget_single_view.validate()
-        .partial(**params_dict["mean_speed_sv_widgets"])
+        .partial(**(params_dict.get("mean_speed_sv_widgets") or {}))
         .map(argnames=["view", "data"], argvalues=average_speed_converted)
     )
 
     mean_speed_grouped_sv_widget = (
         merge_widget_views.validate()
         .partial(
-            widgets=mean_speed_sv_widgets, **params_dict["mean_speed_grouped_sv_widget"]
+            widgets=mean_speed_sv_widgets,
+            **(params_dict.get("mean_speed_grouped_sv_widget") or {}),
         )
         .call()
     )
 
     max_speed = (
         dataframe_column_max.validate()
-        .partial(**params_dict["max_speed"])
+        .partial(**(params_dict.get("max_speed") or {}))
         .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
     )
 
     max_speed_converted = (
         with_unit.validate()
-        .partial(**params_dict["max_speed_converted"])
+        .partial(**(params_dict.get("max_speed_converted") or {}))
         .mapvalues(argnames=["value"], argvalues=max_speed)
     )
 
     max_speed_sv_widgets = (
         create_single_value_widget_single_view.validate()
-        .partial(**params_dict["max_speed_sv_widgets"])
+        .partial(**(params_dict.get("max_speed_sv_widgets") or {}))
         .map(argnames=["view", "data"], argvalues=max_speed_converted)
     )
 
     max_speed_grouped_sv_widget = (
         merge_widget_views.validate()
         .partial(
-            widgets=max_speed_sv_widgets, **params_dict["max_speed_grouped_sv_widget"]
+            widgets=max_speed_sv_widgets,
+            **(params_dict.get("max_speed_grouped_sv_widget") or {}),
         )
         .call()
     )
 
     num_location = (
         dataframe_count.validate()
-        .partial(**params_dict["num_location"])
+        .partial(**(params_dict.get("num_location") or {}))
         .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
     )
 
     num_location_sv_widgets = (
         create_single_value_widget_single_view.validate()
-        .partial(**params_dict["num_location_sv_widgets"])
+        .partial(**(params_dict.get("num_location_sv_widgets") or {}))
         .map(argnames=["view", "data"], argvalues=num_location)
     )
 
@@ -253,20 +299,20 @@ def main(params: Params):
         merge_widget_views.validate()
         .partial(
             widgets=num_location_sv_widgets,
-            **params_dict["num_location_grouped_sv_widget"],
+            **(params_dict.get("num_location_grouped_sv_widget") or {}),
         )
         .call()
     )
 
     daynight_ratio = (
         get_day_night_ratio.validate()
-        .partial(**params_dict["daynight_ratio"])
+        .partial(**(params_dict.get("daynight_ratio") or {}))
         .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
     )
 
     daynight_ratio_sv_widgets = (
         create_single_value_widget_single_view.validate()
-        .partial(**params_dict["daynight_ratio_sv_widgets"])
+        .partial(**(params_dict.get("daynight_ratio_sv_widgets") or {}))
         .map(argnames=["view", "data"], argvalues=daynight_ratio)
     )
 
@@ -274,26 +320,26 @@ def main(params: Params):
         merge_widget_views.validate()
         .partial(
             widgets=daynight_ratio_sv_widgets,
-            **params_dict["daynight_ratio_grouped_sv_widget"],
+            **(params_dict.get("daynight_ratio_grouped_sv_widget") or {}),
         )
         .call()
     )
 
     total_distance = (
         dataframe_column_sum.validate()
-        .partial(**params_dict["total_distance"])
+        .partial(**(params_dict.get("total_distance") or {}))
         .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
     )
 
     total_dist_converted = (
         with_unit.validate()
-        .partial(**params_dict["total_dist_converted"])
+        .partial(**(params_dict.get("total_dist_converted") or {}))
         .mapvalues(argnames=["value"], argvalues=total_distance)
     )
 
     total_distance_sv_widgets = (
         create_single_value_widget_single_view.validate()
-        .partial(**params_dict["total_distance_sv_widgets"])
+        .partial(**(params_dict.get("total_distance_sv_widgets") or {}))
         .map(argnames=["view", "data"], argvalues=total_dist_converted)
     )
 
@@ -301,58 +347,71 @@ def main(params: Params):
         merge_widget_views.validate()
         .partial(
             widgets=total_distance_sv_widgets,
-            **params_dict["total_dist_grouped_sv_widget"],
+            **(params_dict.get("total_dist_grouped_sv_widget") or {}),
         )
         .call()
     )
 
     total_time = (
         dataframe_column_sum.validate()
-        .partial(**params_dict["total_time"])
+        .partial(**(params_dict.get("total_time") or {}))
         .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
     )
 
     total_time_converted = (
         with_unit.validate()
-        .partial(**params_dict["total_time_converted"])
+        .partial(**(params_dict.get("total_time_converted") or {}))
         .mapvalues(argnames=["value"], argvalues=total_time)
     )
 
     total_time_sv_widgets = (
         create_single_value_widget_single_view.validate()
-        .partial(**params_dict["total_time_sv_widgets"])
+        .partial(**(params_dict.get("total_time_sv_widgets") or {}))
         .map(argnames=["view", "data"], argvalues=total_time_converted)
     )
 
     total_time_grouped_sv_widget = (
         merge_widget_views.validate()
         .partial(
-            widgets=total_time_sv_widgets, **params_dict["total_time_grouped_sv_widget"]
+            widgets=total_time_sv_widgets,
+            **(params_dict.get("total_time_grouped_sv_widget") or {}),
         )
         .call()
     )
 
     td = (
         calculate_time_density.validate()
-        .partial(**params_dict["td"])
+        .partial(**(params_dict.get("td") or {}))
         .mapvalues(argnames=["trajectory_gdf"], argvalues=split_subject_traj_groups)
     )
 
     td_colormap = (
         apply_color_map.validate()
-        .partial(**params_dict["td_colormap"])
+        .partial(
+            input_column_name="percentile",
+            colormap="RdYlGn_r",
+            output_column_name="percentile_colormap",
+            **(params_dict.get("td_colormap") or {}),
+        )
         .mapvalues(argnames=["df"], argvalues=td)
     )
 
     td_map_layer = (
-        create_map_layer.validate()
-        .partial(**params_dict["td_map_layer"])
+        create_polygon_layer.validate()
+        .partial(
+            layer_style={
+                "fill_color_column": "percentile_colormap",
+                "opacity": 0.7,
+                "get_line_width": 0,
+            },
+            **(params_dict.get("td_map_layer") or {}),
+        )
         .mapvalues(argnames=["geodataframe"], argvalues=td_colormap)
     )
 
     td_ecomap = (
         draw_ecomap.validate()
-        .partial(**params_dict["td_ecomap"])
+        .partial(**(params_dict.get("td_ecomap") or {}))
         .mapvalues(argnames=["geo_layers"], argvalues=td_map_layer)
     )
 
@@ -360,20 +419,46 @@ def main(params: Params):
         persist_text.validate()
         .partial(
             root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-            **params_dict["td_ecomap_html_url"],
+            **(params_dict.get("td_ecomap_html_url") or {}),
         )
         .mapvalues(argnames=["text"], argvalues=td_ecomap)
     )
 
     td_map_widget = (
         create_map_widget_single_view.validate()
-        .partial(**params_dict["td_map_widget"])
+        .partial(**(params_dict.get("td_map_widget") or {}))
         .map(argnames=["view", "data"], argvalues=td_ecomap_html_url)
     )
 
     td_grouped_map_widget = (
         merge_widget_views.validate()
-        .partial(widgets=td_map_widget, **params_dict["td_grouped_map_widget"])
+        .partial(
+            widgets=td_map_widget, **(params_dict.get("td_grouped_map_widget") or {})
+        )
+        .call()
+    )
+
+    nsd_chart = (
+        draw_ecoplot.validate()
+        .partial(
+            dataframe=traj_add_temporal_index, **(params_dict.get("nsd_chart") or {})
+        )
+        .call()
+    )
+
+    nsd_chart_html_url = (
+        persist_text.validate()
+        .partial(
+            text=nsd_chart,
+            root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
+            **(params_dict.get("nsd_chart_html_url") or {}),
+        )
+        .call()
+    )
+
+    nsd_chart_widget = (
+        create_plot_widget_single_view.validate()
+        .partial(data=nsd_chart_html_url, **(params_dict.get("nsd_chart_widget") or {}))
         .call()
     )
 
@@ -391,10 +476,11 @@ def main(params: Params):
                 total_time_grouped_sv_widget,
                 td_grouped_map_widget,
                 traj_daynight_grouped_map_widget,
+                nsd_chart_widget,
             ],
             groupers=groupers,
             time_range=time_range,
-            **params_dict["subject_tracking_dashboard"],
+            **(params_dict.get("subject_tracking_dashboard") or {}),
         )
         .call()
     )

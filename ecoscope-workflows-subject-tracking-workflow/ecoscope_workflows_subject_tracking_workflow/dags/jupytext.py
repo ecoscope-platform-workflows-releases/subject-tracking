@@ -1,6 +1,6 @@
 # [generated]
 # by = { compiler = "ecoscope-workflows-core", version = "9999" }
-# from-spec-sha256 = "7059dc90b6bccb32cc0e0a6703d88a1260a95b6c697ccf1a539752afe60d3c14"
+# from-spec-sha256 = "ce99aa75b964ef05abbda6aaf04196155783e7be46b4194b23de1ec97f12a9ea"
 
 
 # ruff: noqa: E402
@@ -27,7 +27,7 @@ from ecoscope_workflows_core.tasks.groupby import split_groups
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import apply_classification
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import apply_color_map
 from ecoscope_workflows_core.tasks.transformation import map_values_with_unit
-from ecoscope_workflows_ext_ecoscope.tasks.results import create_map_layer
+from ecoscope_workflows_ext_ecoscope.tasks.results import create_polyline_layer
 from ecoscope_workflows_ext_ecoscope.tasks.results import draw_ecomap
 from ecoscope_workflows_core.tasks.io import persist_text
 from ecoscope_workflows_core.tasks.results import create_map_widget_single_view
@@ -40,6 +40,9 @@ from ecoscope_workflows_core.tasks.analysis import dataframe_count
 from ecoscope_workflows_ext_ecoscope.tasks.analysis import get_day_night_ratio
 from ecoscope_workflows_core.tasks.analysis import dataframe_column_sum
 from ecoscope_workflows_ext_ecoscope.tasks.analysis import calculate_time_density
+from ecoscope_workflows_ext_ecoscope.tasks.results import create_polygon_layer
+from ecoscope_workflows_ext_ecoscope.tasks.results import draw_ecoplot
+from ecoscope_workflows_core.tasks.results import create_plot_widget_single_view
 from ecoscope_workflows_core.tasks.results import gather_dashboard
 
 # %% [markdown]
@@ -124,17 +127,21 @@ subject_obs = get_subjectgroup_observations.partial(
 # %%
 # parameters
 
-subject_reloc_params = dict(
-    filter_point_coords=...,
-    relocs_columns=...,
-)
+subject_reloc_params = dict()
 
 # %%
 # call the task
 
 
 subject_reloc = process_relocations.partial(
-    observations=subject_obs, **subject_reloc_params
+    observations=subject_obs,
+    relocs_columns=["groupby_col", "fixtime", "junk_status", "geometry"],
+    filter_point_coords=[
+        {"x": 180.0, "y": 90.0},
+        {"x": 0.0, "y": 0.0},
+        {"x": 1.0, "y": 1.0},
+    ],
+    **subject_reloc_params,
 ).call()
 
 
@@ -186,9 +193,6 @@ subject_traj = relocations_to_trajectory.partial(
 # parameters
 
 traj_add_temporal_index_params = dict(
-    index_name=...,
-    time_col=...,
-    directive=...,
     cast_to_datetime=...,
     format=...,
 )
@@ -198,7 +202,10 @@ traj_add_temporal_index_params = dict(
 
 
 traj_add_temporal_index = add_temporal_index.partial(
-    df=subject_traj, **traj_add_temporal_index_params
+    df=subject_traj,
+    time_col="segment_start",
+    groupers=groupers,
+    **traj_add_temporal_index_params,
 ).call()
 
 
@@ -249,7 +256,6 @@ classify_traj_speed = apply_classification.partial(
 
 colormap_traj_speed_params = dict(
     input_column_name=...,
-    colormap=...,
     output_column_name=...,
 )
 
@@ -257,9 +263,10 @@ colormap_traj_speed_params = dict(
 # call the task
 
 
-colormap_traj_speed = apply_color_map.partial(**colormap_traj_speed_params).mapvalues(
-    argnames=["df"], argvalues=classify_traj_speed
-)
+colormap_traj_speed = apply_color_map.partial(
+    colormap=["#1a9850", "#91cf60", "#d9ef8b", "#fee08b", "#fc8d59", "#d73027"],
+    **colormap_traj_speed_params,
+).mapvalues(argnames=["df"], argvalues=classify_traj_speed)
 
 
 # %% [markdown]
@@ -291,18 +298,20 @@ speedmap_legend_with_unit = map_values_with_unit.partial(
 # %%
 # parameters
 
-traj_map_layers_params = dict(
-    layer_style=...,
-    legend=...,
-)
+traj_map_layers_params = dict()
 
 # %%
 # call the task
 
 
-traj_map_layers = create_map_layer.partial(**traj_map_layers_params).mapvalues(
-    argnames=["geodataframe"], argvalues=speedmap_legend_with_unit
-)
+traj_map_layers = create_polyline_layer.partial(
+    layer_style={"color_column": "speed_bins_colormap"},
+    legend={
+        "label_column": "speed_bins_formatted",
+        "color_column": "speed_bins_colormap",
+    },
+    **traj_map_layers_params,
+).mapvalues(argnames=["geodataframe"], argvalues=speedmap_legend_with_unit)
 
 
 # %% [markdown]
@@ -391,7 +400,6 @@ traj_grouped_map_widget = merge_widget_views.partial(
 
 colormap_traj_night_params = dict(
     input_column_name=...,
-    colormap=...,
     output_column_name=...,
 )
 
@@ -399,9 +407,9 @@ colormap_traj_night_params = dict(
 # call the task
 
 
-colormap_traj_night = apply_color_map.partial(**colormap_traj_night_params).mapvalues(
-    argnames=["df"], argvalues=split_subject_traj_groups
-)
+colormap_traj_night = apply_color_map.partial(
+    colormap=["#292965", "#e7a553"], **colormap_traj_night_params
+).mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
 
 
 # %% [markdown]
@@ -410,17 +418,16 @@ colormap_traj_night = apply_color_map.partial(**colormap_traj_night_params).mapv
 # %%
 # parameters
 
-traj_map_night_layers_params = dict(
-    layer_style=...,
-    legend=...,
-)
+traj_map_night_layers_params = dict()
 
 # %%
 # call the task
 
 
-traj_map_night_layers = create_map_layer.partial(
-    **traj_map_night_layers_params
+traj_map_night_layers = create_polyline_layer.partial(
+    layer_style={"color_column": "is_night_colors"},
+    legend={"labels": ["Night", "Day"], "colors": ["#292965", "#e7a553"]},
+    **traj_map_night_layers_params,
 ).mapvalues(argnames=["geodataframe"], argvalues=colormap_traj_night)
 
 
@@ -946,19 +953,18 @@ td = calculate_time_density.partial(**td_params).mapvalues(
 # %%
 # parameters
 
-td_colormap_params = dict(
-    input_column_name=...,
-    colormap=...,
-    output_column_name=...,
-)
+td_colormap_params = dict()
 
 # %%
 # call the task
 
 
-td_colormap = apply_color_map.partial(**td_colormap_params).mapvalues(
-    argnames=["df"], argvalues=td
-)
+td_colormap = apply_color_map.partial(
+    input_column_name="percentile",
+    colormap="RdYlGn_r",
+    output_column_name="percentile_colormap",
+    **td_colormap_params,
+).mapvalues(argnames=["df"], argvalues=td)
 
 
 # %% [markdown]
@@ -968,7 +974,6 @@ td_colormap = apply_color_map.partial(**td_colormap_params).mapvalues(
 # parameters
 
 td_map_layer_params = dict(
-    layer_style=...,
     legend=...,
 )
 
@@ -976,9 +981,14 @@ td_map_layer_params = dict(
 # call the task
 
 
-td_map_layer = create_map_layer.partial(**td_map_layer_params).mapvalues(
-    argnames=["geodataframe"], argvalues=td_colormap
-)
+td_map_layer = create_polygon_layer.partial(
+    layer_style={
+        "fill_color_column": "percentile_colormap",
+        "opacity": 0.7,
+        "get_line_width": 0,
+    },
+    **td_map_layer_params,
+).mapvalues(argnames=["geodataframe"], argvalues=td_colormap)
 
 
 # %% [markdown]
@@ -1060,6 +1070,70 @@ td_grouped_map_widget = merge_widget_views.partial(
 
 
 # %% [markdown]
+# ## Draw NSD Scatter Chart
+
+# %%
+# parameters
+
+nsd_chart_params = dict(
+    group_by=...,
+    x_axis=...,
+    y_axis=...,
+    plot_style=...,
+    color_column=...,
+)
+
+# %%
+# call the task
+
+
+nsd_chart = draw_ecoplot.partial(
+    dataframe=traj_add_temporal_index, **nsd_chart_params
+).call()
+
+
+# %% [markdown]
+# ## Persist NSD Scatter Chart as Text
+
+# %%
+# parameters
+
+nsd_chart_html_url_params = dict(
+    filename=...,
+)
+
+# %%
+# call the task
+
+
+nsd_chart_html_url = persist_text.partial(
+    text=nsd_chart,
+    root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
+    **nsd_chart_html_url_params,
+).call()
+
+
+# %% [markdown]
+# ## Create NSD Plot Widget
+
+# %%
+# parameters
+
+nsd_chart_widget_params = dict(
+    title=...,
+    view=...,
+)
+
+# %%
+# call the task
+
+
+nsd_chart_widget = create_plot_widget_single_view.partial(
+    data=nsd_chart_html_url, **nsd_chart_widget_params
+).call()
+
+
+# %% [markdown]
 # ## Create Dashboard with Subject Tracking Widgets
 
 # %%
@@ -1083,6 +1157,7 @@ subject_tracking_dashboard = gather_dashboard.partial(
         total_time_grouped_sv_widget,
         td_grouped_map_widget,
         traj_daynight_grouped_map_widget,
+        nsd_chart_widget,
     ],
     groupers=groupers,
     time_range=time_range,
