@@ -1,6 +1,6 @@
 # [generated]
 # by = { compiler = "ecoscope-workflows-core", version = "9999" }
-# from-spec-sha256 = "ce99aa75b964ef05abbda6aaf04196155783e7be46b4194b23de1ec97f12a9ea"
+# from-spec-sha256 = "82ed246d4e30f973c3e4c9693a511d5c6f9d016b0fc42192a1205c845edd25b1"
 
 
 import json
@@ -25,7 +25,7 @@ from .params import Params
 app = FastAPI(
     title="subject_tracking",
     debug=True,
-    version="ce99aa7",
+    version="82ed246",
 )
 app.add_middleware(
     CORSMiddleware,

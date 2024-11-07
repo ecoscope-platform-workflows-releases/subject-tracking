@@ -1,15 +1,20 @@
 id: subject_tracking
 requirements:
   - name: ecoscope-workflows-core
-    version: v0.0.14
+    version: v0.0.16
     channel: https://repo.prefix.dev/ecoscope-workflows/
   - name: ecoscope-workflows-ext-ecoscope
-    version: v0.0.14
+    version: v0.0.16
     channel: https://repo.prefix.dev/ecoscope-workflows/
 workflow:
   - name: Set Workflow Details
     id: workflow_details
     task: set_workflow_details
+
+  - name: Select EarthRanger Connection
+    id: er_client_name
+    task: set_connection
+
   # set 'global' groupers
   - name: Set Groupers
     id: groupers
@@ -24,6 +29,7 @@ workflow:
     id: subject_obs
     task: get_subjectgroup_observations
     partial:
+      client: ${{ workflow.er_client_name.return }}
       time_range: ${{ workflow.time_range.return }}
   - name: Transform Observations to Relocations
     id: subject_reloc
@@ -65,6 +71,12 @@ workflow:
   - name: Classify Trajectories By Speed
     id: classify_traj_speed
     task: apply_classification
+    partial:
+      input_column_name: "speed_kmhr"
+      output_column_name: "speed_bins"
+      classification_options:
+        scheme: "equal_interval"
+        k: 6
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_subject_traj_groups.return }}
@@ -72,6 +84,8 @@ workflow:
     id: colormap_traj_speed
     task: apply_color_map
     partial:
+      input_column_name: "speed_bins"
+      output_column_name: "speed_bins_colormap"
       colormap: ["#1a9850", "#91cf60", "#d9ef8b", "#fee08b", "#fc8d59", "#d73027"]
     mapvalues:
       argnames: df
@@ -79,6 +93,11 @@ workflow:
   - name: Format Speedmap Legend Label
     id: speedmap_legend_with_unit
     task: map_values_with_unit
+    partial:
+      input_column_name: "speed_bins"
+      output_column_name: "speed_bins_formatted"
+      original_unit: "km/h"
+      new_unit: "km/h"
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.colormap_traj_speed.return }}
@@ -97,6 +116,16 @@ workflow:
   - name: Draw Ecomaps for each trajectory group
     id: traj_ecomap
     task: draw_ecomap
+    partial:
+      tile_layers:
+        - name: "TERRAIN"
+        - name: "SATELLITE"
+          opacity: 0.5
+      north_arrow_style:
+        placement: "top-left"
+      legend_style:
+        placement: "bottom-right"
+      static: False
     mapvalues:
       argnames: geo_layers
       argvalues: ${{ workflow.traj_map_layers.return }}
@@ -111,6 +140,8 @@ workflow:
   - name: Create Map Widgets for Trajectories
     id: traj_map_widgets_single_views
     task: create_map_widget_single_view
+    partial:
+      title: "Subject Group Trajectory Map"
     map:
       argnames: [view, data]
       argvalues: ${{ workflow.ecomap_html_urls.return }}
@@ -126,6 +157,8 @@ workflow:
     task: apply_color_map
     partial:
       colormap: ["#292965", "#e7a553"]
+      input_column_name: "extra__is_night"
+      output_column_name: "is_night_colors"
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_subject_traj_groups.return }}
@@ -144,6 +177,16 @@ workflow:
   - name: Draw Ecomaps for each trajectory group
     id: traj_daynight_ecomap
     task: draw_ecomap
+    partial:
+      tile_layers:
+        - name: "TERRAIN"
+        - name: "SATELLITE"
+          opacity: 0.5
+      north_arrow_style:
+        placement: "top-left"
+      legend_style:
+        placement: "bottom-right"
+      static: False
     mapvalues:
       argnames: geo_layers
       argvalues: ${{ workflow.traj_map_night_layers.return }}
@@ -158,6 +201,8 @@ workflow:
   - name: Create Map Widgets for Trajectories
     id: traj_map_daynight_widgets_sv
     task: create_map_widget_single_view
+    partial:
+      title: "Subject Group Night/Day Map"
     map:
       argnames: [view, data]
       argvalues: ${{ workflow.ecomap_daynight_html_urls.return }}
@@ -171,18 +216,25 @@ workflow:
   - name: Calculate Mean Speed Per Group
     id: mean_speed
     task: dataframe_column_mean
+    partial:
+      column_name: "speed_kmhr"
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_subject_traj_groups.return }}
   - name: Convert Average Speed units
     id: average_speed_converted
     task: with_unit
+    partial:
+      original_unit: "km/h"
+      new_unit: "km/h"
     mapvalues:
       argnames: value
       argvalues: ${{ workflow.mean_speed.return }}
   - name: Create Single Value Widgets for Mean Speed Per Group
     id: mean_speed_sv_widgets
     task: create_single_value_widget_single_view
+    partial:
+      title: "Mean Speed"
     map:
       argnames: [view, data]
       argvalues: ${{ workflow.average_speed_converted.return }}
@@ -196,18 +248,25 @@ workflow:
   - name: Calculate Max Speed Per Group
     id: max_speed
     task: dataframe_column_max
+    partial:
+      column_name: "speed_kmhr"
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_subject_traj_groups.return }}
   - name: Convert Max Speed units
     id: max_speed_converted
     task: with_unit
+    partial:
+      original_unit: "km/h"
+      new_unit: "km/h"
     mapvalues:
       argnames: value
       argvalues: ${{ workflow.max_speed.return }}
   - name: Create Single Value Widgets for Max Speed Per Group
     id: max_speed_sv_widgets
     task: create_single_value_widget_single_view
+    partial:
+      title: "Max Speed"
     map:
       argnames: [view, data]
       argvalues: ${{ workflow.max_speed_converted.return }}
@@ -227,6 +286,8 @@ workflow:
   - name: Create Single Value Widgets for Number of Location Per Group
     id: num_location_sv_widgets
     task: create_single_value_widget_single_view
+    partial:
+      title: "Number of Locations"
     map:
       argnames: [view, data]
       argvalues: ${{ workflow.num_location.return }}
@@ -246,6 +307,8 @@ workflow:
   - name: Create Single Value Widgets for Day/Night Ratio Per Group
     id: daynight_ratio_sv_widgets
     task: create_single_value_widget_single_view
+    partial:
+      title: "Night/Day Ratio"
     map:
       argnames: [view, data]
       argvalues: ${{ workflow.daynight_ratio.return }}
@@ -259,18 +322,25 @@ workflow:
   - name: Calculate Total Distance Per Group
     id: total_distance
     task: dataframe_column_sum
+    partial:
+      column_name: "dist_meters"
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_subject_traj_groups.return }}
   - name: Convert total distance units
     id: total_dist_converted
     task: with_unit
+    partial:
+      original_unit: "m"
+      new_unit: "km"
     mapvalues:
       argnames: value
       argvalues: ${{ workflow.total_distance.return }}
   - name: Create Single Value Widgets for Total Distance Per Group
     id: total_distance_sv_widgets
     task: create_single_value_widget_single_view
+    partial:
+      title: "Total Distance"
     map:
       argnames: [view, data]
       argvalues: ${{ workflow.total_dist_converted.return }}
@@ -284,18 +354,25 @@ workflow:
   - name: Calculate Total Time Per Group
     id: total_time
     task: dataframe_column_sum
+    partial:
+      column_name: "timespan_seconds"
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_subject_traj_groups.return }}
   - name: Convert total time units
     id: total_time_converted
     task: with_unit
+    partial:
+      original_unit: "s"
+      new_unit: "h"
     mapvalues:
       argnames: value
       argvalues: ${{ workflow.total_time.return }}
   - name: Create Single Value Widgets for Total Distance Per Group
     id: total_time_sv_widgets
     task: create_single_value_widget_single_view
+    partial:
+      title: "Total Time"
     map:
       argnames: [view, data]
       argvalues: ${{ workflow.total_time_converted.return }}
@@ -309,6 +386,10 @@ workflow:
   - name: Calculate Time Density from Trajectory
     id: td
     task: calculate_time_density
+    partial:
+      pixel_size: 250.0
+      crs: "ESRI:102022"
+      percentiles: [50.0, 60.0, 70.0, 80.0, 90.0, 95.0]
     mapvalues:
       argnames: trajectory_gdf
       argvalues: ${{ workflow.split_subject_traj_groups.return }}
@@ -337,6 +418,16 @@ workflow:
   - name: Draw Ecomap from Time Density
     id: td_ecomap
     task: draw_ecomap
+    partial:
+      tile_layers:
+        - name: "TERRAIN"
+        - name: "SATELLITE"
+          opacity: 0.5
+      north_arrow_style:
+        placement: "top-left"
+      legend_style:
+        placement: "bottom-right"
+      static: False
     mapvalues:
       argnames: geo_layers
       argvalues: ${{ workflow.td_map_layer.return }}
@@ -351,6 +442,8 @@ workflow:
   - name: Create Time Density Map Widget
     id: td_map_widget
     task: create_map_widget_single_view
+    partial:
+      title: "Home Range Map"
     map:
       argnames: [view, data]
       argvalues: ${{ workflow.td_ecomap_html_url.return }}
@@ -366,6 +459,11 @@ workflow:
     task: draw_ecoplot
     partial:
       dataframe: ${{ workflow.traj_add_temporal_index.return }}
+      group_by: "groupby_col"
+      x_axis: "segment_start"
+      y_axis: "nsd"
+      plot_style:
+        xperiodalignment: null
   - name: Persist NSD Scatter Chart as Text
     id: nsd_chart_html_url
     task: persist_text
@@ -377,6 +475,7 @@ workflow:
     task: create_plot_widget_single_view
     partial:
       data: ${{ workflow.nsd_chart_html_url.return }}
+      title: "Net Square Displacement"
 
   # dashboard
   - name: Create Dashboard with Subject Tracking Widgets

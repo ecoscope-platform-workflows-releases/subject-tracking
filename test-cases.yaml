@@ -7,6 +7,9 @@ test1:
       name: "Subject Tracking Dashboard"
       description: "A dashboard for visualizing subject trajectories and home range."
 
+    er_client_name:
+      name: "mep_dev"
+
     # Parameters for 'Set Groupers' using task `set_groupers`.
     groupers:
       groupers: # (list[ecoscope_workflows.tasks.groupby._groupby.Grouper], FieldInfo(annotation=NoneType, required=True, description='            Index(es) and/or column(s) to group by, along with\n            optional display names and help text.\n            '))
@@ -20,151 +23,14 @@ test1:
 
     # Parameters for 'Get Subject Group Observations from EarthRanger' using task `get_subjectgroup_observations`.
     subject_obs:
-      client: "mep_dev" # (<class 'ecoscope_workflows.connections.EarthRangerClientProtocol'>, BeforeValidator(func=<bound method DataConnection.client_from_named_connection of <class 'ecoscope_workflows.connections.EarthRangerConnection'>>), WithJsonSchema(json_schema={'type': 'string', 'description': 'A named EarthRanger connection.'}, mode=None))
       subject_group_name: "Ecoscope" # (<class 'str'>, FieldInfo(annotation=NoneType, required=True, description='Name of EarthRanger Subject'))
       include_inactive: False # (<class 'bool'>, FieldInfo(annotation=NoneType, required=True, description='Whether or not to include inactive subjects'))
 
     # Parameters for 'Transform Relocations to Trajectories' using task `relocations_to_trajectory`.
     subject_traj:
-      min_length_meters: 0.001 # (<class 'float'>, FieldInfo(annotation=NoneType, required=True))
       max_length_meters: 10000 # (<class 'float'>, FieldInfo(annotation=NoneType, required=True))
       max_time_secs: 21600 # (<class 'float'>, FieldInfo(annotation=NoneType, required=True))
-      min_time_secs: 1 # (<class 'float'>, FieldInfo(annotation=NoneType, required=True))
       max_speed_kmhr: 10 # (<class 'float'>, FieldInfo(annotation=NoneType, required=True))
-      min_speed_kmhr: 0.0 # (<class 'float'>, FieldInfo(annotation=NoneType, required=True))
-
-    classify_traj_speed:
-      input_column_name: "speed_kmhr"
-      output_column_name: "speed_bins"
-      classification_options:
-        scheme: "equal_interval"
-        k: 6
-
-    colormap_traj_speed:
-      input_column_name: "speed_bins"
-      output_column_name: "speed_bins_colormap"
-
-    speedmap_legend_with_unit:
-      input_column_name: "speed_bins"
-      output_column_name: "speed_bins_formatted"
-      original_unit: "km/h"
-      new_unit: "km/h"
-
-    # Parameters for 'Draw Ecomaps for each trajectory group' using task `draw_ecomap`.
-    traj_ecomap:
-      tile_layers:
-        - name: "SATELLITE"
-        - name: "TERRAIN"
-          opacity: 0.5
-      static: False # (<class 'bool'>, FieldInfo(annotation=NoneType, required=False))
-
-    # Parameters for 'Create Map Widgets for Patrol Events' using task `create_map_widget_single_view`.
-    traj_map_widgets_single_views:
-      title: "Subject Group Trajectory Map" # (<class 'str'>, FieldInfo(annotation=NoneType, required=True, description='The title of the widget'))
-
-    colormap_traj_night:
-      input_column_name: "extra__is_night"
-      output_column_name: "is_night_colors"
-
-    # Parameters for 'Draw Ecomaps for each trajectory group' using task `draw_ecomap`.
-    traj_daynight_ecomap:
-      tile_layers:
-        - name: "SATELLITE"
-        - name: "TERRAIN"
-          opacity: 0.5
-      static: False # (<class 'bool'>, FieldInfo(annotation=NoneType, required=False))
-
-    # Parameters for 'Create Map Widgets for Patrol Events' using task `create_map_widget_single_view`.
-    traj_map_daynight_widgets_sv:
-      title: "Subject Group Day/Night Map" # (<class 'str'>, FieldInfo(annotation=NoneType, required=True, description='The title of the widget'))
-
-    # Parameters for 'Calculate Mean Speed Per Group' using task `dataframe_column_mean`.
-    mean_speed:
-      column_name: "speed_kmhr" # (<class 'str'>, FieldInfo(annotation=NoneType, required=True, description='Column to aggregate'))
-
-    average_speed_converted:
-      original_unit: "km/h"
-      new_unit: "km/h"
-
-    # Parameters for 'Create Single Value Widgets for Mean Speed Per Group' using task `create_single_value_widget_single_view`.
-    mean_speed_sv_widgets:
-      title: "Mean Speed" # (<class 'str'>, FieldInfo(annotation=NoneType, required=True, description='The title of the widget'))
-
-    # Parameters for 'Calculate Max Speed Per Group' using task `dataframe_column_mean`.
-    max_speed:
-      column_name: "speed_kmhr" # (<class 'str'>, FieldInfo(annotation=NoneType, required=True, description='Column to aggregate'))
-
-    max_speed_converted:
-      original_unit: "km/h"
-      new_unit: "km/h"
-
-    # Parameters for 'Create Single Value Widgets for Mean Max Per Group' using task `create_single_value_widget_single_view`.
-    max_speed_sv_widgets:
-      title: "Max Speed" # (<class 'str'>, FieldInfo(annotation=NoneType, required=True, description='The title of the widget'))
-
-    # Parameters for 'Create Single Value Widgets for Number of Location Per Group' using task `create_single_value_widget_single_view`.
-    num_location_sv_widgets:
-      title: "Number of Locations" # (<class 'str'>, FieldInfo(annotation=NoneType, required=True, description='The title of the widget'))
-
-
-    # Parameters for 'Create Single Value Widgets for Day/Night Ratio Per Group' using task `create_single_value_widget_single_view`.
-    daynight_ratio_sv_widgets:
-      title: "Day Night Ratio" # (<class 'str'>, FieldInfo(annotation=NoneType, required=True, description='The title of the widget'))
-
-    # Parameters for 'Calculate Total Distance Per Group' using task `dataframe_column_sum`.
-    total_distance:
-      column_name: "dist_meters" # (<class 'str'>, FieldInfo(annotation=NoneType, required=True, description='Column to aggregate'))
-
-    # Parameters for 'Convert total patrol distance units' using task `apply_arithmetic_operation`.
-    total_dist_converted:
-      original_unit: "m"
-      new_unit: "km"
-
-    # Parameters for 'Create Single Value Widgets for Total Distance Per Group' using task `create_single_value_widget_single_view`.
-    total_distance_sv_widgets:
-      title: "Total Distance" # (<class 'str'>, FieldInfo(annotation=NoneType, required=True, description='The title of the widget'))
-
-    # Parameters for 'Calculate Total Patrol Time Per Group' using task `dataframe_column_sum`.
-    total_time:
-      column_name: "timespan_seconds" # (<class 'str'>, FieldInfo(annotation=NoneType, required=True, description='Column to aggregate'))
-
-    # Parameters for 'Convert total patrol time units' using task `apply_arithmetic_operation`.
-    total_time_converted:
-      original_unit: "s"
-      new_unit: "h"
-
-    # Parameters for 'Create Single Value Widgets for Total Patrol Time Per Group' using task `create_single_value_widget_single_view`.
-    total_time_sv_widgets:
-      title: "Total Time" # (<class 'str'>, FieldInfo(annotation=NoneType, required=True, description='The title of the widget'))
-
-    # Parameters for 'Calculate Time Density from Trajectory' using task `calculate_time_density`.
-    td:
-      pixel_size: 250.0 # (<class 'float'>, FieldInfo(annotation=NoneType, required=False, default=250.0, description='Pixel size for raster profile.'))
-      crs: "ESRI:102022" # (<class 'str'>, FieldInfo(annotation=NoneType, required=False, default='ESRI:102022'))
-      nodata_value: "nan" # (<class 'float'>, FieldInfo(annotation=NoneType, required=False, default=nan, metadata=[_PydanticGeneralMetadata(allow_inf_nan=True)]))
-      band_count: 1 # (<class 'int'>, FieldInfo(annotation=NoneType, required=False, default=1))
-      max_speed_factor: 1.05 # (<class 'float'>, FieldInfo(annotation=NoneType, required=False, default=1.05))
-      expansion_factor: 1.3 # (<class 'float'>, FieldInfo(annotation=NoneType, required=False, default=1.3))
-      percentiles: [50.0, 60.0, 70.0, 80.0, 90.0, 95.0] # (list[float], FieldInfo(annotation=NoneType, required=False, default=[50.0, 60.0, 70.0, 80.0, 90.0, 95.0]))
-
-    # Parameters for 'Draw Ecomap from Time Density' using task `draw_ecomap`.
-    td_ecomap:
-      tile_layers:
-        - name: "SATELLITE"
-        - name: "TERRAIN"
-          opacity: 0.5
-      static: False # (<class 'bool'>, FieldInfo(annotation=NoneType, required=False))
-
-    # Parameters for 'Create Time Density Map Widget' using task `create_map_widget_single_view`.
-    td_map_widget:
-      title: "Home Range Map" # (<class 'str'>, FieldInfo(annotation=NoneType, required=True, description='The title of the widget'))
-
-    nsd_chart:
-      group_by: "groupby_col"
-      x_axis: "segment_start" # (<class 'str'>, FieldInfo(annotation=NoneType, required=True, description='The dataframe column to plot in the x axis.'))
-      y_axis: "nsd" # (<class 'str'>, FieldInfo(annotation=NoneType, required=True, description='The dataframe column to plot in the y axis.'))
-    nsd_chart_widget:
-      title: "NSD Chart" # (<class 'str'>, FieldInfo(annotation=NoneType, required=True, description='The title of the widget'))
 
   assertions:
     result_stdout_contains:

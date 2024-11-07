@@ -1,6 +1,6 @@
 # [generated]
 # by = { compiler = "ecoscope-workflows-core", version = "9999" }
-# from-spec-sha256 = "ce99aa75b964ef05abbda6aaf04196155783e7be46b4194b23de1ec97f12a9ea"
+# from-spec-sha256 = "82ed246d4e30f973c3e4c9693a511d5c6f9d016b0fc42192a1205c845edd25b1"
 
 
 # ruff: noqa: E402
@@ -14,6 +14,7 @@
 
 import os
 from ecoscope_workflows_core.tasks.config import set_workflow_details
+from ecoscope_workflows_core.tasks.io import set_connection
 from ecoscope_workflows_core.tasks.groupby import set_groupers
 from ecoscope_workflows_core.tasks.filter import set_time_range
 from ecoscope_workflows_ext_ecoscope.tasks.io import get_subjectgroup_observations
@@ -65,6 +66,23 @@ workflow_details = set_workflow_details.partial(**workflow_details_params).call(
 
 
 # %% [markdown]
+# ## Select EarthRanger Connection
+
+# %%
+# parameters
+
+er_client_name_params = dict(
+    name=...,
+)
+
+# %%
+# call the task
+
+
+er_client_name = set_connection.partial(**er_client_name_params).call()
+
+
+# %% [markdown]
 # ## Set Groupers
 
 # %%
@@ -107,7 +125,6 @@ time_range = set_time_range.partial(**time_range_params).call()
 # parameters
 
 subject_obs_params = dict(
-    client=...,
     subject_group_name=...,
     include_inactive=...,
 )
@@ -117,7 +134,7 @@ subject_obs_params = dict(
 
 
 subject_obs = get_subjectgroup_observations.partial(
-    time_range=time_range, **subject_obs_params
+    client=er_client_name, time_range=time_range, **subject_obs_params
 ).call()
 
 
@@ -233,10 +250,7 @@ split_subject_traj_groups = split_groups.partial(
 # parameters
 
 classify_traj_speed_params = dict(
-    input_column_name=...,
-    output_column_name=...,
     labels=...,
-    classification_options=...,
 )
 
 # %%
@@ -244,7 +258,10 @@ classify_traj_speed_params = dict(
 
 
 classify_traj_speed = apply_classification.partial(
-    **classify_traj_speed_params
+    input_column_name="speed_kmhr",
+    output_column_name="speed_bins",
+    classification_options={"scheme": "equal_interval", "k": 6},
+    **classify_traj_speed_params,
 ).mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
 
 
@@ -254,16 +271,15 @@ classify_traj_speed = apply_classification.partial(
 # %%
 # parameters
 
-colormap_traj_speed_params = dict(
-    input_column_name=...,
-    output_column_name=...,
-)
+colormap_traj_speed_params = dict()
 
 # %%
 # call the task
 
 
 colormap_traj_speed = apply_color_map.partial(
+    input_column_name="speed_bins",
+    output_column_name="speed_bins_colormap",
     colormap=["#1a9850", "#91cf60", "#d9ef8b", "#fee08b", "#fc8d59", "#d73027"],
     **colormap_traj_speed_params,
 ).mapvalues(argnames=["df"], argvalues=classify_traj_speed)
@@ -276,10 +292,6 @@ colormap_traj_speed = apply_color_map.partial(
 # parameters
 
 speedmap_legend_with_unit_params = dict(
-    input_column_name=...,
-    output_column_name=...,
-    original_unit=...,
-    new_unit=...,
     decimal_places=...,
 )
 
@@ -288,7 +300,11 @@ speedmap_legend_with_unit_params = dict(
 
 
 speedmap_legend_with_unit = map_values_with_unit.partial(
-    **speedmap_legend_with_unit_params
+    input_column_name="speed_bins",
+    output_column_name="speed_bins_formatted",
+    original_unit="km/h",
+    new_unit="km/h",
+    **speedmap_legend_with_unit_params,
 ).mapvalues(argnames=["df"], argvalues=colormap_traj_speed)
 
 
@@ -321,20 +337,20 @@ traj_map_layers = create_polyline_layer.partial(
 # parameters
 
 traj_ecomap_params = dict(
-    tile_layers=...,
-    static=...,
     title=...,
-    north_arrow_style=...,
-    legend_style=...,
 )
 
 # %%
 # call the task
 
 
-traj_ecomap = draw_ecomap.partial(**traj_ecomap_params).mapvalues(
-    argnames=["geo_layers"], argvalues=traj_map_layers
-)
+traj_ecomap = draw_ecomap.partial(
+    tile_layers=[{"name": "TERRAIN"}, {"name": "SATELLITE", "opacity": 0.5}],
+    north_arrow_style={"placement": "top-left"},
+    legend_style={"placement": "bottom-right"},
+    static=False,
+    **traj_ecomap_params,
+).mapvalues(argnames=["geo_layers"], argvalues=traj_map_layers)
 
 
 # %% [markdown]
@@ -362,16 +378,14 @@ ecomap_html_urls = persist_text.partial(
 # %%
 # parameters
 
-traj_map_widgets_single_views_params = dict(
-    title=...,
-)
+traj_map_widgets_single_views_params = dict()
 
 # %%
 # call the task
 
 
 traj_map_widgets_single_views = create_map_widget_single_view.partial(
-    **traj_map_widgets_single_views_params
+    title="Subject Group Trajectory Map", **traj_map_widgets_single_views_params
 ).map(argnames=["view", "data"], argvalues=ecomap_html_urls)
 
 
@@ -398,17 +412,17 @@ traj_grouped_map_widget = merge_widget_views.partial(
 # %%
 # parameters
 
-colormap_traj_night_params = dict(
-    input_column_name=...,
-    output_column_name=...,
-)
+colormap_traj_night_params = dict()
 
 # %%
 # call the task
 
 
 colormap_traj_night = apply_color_map.partial(
-    colormap=["#292965", "#e7a553"], **colormap_traj_night_params
+    colormap=["#292965", "#e7a553"],
+    input_column_name="extra__is_night",
+    output_column_name="is_night_colors",
+    **colormap_traj_night_params,
 ).mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
 
 
@@ -438,20 +452,20 @@ traj_map_night_layers = create_polyline_layer.partial(
 # parameters
 
 traj_daynight_ecomap_params = dict(
-    tile_layers=...,
-    static=...,
     title=...,
-    north_arrow_style=...,
-    legend_style=...,
 )
 
 # %%
 # call the task
 
 
-traj_daynight_ecomap = draw_ecomap.partial(**traj_daynight_ecomap_params).mapvalues(
-    argnames=["geo_layers"], argvalues=traj_map_night_layers
-)
+traj_daynight_ecomap = draw_ecomap.partial(
+    tile_layers=[{"name": "TERRAIN"}, {"name": "SATELLITE", "opacity": 0.5}],
+    north_arrow_style={"placement": "top-left"},
+    legend_style={"placement": "bottom-right"},
+    static=False,
+    **traj_daynight_ecomap_params,
+).mapvalues(argnames=["geo_layers"], argvalues=traj_map_night_layers)
 
 
 # %% [markdown]
@@ -480,16 +494,14 @@ ecomap_daynight_html_urls = persist_text.partial(
 # %%
 # parameters
 
-traj_map_daynight_widgets_sv_params = dict(
-    title=...,
-)
+traj_map_daynight_widgets_sv_params = dict()
 
 # %%
 # call the task
 
 
 traj_map_daynight_widgets_sv = create_map_widget_single_view.partial(
-    **traj_map_daynight_widgets_sv_params
+    title="Subject Group Night/Day Map", **traj_map_daynight_widgets_sv_params
 ).map(argnames=["view", "data"], argvalues=ecomap_daynight_html_urls)
 
 
@@ -516,17 +528,15 @@ traj_daynight_grouped_map_widget = merge_widget_views.partial(
 # %%
 # parameters
 
-mean_speed_params = dict(
-    column_name=...,
-)
+mean_speed_params = dict()
 
 # %%
 # call the task
 
 
-mean_speed = dataframe_column_mean.partial(**mean_speed_params).mapvalues(
-    argnames=["df"], argvalues=split_subject_traj_groups
-)
+mean_speed = dataframe_column_mean.partial(
+    column_name="speed_kmhr", **mean_speed_params
+).mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
 
 
 # %% [markdown]
@@ -535,18 +545,15 @@ mean_speed = dataframe_column_mean.partial(**mean_speed_params).mapvalues(
 # %%
 # parameters
 
-average_speed_converted_params = dict(
-    original_unit=...,
-    new_unit=...,
-)
+average_speed_converted_params = dict()
 
 # %%
 # call the task
 
 
-average_speed_converted = with_unit.partial(**average_speed_converted_params).mapvalues(
-    argnames=["value"], argvalues=mean_speed
-)
+average_speed_converted = with_unit.partial(
+    original_unit="km/h", new_unit="km/h", **average_speed_converted_params
+).mapvalues(argnames=["value"], argvalues=mean_speed)
 
 
 # %% [markdown]
@@ -556,7 +563,6 @@ average_speed_converted = with_unit.partial(**average_speed_converted_params).ma
 # parameters
 
 mean_speed_sv_widgets_params = dict(
-    title=...,
     decimal_places=...,
 )
 
@@ -565,7 +571,7 @@ mean_speed_sv_widgets_params = dict(
 
 
 mean_speed_sv_widgets = create_single_value_widget_single_view.partial(
-    **mean_speed_sv_widgets_params
+    title="Mean Speed", **mean_speed_sv_widgets_params
 ).map(argnames=["view", "data"], argvalues=average_speed_converted)
 
 
@@ -592,17 +598,15 @@ mean_speed_grouped_sv_widget = merge_widget_views.partial(
 # %%
 # parameters
 
-max_speed_params = dict(
-    column_name=...,
-)
+max_speed_params = dict()
 
 # %%
 # call the task
 
 
-max_speed = dataframe_column_max.partial(**max_speed_params).mapvalues(
-    argnames=["df"], argvalues=split_subject_traj_groups
-)
+max_speed = dataframe_column_max.partial(
+    column_name="speed_kmhr", **max_speed_params
+).mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
 
 
 # %% [markdown]
@@ -611,18 +615,15 @@ max_speed = dataframe_column_max.partial(**max_speed_params).mapvalues(
 # %%
 # parameters
 
-max_speed_converted_params = dict(
-    original_unit=...,
-    new_unit=...,
-)
+max_speed_converted_params = dict()
 
 # %%
 # call the task
 
 
-max_speed_converted = with_unit.partial(**max_speed_converted_params).mapvalues(
-    argnames=["value"], argvalues=max_speed
-)
+max_speed_converted = with_unit.partial(
+    original_unit="km/h", new_unit="km/h", **max_speed_converted_params
+).mapvalues(argnames=["value"], argvalues=max_speed)
 
 
 # %% [markdown]
@@ -632,7 +633,6 @@ max_speed_converted = with_unit.partial(**max_speed_converted_params).mapvalues(
 # parameters
 
 max_speed_sv_widgets_params = dict(
-    title=...,
     decimal_places=...,
 )
 
@@ -641,7 +641,7 @@ max_speed_sv_widgets_params = dict(
 
 
 max_speed_sv_widgets = create_single_value_widget_single_view.partial(
-    **max_speed_sv_widgets_params
+    title="Max Speed", **max_speed_sv_widgets_params
 ).map(argnames=["view", "data"], argvalues=max_speed_converted)
 
 
@@ -686,7 +686,6 @@ num_location = dataframe_count.partial(**num_location_params).mapvalues(
 # parameters
 
 num_location_sv_widgets_params = dict(
-    title=...,
     decimal_places=...,
 )
 
@@ -695,7 +694,7 @@ num_location_sv_widgets_params = dict(
 
 
 num_location_sv_widgets = create_single_value_widget_single_view.partial(
-    **num_location_sv_widgets_params
+    title="Number of Locations", **num_location_sv_widgets_params
 ).map(argnames=["view", "data"], argvalues=num_location)
 
 
@@ -740,7 +739,6 @@ daynight_ratio = get_day_night_ratio.partial(**daynight_ratio_params).mapvalues(
 # parameters
 
 daynight_ratio_sv_widgets_params = dict(
-    title=...,
     decimal_places=...,
 )
 
@@ -749,7 +747,7 @@ daynight_ratio_sv_widgets_params = dict(
 
 
 daynight_ratio_sv_widgets = create_single_value_widget_single_view.partial(
-    **daynight_ratio_sv_widgets_params
+    title="Night/Day Ratio", **daynight_ratio_sv_widgets_params
 ).map(argnames=["view", "data"], argvalues=daynight_ratio)
 
 
@@ -776,17 +774,15 @@ daynight_ratio_grouped_sv_widget = merge_widget_views.partial(
 # %%
 # parameters
 
-total_distance_params = dict(
-    column_name=...,
-)
+total_distance_params = dict()
 
 # %%
 # call the task
 
 
-total_distance = dataframe_column_sum.partial(**total_distance_params).mapvalues(
-    argnames=["df"], argvalues=split_subject_traj_groups
-)
+total_distance = dataframe_column_sum.partial(
+    column_name="dist_meters", **total_distance_params
+).mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
 
 
 # %% [markdown]
@@ -795,18 +791,15 @@ total_distance = dataframe_column_sum.partial(**total_distance_params).mapvalues
 # %%
 # parameters
 
-total_dist_converted_params = dict(
-    original_unit=...,
-    new_unit=...,
-)
+total_dist_converted_params = dict()
 
 # %%
 # call the task
 
 
-total_dist_converted = with_unit.partial(**total_dist_converted_params).mapvalues(
-    argnames=["value"], argvalues=total_distance
-)
+total_dist_converted = with_unit.partial(
+    original_unit="m", new_unit="km", **total_dist_converted_params
+).mapvalues(argnames=["value"], argvalues=total_distance)
 
 
 # %% [markdown]
@@ -816,7 +809,6 @@ total_dist_converted = with_unit.partial(**total_dist_converted_params).mapvalue
 # parameters
 
 total_distance_sv_widgets_params = dict(
-    title=...,
     decimal_places=...,
 )
 
@@ -825,7 +817,7 @@ total_distance_sv_widgets_params = dict(
 
 
 total_distance_sv_widgets = create_single_value_widget_single_view.partial(
-    **total_distance_sv_widgets_params
+    title="Total Distance", **total_distance_sv_widgets_params
 ).map(argnames=["view", "data"], argvalues=total_dist_converted)
 
 
@@ -852,17 +844,15 @@ total_dist_grouped_sv_widget = merge_widget_views.partial(
 # %%
 # parameters
 
-total_time_params = dict(
-    column_name=...,
-)
+total_time_params = dict()
 
 # %%
 # call the task
 
 
-total_time = dataframe_column_sum.partial(**total_time_params).mapvalues(
-    argnames=["df"], argvalues=split_subject_traj_groups
-)
+total_time = dataframe_column_sum.partial(
+    column_name="timespan_seconds", **total_time_params
+).mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
 
 
 # %% [markdown]
@@ -871,18 +861,15 @@ total_time = dataframe_column_sum.partial(**total_time_params).mapvalues(
 # %%
 # parameters
 
-total_time_converted_params = dict(
-    original_unit=...,
-    new_unit=...,
-)
+total_time_converted_params = dict()
 
 # %%
 # call the task
 
 
-total_time_converted = with_unit.partial(**total_time_converted_params).mapvalues(
-    argnames=["value"], argvalues=total_time
-)
+total_time_converted = with_unit.partial(
+    original_unit="s", new_unit="h", **total_time_converted_params
+).mapvalues(argnames=["value"], argvalues=total_time)
 
 
 # %% [markdown]
@@ -892,7 +879,6 @@ total_time_converted = with_unit.partial(**total_time_converted_params).mapvalue
 # parameters
 
 total_time_sv_widgets_params = dict(
-    title=...,
     decimal_places=...,
 )
 
@@ -901,7 +887,7 @@ total_time_sv_widgets_params = dict(
 
 
 total_time_sv_widgets = create_single_value_widget_single_view.partial(
-    **total_time_sv_widgets_params
+    title="Total Time", **total_time_sv_widgets_params
 ).map(argnames=["view", "data"], argvalues=total_time_converted)
 
 
@@ -929,22 +915,22 @@ total_time_grouped_sv_widget = merge_widget_views.partial(
 # parameters
 
 td_params = dict(
-    pixel_size=...,
-    crs=...,
     nodata_value=...,
     band_count=...,
     max_speed_factor=...,
     expansion_factor=...,
-    percentiles=...,
 )
 
 # %%
 # call the task
 
 
-td = calculate_time_density.partial(**td_params).mapvalues(
-    argnames=["trajectory_gdf"], argvalues=split_subject_traj_groups
-)
+td = calculate_time_density.partial(
+    pixel_size=250.0,
+    crs="ESRI:102022",
+    percentiles=[50.0, 60.0, 70.0, 80.0, 90.0, 95.0],
+    **td_params,
+).mapvalues(argnames=["trajectory_gdf"], argvalues=split_subject_traj_groups)
 
 
 # %% [markdown]
@@ -998,20 +984,20 @@ td_map_layer = create_polygon_layer.partial(
 # parameters
 
 td_ecomap_params = dict(
-    tile_layers=...,
-    static=...,
     title=...,
-    north_arrow_style=...,
-    legend_style=...,
 )
 
 # %%
 # call the task
 
 
-td_ecomap = draw_ecomap.partial(**td_ecomap_params).mapvalues(
-    argnames=["geo_layers"], argvalues=td_map_layer
-)
+td_ecomap = draw_ecomap.partial(
+    tile_layers=[{"name": "TERRAIN"}, {"name": "SATELLITE", "opacity": 0.5}],
+    north_arrow_style={"placement": "top-left"},
+    legend_style={"placement": "bottom-right"},
+    static=False,
+    **td_ecomap_params,
+).mapvalues(argnames=["geo_layers"], argvalues=td_map_layer)
 
 
 # %% [markdown]
@@ -1039,17 +1025,15 @@ td_ecomap_html_url = persist_text.partial(
 # %%
 # parameters
 
-td_map_widget_params = dict(
-    title=...,
-)
+td_map_widget_params = dict()
 
 # %%
 # call the task
 
 
-td_map_widget = create_map_widget_single_view.partial(**td_map_widget_params).map(
-    argnames=["view", "data"], argvalues=td_ecomap_html_url
-)
+td_map_widget = create_map_widget_single_view.partial(
+    title="Home Range Map", **td_map_widget_params
+).map(argnames=["view", "data"], argvalues=td_ecomap_html_url)
 
 
 # %% [markdown]
@@ -1076,10 +1060,6 @@ td_grouped_map_widget = merge_widget_views.partial(
 # parameters
 
 nsd_chart_params = dict(
-    group_by=...,
-    x_axis=...,
-    y_axis=...,
-    plot_style=...,
     color_column=...,
 )
 
@@ -1088,7 +1068,12 @@ nsd_chart_params = dict(
 
 
 nsd_chart = draw_ecoplot.partial(
-    dataframe=traj_add_temporal_index, **nsd_chart_params
+    dataframe=traj_add_temporal_index,
+    group_by="groupby_col",
+    x_axis="segment_start",
+    y_axis="nsd",
+    plot_style={"xperiodalignment": None},
+    **nsd_chart_params,
 ).call()
 
 
@@ -1120,7 +1105,6 @@ nsd_chart_html_url = persist_text.partial(
 # parameters
 
 nsd_chart_widget_params = dict(
-    title=...,
     view=...,
 )
 
@@ -1129,7 +1113,7 @@ nsd_chart_widget_params = dict(
 
 
 nsd_chart_widget = create_plot_widget_single_view.partial(
-    data=nsd_chart_html_url, **nsd_chart_widget_params
+    data=nsd_chart_html_url, title="Net Square Displacement", **nsd_chart_widget_params
 ).call()
 
 

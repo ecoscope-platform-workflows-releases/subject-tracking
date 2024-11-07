@@ -1,6 +1,6 @@
 # [generated]
 # by = { compiler = "ecoscope-workflows-core", version = "9999" }
-# from-spec-sha256 = "ce99aa75b964ef05abbda6aaf04196155783e7be46b4194b23de1ec97f12a9ea"
+# from-spec-sha256 = "82ed246d4e30f973c3e4c9693a511d5c6f9d016b0fc42192a1205c845edd25b1"
 
 # ruff: noqa: E402
 
@@ -18,6 +18,7 @@ from ecoscope_workflows_core.testing import create_task_magicmock  # 🧪
 from ecoscope_workflows_core.graph import DependsOn, DependsOnSequence, Graph, Node
 
 from ecoscope_workflows_core.tasks.config import set_workflow_details
+from ecoscope_workflows_core.tasks.io import set_connection
 from ecoscope_workflows_core.tasks.groupby import set_groupers
 from ecoscope_workflows_core.tasks.filter import set_time_range
 
@@ -63,9 +64,10 @@ def main(params: Params):
 
     dependencies = {
         "workflow_details": [],
+        "er_client_name": [],
         "groupers": [],
         "time_range": [],
-        "subject_obs": ["time_range"],
+        "subject_obs": ["er_client_name", "time_range"],
         "subject_reloc": ["subject_obs"],
         "day_night_labels": ["subject_reloc"],
         "subject_traj": ["day_night_labels"],
@@ -140,6 +142,11 @@ def main(params: Params):
             partial=(params_dict.get("workflow_details") or {}),
             method="call",
         ),
+        "er_client_name": Node(
+            async_task=set_connection.validate().set_executor("lithops"),
+            partial=(params_dict.get("er_client_name") or {}),
+            method="call",
+        ),
         "groupers": Node(
             async_task=set_groupers.validate().set_executor("lithops"),
             partial=(params_dict.get("groupers") or {}),
@@ -153,6 +160,7 @@ def main(params: Params):
         "subject_obs": Node(
             async_task=get_subjectgroup_observations.validate().set_executor("lithops"),
             partial={
+                "client": DependsOn("er_client_name"),
                 "time_range": DependsOn("time_range"),
             }
             | (params_dict.get("subject_obs") or {}),
@@ -209,7 +217,12 @@ def main(params: Params):
         ),
         "classify_traj_speed": Node(
             async_task=apply_classification.validate().set_executor("lithops"),
-            partial=(params_dict.get("classify_traj_speed") or {}),
+            partial={
+                "input_column_name": "speed_kmhr",
+                "output_column_name": "speed_bins",
+                "classification_options": {"scheme": "equal_interval", "k": 6},
+            }
+            | (params_dict.get("classify_traj_speed") or {}),
             method="mapvalues",
             kwargs={
                 "argnames": ["df"],
@@ -219,6 +232,8 @@ def main(params: Params):
         "colormap_traj_speed": Node(
             async_task=apply_color_map.validate().set_executor("lithops"),
             partial={
+                "input_column_name": "speed_bins",
+                "output_column_name": "speed_bins_colormap",
                 "colormap": [
                     "#1a9850",
                     "#91cf60",
@@ -237,7 +252,13 @@ def main(params: Params):
         ),
         "speedmap_legend_with_unit": Node(
             async_task=map_values_with_unit.validate().set_executor("lithops"),
-            partial=(params_dict.get("speedmap_legend_with_unit") or {}),
+            partial={
+                "input_column_name": "speed_bins",
+                "output_column_name": "speed_bins_formatted",
+                "original_unit": "km/h",
+                "new_unit": "km/h",
+            }
+            | (params_dict.get("speedmap_legend_with_unit") or {}),
             method="mapvalues",
             kwargs={
                 "argnames": ["df"],
@@ -262,7 +283,16 @@ def main(params: Params):
         ),
         "traj_ecomap": Node(
             async_task=draw_ecomap.validate().set_executor("lithops"),
-            partial=(params_dict.get("traj_ecomap") or {}),
+            partial={
+                "tile_layers": [
+                    {"name": "TERRAIN"},
+                    {"name": "SATELLITE", "opacity": 0.5},
+                ],
+                "north_arrow_style": {"placement": "top-left"},
+                "legend_style": {"placement": "bottom-right"},
+                "static": False,
+            }
+            | (params_dict.get("traj_ecomap") or {}),
             method="mapvalues",
             kwargs={
                 "argnames": ["geo_layers"],
@@ -283,7 +313,10 @@ def main(params: Params):
         ),
         "traj_map_widgets_single_views": Node(
             async_task=create_map_widget_single_view.validate().set_executor("lithops"),
-            partial=(params_dict.get("traj_map_widgets_single_views") or {}),
+            partial={
+                "title": "Subject Group Trajectory Map",
+            }
+            | (params_dict.get("traj_map_widgets_single_views") or {}),
             method="map",
             kwargs={
                 "argnames": ["view", "data"],
@@ -302,6 +335,8 @@ def main(params: Params):
             async_task=apply_color_map.validate().set_executor("lithops"),
             partial={
                 "colormap": ["#292965", "#e7a553"],
+                "input_column_name": "extra__is_night",
+                "output_column_name": "is_night_colors",
             }
             | (params_dict.get("colormap_traj_night") or {}),
             method="mapvalues",
@@ -328,7 +363,16 @@ def main(params: Params):
         ),
         "traj_daynight_ecomap": Node(
             async_task=draw_ecomap.validate().set_executor("lithops"),
-            partial=(params_dict.get("traj_daynight_ecomap") or {}),
+            partial={
+                "tile_layers": [
+                    {"name": "TERRAIN"},
+                    {"name": "SATELLITE", "opacity": 0.5},
+                ],
+                "north_arrow_style": {"placement": "top-left"},
+                "legend_style": {"placement": "bottom-right"},
+                "static": False,
+            }
+            | (params_dict.get("traj_daynight_ecomap") or {}),
             method="mapvalues",
             kwargs={
                 "argnames": ["geo_layers"],
@@ -349,7 +393,10 @@ def main(params: Params):
         ),
         "traj_map_daynight_widgets_sv": Node(
             async_task=create_map_widget_single_view.validate().set_executor("lithops"),
-            partial=(params_dict.get("traj_map_daynight_widgets_sv") or {}),
+            partial={
+                "title": "Subject Group Night/Day Map",
+            }
+            | (params_dict.get("traj_map_daynight_widgets_sv") or {}),
             method="map",
             kwargs={
                 "argnames": ["view", "data"],
@@ -366,7 +413,10 @@ def main(params: Params):
         ),
         "mean_speed": Node(
             async_task=dataframe_column_mean.validate().set_executor("lithops"),
-            partial=(params_dict.get("mean_speed") or {}),
+            partial={
+                "column_name": "speed_kmhr",
+            }
+            | (params_dict.get("mean_speed") or {}),
             method="mapvalues",
             kwargs={
                 "argnames": ["df"],
@@ -375,7 +425,11 @@ def main(params: Params):
         ),
         "average_speed_converted": Node(
             async_task=with_unit.validate().set_executor("lithops"),
-            partial=(params_dict.get("average_speed_converted") or {}),
+            partial={
+                "original_unit": "km/h",
+                "new_unit": "km/h",
+            }
+            | (params_dict.get("average_speed_converted") or {}),
             method="mapvalues",
             kwargs={
                 "argnames": ["value"],
@@ -386,7 +440,10 @@ def main(params: Params):
             async_task=create_single_value_widget_single_view.validate().set_executor(
                 "lithops"
             ),
-            partial=(params_dict.get("mean_speed_sv_widgets") or {}),
+            partial={
+                "title": "Mean Speed",
+            }
+            | (params_dict.get("mean_speed_sv_widgets") or {}),
             method="map",
             kwargs={
                 "argnames": ["view", "data"],
@@ -403,7 +460,10 @@ def main(params: Params):
         ),
         "max_speed": Node(
             async_task=dataframe_column_max.validate().set_executor("lithops"),
-            partial=(params_dict.get("max_speed") or {}),
+            partial={
+                "column_name": "speed_kmhr",
+            }
+            | (params_dict.get("max_speed") or {}),
             method="mapvalues",
             kwargs={
                 "argnames": ["df"],
@@ -412,7 +472,11 @@ def main(params: Params):
         ),
         "max_speed_converted": Node(
             async_task=with_unit.validate().set_executor("lithops"),
-            partial=(params_dict.get("max_speed_converted") or {}),
+            partial={
+                "original_unit": "km/h",
+                "new_unit": "km/h",
+            }
+            | (params_dict.get("max_speed_converted") or {}),
             method="mapvalues",
             kwargs={
                 "argnames": ["value"],
@@ -423,7 +487,10 @@ def main(params: Params):
             async_task=create_single_value_widget_single_view.validate().set_executor(
                 "lithops"
             ),
-            partial=(params_dict.get("max_speed_sv_widgets") or {}),
+            partial={
+                "title": "Max Speed",
+            }
+            | (params_dict.get("max_speed_sv_widgets") or {}),
             method="map",
             kwargs={
                 "argnames": ["view", "data"],
@@ -451,7 +518,10 @@ def main(params: Params):
             async_task=create_single_value_widget_single_view.validate().set_executor(
                 "lithops"
             ),
-            partial=(params_dict.get("num_location_sv_widgets") or {}),
+            partial={
+                "title": "Number of Locations",
+            }
+            | (params_dict.get("num_location_sv_widgets") or {}),
             method="map",
             kwargs={
                 "argnames": ["view", "data"],
@@ -479,7 +549,10 @@ def main(params: Params):
             async_task=create_single_value_widget_single_view.validate().set_executor(
                 "lithops"
             ),
-            partial=(params_dict.get("daynight_ratio_sv_widgets") or {}),
+            partial={
+                "title": "Night/Day Ratio",
+            }
+            | (params_dict.get("daynight_ratio_sv_widgets") or {}),
             method="map",
             kwargs={
                 "argnames": ["view", "data"],
@@ -496,7 +569,10 @@ def main(params: Params):
         ),
         "total_distance": Node(
             async_task=dataframe_column_sum.validate().set_executor("lithops"),
-            partial=(params_dict.get("total_distance") or {}),
+            partial={
+                "column_name": "dist_meters",
+            }
+            | (params_dict.get("total_distance") or {}),
             method="mapvalues",
             kwargs={
                 "argnames": ["df"],
@@ -505,7 +581,11 @@ def main(params: Params):
         ),
         "total_dist_converted": Node(
             async_task=with_unit.validate().set_executor("lithops"),
-            partial=(params_dict.get("total_dist_converted") or {}),
+            partial={
+                "original_unit": "m",
+                "new_unit": "km",
+            }
+            | (params_dict.get("total_dist_converted") or {}),
             method="mapvalues",
             kwargs={
                 "argnames": ["value"],
@@ -516,7 +596,10 @@ def main(params: Params):
             async_task=create_single_value_widget_single_view.validate().set_executor(
                 "lithops"
             ),
-            partial=(params_dict.get("total_distance_sv_widgets") or {}),
+            partial={
+                "title": "Total Distance",
+            }
+            | (params_dict.get("total_distance_sv_widgets") or {}),
             method="map",
             kwargs={
                 "argnames": ["view", "data"],
@@ -533,7 +616,10 @@ def main(params: Params):
         ),
         "total_time": Node(
             async_task=dataframe_column_sum.validate().set_executor("lithops"),
-            partial=(params_dict.get("total_time") or {}),
+            partial={
+                "column_name": "timespan_seconds",
+            }
+            | (params_dict.get("total_time") or {}),
             method="mapvalues",
             kwargs={
                 "argnames": ["df"],
@@ -542,7 +628,11 @@ def main(params: Params):
         ),
         "total_time_converted": Node(
             async_task=with_unit.validate().set_executor("lithops"),
-            partial=(params_dict.get("total_time_converted") or {}),
+            partial={
+                "original_unit": "s",
+                "new_unit": "h",
+            }
+            | (params_dict.get("total_time_converted") or {}),
             method="mapvalues",
             kwargs={
                 "argnames": ["value"],
@@ -553,7 +643,10 @@ def main(params: Params):
             async_task=create_single_value_widget_single_view.validate().set_executor(
                 "lithops"
             ),
-            partial=(params_dict.get("total_time_sv_widgets") or {}),
+            partial={
+                "title": "Total Time",
+            }
+            | (params_dict.get("total_time_sv_widgets") or {}),
             method="map",
             kwargs={
                 "argnames": ["view", "data"],
@@ -570,7 +663,12 @@ def main(params: Params):
         ),
         "td": Node(
             async_task=calculate_time_density.validate().set_executor("lithops"),
-            partial=(params_dict.get("td") or {}),
+            partial={
+                "pixel_size": 250.0,
+                "crs": "ESRI:102022",
+                "percentiles": [50.0, 60.0, 70.0, 80.0, 90.0, 95.0],
+            }
+            | (params_dict.get("td") or {}),
             method="mapvalues",
             kwargs={
                 "argnames": ["trajectory_gdf"],
@@ -609,7 +707,16 @@ def main(params: Params):
         ),
         "td_ecomap": Node(
             async_task=draw_ecomap.validate().set_executor("lithops"),
-            partial=(params_dict.get("td_ecomap") or {}),
+            partial={
+                "tile_layers": [
+                    {"name": "TERRAIN"},
+                    {"name": "SATELLITE", "opacity": 0.5},
+                ],
+                "north_arrow_style": {"placement": "top-left"},
+                "legend_style": {"placement": "bottom-right"},
+                "static": False,
+            }
+            | (params_dict.get("td_ecomap") or {}),
             method="mapvalues",
             kwargs={
                 "argnames": ["geo_layers"],
@@ -630,7 +737,10 @@ def main(params: Params):
         ),
         "td_map_widget": Node(
             async_task=create_map_widget_single_view.validate().set_executor("lithops"),
-            partial=(params_dict.get("td_map_widget") or {}),
+            partial={
+                "title": "Home Range Map",
+            }
+            | (params_dict.get("td_map_widget") or {}),
             method="map",
             kwargs={
                 "argnames": ["view", "data"],
@@ -649,6 +759,10 @@ def main(params: Params):
             async_task=draw_ecoplot.validate().set_executor("lithops"),
             partial={
                 "dataframe": DependsOn("traj_add_temporal_index"),
+                "group_by": "groupby_col",
+                "x_axis": "segment_start",
+                "y_axis": "nsd",
+                "plot_style": {"xperiodalignment": None},
             }
             | (params_dict.get("nsd_chart") or {}),
             method="call",
@@ -668,6 +782,7 @@ def main(params: Params):
             ),
             partial={
                 "data": DependsOn("nsd_chart_html_url"),
+                "title": "Net Square Displacement",
             }
             | (params_dict.get("nsd_chart_widget") or {}),
             method="call",
