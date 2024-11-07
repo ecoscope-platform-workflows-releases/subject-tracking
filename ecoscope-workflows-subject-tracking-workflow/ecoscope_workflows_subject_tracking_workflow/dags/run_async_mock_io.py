@@ -1,6 +1,6 @@
 # [generated]
 # by = { compiler = "ecoscope-workflows-core", version = "9999" }
-# from-spec-sha256 = "8e83a86b58a42b4e1651223cad2ef9e207d4b50645526dab5e441b82e6b02eee"
+# from-spec-sha256 = "82ed246d4e30f973c3e4c9693a511d5c6f9d016b0fc42192a1205c845edd25b1"
 
 # ruff: noqa: E402
 
@@ -15,7 +15,7 @@ import warnings  # 🧪
 from ecoscope_workflows_core.testing import create_task_magicmock  # 🧪
 
 
-from ecoscope_workflows_core.graph import DependsOn, Graph, Node
+from ecoscope_workflows_core.graph import DependsOn, DependsOnSequence, Graph, Node
 
 from ecoscope_workflows_core.tasks.config import set_workflow_details
 from ecoscope_workflows_core.tasks.io import set_connection
@@ -48,6 +48,11 @@ from ecoscope_workflows_core.tasks.analysis import dataframe_column_max
 from ecoscope_workflows_core.tasks.analysis import dataframe_count
 from ecoscope_workflows_ext_ecoscope.tasks.analysis import get_day_night_ratio
 from ecoscope_workflows_core.tasks.analysis import dataframe_column_sum
+from ecoscope_workflows_ext_ecoscope.tasks.analysis import calculate_time_density
+from ecoscope_workflows_ext_ecoscope.tasks.results import create_polygon_layer
+from ecoscope_workflows_ext_ecoscope.tasks.results import draw_ecoplot
+from ecoscope_workflows_core.tasks.results import create_plot_widget_single_view
+from ecoscope_workflows_core.tasks.results import gather_dashboard
 
 from ..params import Params
 
@@ -99,6 +104,36 @@ def main(params: Params):
         "total_distance": ["split_subject_traj_groups"],
         "total_dist_converted": ["total_distance"],
         "total_distance_sv_widgets": ["total_dist_converted"],
+        "total_dist_grouped_sv_widget": ["total_distance_sv_widgets"],
+        "total_time": ["split_subject_traj_groups"],
+        "total_time_converted": ["total_time"],
+        "total_time_sv_widgets": ["total_time_converted"],
+        "total_time_grouped_sv_widget": ["total_time_sv_widgets"],
+        "td": ["split_subject_traj_groups"],
+        "td_colormap": ["td"],
+        "td_map_layer": ["td_colormap"],
+        "td_ecomap": ["td_map_layer"],
+        "td_ecomap_html_url": ["td_ecomap"],
+        "td_map_widget": ["td_ecomap_html_url"],
+        "td_grouped_map_widget": ["td_map_widget"],
+        "nsd_chart": ["traj_add_temporal_index"],
+        "nsd_chart_html_url": ["nsd_chart"],
+        "nsd_chart_widget": ["nsd_chart_html_url"],
+        "subject_tracking_dashboard": [
+            "workflow_details",
+            "traj_grouped_map_widget",
+            "mean_speed_grouped_sv_widget",
+            "max_speed_grouped_sv_widget",
+            "num_location_grouped_sv_widget",
+            "daynight_ratio_grouped_sv_widget",
+            "total_dist_grouped_sv_widget",
+            "total_time_grouped_sv_widget",
+            "td_grouped_map_widget",
+            "traj_daynight_grouped_map_widget",
+            "nsd_chart_widget",
+            "groupers",
+            "time_range",
+        ],
     }
 
     nodes = {
@@ -570,6 +605,211 @@ def main(params: Params):
                 "argnames": ["view", "data"],
                 "argvalues": DependsOn("total_dist_converted"),
             },
+        ),
+        "total_dist_grouped_sv_widget": Node(
+            async_task=merge_widget_views.validate().set_executor("lithops"),
+            partial={
+                "widgets": DependsOn("total_distance_sv_widgets"),
+            }
+            | (params_dict.get("total_dist_grouped_sv_widget") or {}),
+            method="call",
+        ),
+        "total_time": Node(
+            async_task=dataframe_column_sum.validate().set_executor("lithops"),
+            partial={
+                "column_name": "timespan_seconds",
+            }
+            | (params_dict.get("total_time") or {}),
+            method="mapvalues",
+            kwargs={
+                "argnames": ["df"],
+                "argvalues": DependsOn("split_subject_traj_groups"),
+            },
+        ),
+        "total_time_converted": Node(
+            async_task=with_unit.validate().set_executor("lithops"),
+            partial={
+                "original_unit": "s",
+                "new_unit": "h",
+            }
+            | (params_dict.get("total_time_converted") or {}),
+            method="mapvalues",
+            kwargs={
+                "argnames": ["value"],
+                "argvalues": DependsOn("total_time"),
+            },
+        ),
+        "total_time_sv_widgets": Node(
+            async_task=create_single_value_widget_single_view.validate().set_executor(
+                "lithops"
+            ),
+            partial={
+                "title": "Total Time",
+            }
+            | (params_dict.get("total_time_sv_widgets") or {}),
+            method="map",
+            kwargs={
+                "argnames": ["view", "data"],
+                "argvalues": DependsOn("total_time_converted"),
+            },
+        ),
+        "total_time_grouped_sv_widget": Node(
+            async_task=merge_widget_views.validate().set_executor("lithops"),
+            partial={
+                "widgets": DependsOn("total_time_sv_widgets"),
+            }
+            | (params_dict.get("total_time_grouped_sv_widget") or {}),
+            method="call",
+        ),
+        "td": Node(
+            async_task=calculate_time_density.validate().set_executor("lithops"),
+            partial={
+                "pixel_size": 250.0,
+                "crs": "ESRI:102022",
+                "percentiles": [50.0, 60.0, 70.0, 80.0, 90.0, 95.0],
+            }
+            | (params_dict.get("td") or {}),
+            method="mapvalues",
+            kwargs={
+                "argnames": ["trajectory_gdf"],
+                "argvalues": DependsOn("split_subject_traj_groups"),
+            },
+        ),
+        "td_colormap": Node(
+            async_task=apply_color_map.validate().set_executor("lithops"),
+            partial={
+                "input_column_name": "percentile",
+                "colormap": "RdYlGn_r",
+                "output_column_name": "percentile_colormap",
+            }
+            | (params_dict.get("td_colormap") or {}),
+            method="mapvalues",
+            kwargs={
+                "argnames": ["df"],
+                "argvalues": DependsOn("td"),
+            },
+        ),
+        "td_map_layer": Node(
+            async_task=create_polygon_layer.validate().set_executor("lithops"),
+            partial={
+                "layer_style": {
+                    "fill_color_column": "percentile_colormap",
+                    "opacity": 0.7,
+                    "get_line_width": 0,
+                },
+            }
+            | (params_dict.get("td_map_layer") or {}),
+            method="mapvalues",
+            kwargs={
+                "argnames": ["geodataframe"],
+                "argvalues": DependsOn("td_colormap"),
+            },
+        ),
+        "td_ecomap": Node(
+            async_task=draw_ecomap.validate().set_executor("lithops"),
+            partial={
+                "tile_layers": [
+                    {"name": "TERRAIN"},
+                    {"name": "SATELLITE", "opacity": 0.5},
+                ],
+                "north_arrow_style": {"placement": "top-left"},
+                "legend_style": {"placement": "bottom-right"},
+                "static": False,
+            }
+            | (params_dict.get("td_ecomap") or {}),
+            method="mapvalues",
+            kwargs={
+                "argnames": ["geo_layers"],
+                "argvalues": DependsOn("td_map_layer"),
+            },
+        ),
+        "td_ecomap_html_url": Node(
+            async_task=persist_text.validate().set_executor("lithops"),
+            partial={
+                "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
+            }
+            | (params_dict.get("td_ecomap_html_url") or {}),
+            method="mapvalues",
+            kwargs={
+                "argnames": ["text"],
+                "argvalues": DependsOn("td_ecomap"),
+            },
+        ),
+        "td_map_widget": Node(
+            async_task=create_map_widget_single_view.validate().set_executor("lithops"),
+            partial={
+                "title": "Home Range Map",
+            }
+            | (params_dict.get("td_map_widget") or {}),
+            method="map",
+            kwargs={
+                "argnames": ["view", "data"],
+                "argvalues": DependsOn("td_ecomap_html_url"),
+            },
+        ),
+        "td_grouped_map_widget": Node(
+            async_task=merge_widget_views.validate().set_executor("lithops"),
+            partial={
+                "widgets": DependsOn("td_map_widget"),
+            }
+            | (params_dict.get("td_grouped_map_widget") or {}),
+            method="call",
+        ),
+        "nsd_chart": Node(
+            async_task=draw_ecoplot.validate().set_executor("lithops"),
+            partial={
+                "dataframe": DependsOn("traj_add_temporal_index"),
+                "group_by": "groupby_col",
+                "x_axis": "segment_start",
+                "y_axis": "nsd",
+                "plot_style": {"xperiodalignment": None},
+            }
+            | (params_dict.get("nsd_chart") or {}),
+            method="call",
+        ),
+        "nsd_chart_html_url": Node(
+            async_task=persist_text.validate().set_executor("lithops"),
+            partial={
+                "text": DependsOn("nsd_chart"),
+                "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
+            }
+            | (params_dict.get("nsd_chart_html_url") or {}),
+            method="call",
+        ),
+        "nsd_chart_widget": Node(
+            async_task=create_plot_widget_single_view.validate().set_executor(
+                "lithops"
+            ),
+            partial={
+                "data": DependsOn("nsd_chart_html_url"),
+                "title": "Net Square Displacement",
+            }
+            | (params_dict.get("nsd_chart_widget") or {}),
+            method="call",
+        ),
+        "subject_tracking_dashboard": Node(
+            async_task=gather_dashboard.validate().set_executor("lithops"),
+            partial={
+                "details": DependsOn("workflow_details"),
+                "widgets": DependsOnSequence(
+                    [
+                        DependsOn("traj_grouped_map_widget"),
+                        DependsOn("mean_speed_grouped_sv_widget"),
+                        DependsOn("max_speed_grouped_sv_widget"),
+                        DependsOn("num_location_grouped_sv_widget"),
+                        DependsOn("daynight_ratio_grouped_sv_widget"),
+                        DependsOn("total_dist_grouped_sv_widget"),
+                        DependsOn("total_time_grouped_sv_widget"),
+                        DependsOn("td_grouped_map_widget"),
+                        DependsOn("traj_daynight_grouped_map_widget"),
+                        DependsOn("nsd_chart_widget"),
+                    ],
+                ),
+                "groupers": DependsOn("groupers"),
+                "time_range": DependsOn("time_range"),
+            }
+            | (params_dict.get("subject_tracking_dashboard") or {}),
+            method="call",
         ),
     }
     graph = Graph(dependencies=dependencies, nodes=nodes)

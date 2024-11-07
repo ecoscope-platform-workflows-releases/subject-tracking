@@ -1,6 +1,6 @@
 # [generated]
 # by = { compiler = "ecoscope-workflows-core", version = "9999" }
-# from-spec-sha256 = "8e83a86b58a42b4e1651223cad2ef9e207d4b50645526dab5e441b82e6b02eee"
+# from-spec-sha256 = "82ed246d4e30f973c3e4c9693a511d5c6f9d016b0fc42192a1205c845edd25b1"
 import json
 import os
 
@@ -31,6 +31,11 @@ from ecoscope_workflows_core.tasks.analysis import dataframe_column_max
 from ecoscope_workflows_core.tasks.analysis import dataframe_count
 from ecoscope_workflows_ext_ecoscope.tasks.analysis import get_day_night_ratio
 from ecoscope_workflows_core.tasks.analysis import dataframe_column_sum
+from ecoscope_workflows_ext_ecoscope.tasks.analysis import calculate_time_density
+from ecoscope_workflows_ext_ecoscope.tasks.results import create_polygon_layer
+from ecoscope_workflows_ext_ecoscope.tasks.results import draw_ecoplot
+from ecoscope_workflows_core.tasks.results import create_plot_widget_single_view
+from ecoscope_workflows_core.tasks.results import gather_dashboard
 
 from ..params import Params
 
@@ -403,4 +408,172 @@ def main(params: Params):
         .map(argnames=["view", "data"], argvalues=total_dist_converted)
     )
 
-    return total_distance_sv_widgets
+    total_dist_grouped_sv_widget = (
+        merge_widget_views.validate()
+        .partial(
+            widgets=total_distance_sv_widgets,
+            **(params_dict.get("total_dist_grouped_sv_widget") or {}),
+        )
+        .call()
+    )
+
+    total_time = (
+        dataframe_column_sum.validate()
+        .partial(
+            column_name="timespan_seconds", **(params_dict.get("total_time") or {})
+        )
+        .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
+    )
+
+    total_time_converted = (
+        with_unit.validate()
+        .partial(
+            original_unit="s",
+            new_unit="h",
+            **(params_dict.get("total_time_converted") or {}),
+        )
+        .mapvalues(argnames=["value"], argvalues=total_time)
+    )
+
+    total_time_sv_widgets = (
+        create_single_value_widget_single_view.validate()
+        .partial(title="Total Time", **(params_dict.get("total_time_sv_widgets") or {}))
+        .map(argnames=["view", "data"], argvalues=total_time_converted)
+    )
+
+    total_time_grouped_sv_widget = (
+        merge_widget_views.validate()
+        .partial(
+            widgets=total_time_sv_widgets,
+            **(params_dict.get("total_time_grouped_sv_widget") or {}),
+        )
+        .call()
+    )
+
+    td = (
+        calculate_time_density.validate()
+        .partial(
+            pixel_size=250.0,
+            crs="ESRI:102022",
+            percentiles=[50.0, 60.0, 70.0, 80.0, 90.0, 95.0],
+            **(params_dict.get("td") or {}),
+        )
+        .mapvalues(argnames=["trajectory_gdf"], argvalues=split_subject_traj_groups)
+    )
+
+    td_colormap = (
+        apply_color_map.validate()
+        .partial(
+            input_column_name="percentile",
+            colormap="RdYlGn_r",
+            output_column_name="percentile_colormap",
+            **(params_dict.get("td_colormap") or {}),
+        )
+        .mapvalues(argnames=["df"], argvalues=td)
+    )
+
+    td_map_layer = (
+        create_polygon_layer.validate()
+        .partial(
+            layer_style={
+                "fill_color_column": "percentile_colormap",
+                "opacity": 0.7,
+                "get_line_width": 0,
+            },
+            **(params_dict.get("td_map_layer") or {}),
+        )
+        .mapvalues(argnames=["geodataframe"], argvalues=td_colormap)
+    )
+
+    td_ecomap = (
+        draw_ecomap.validate()
+        .partial(
+            tile_layers=[{"name": "TERRAIN"}, {"name": "SATELLITE", "opacity": 0.5}],
+            north_arrow_style={"placement": "top-left"},
+            legend_style={"placement": "bottom-right"},
+            static=False,
+            **(params_dict.get("td_ecomap") or {}),
+        )
+        .mapvalues(argnames=["geo_layers"], argvalues=td_map_layer)
+    )
+
+    td_ecomap_html_url = (
+        persist_text.validate()
+        .partial(
+            root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
+            **(params_dict.get("td_ecomap_html_url") or {}),
+        )
+        .mapvalues(argnames=["text"], argvalues=td_ecomap)
+    )
+
+    td_map_widget = (
+        create_map_widget_single_view.validate()
+        .partial(title="Home Range Map", **(params_dict.get("td_map_widget") or {}))
+        .map(argnames=["view", "data"], argvalues=td_ecomap_html_url)
+    )
+
+    td_grouped_map_widget = (
+        merge_widget_views.validate()
+        .partial(
+            widgets=td_map_widget, **(params_dict.get("td_grouped_map_widget") or {})
+        )
+        .call()
+    )
+
+    nsd_chart = (
+        draw_ecoplot.validate()
+        .partial(
+            dataframe=traj_add_temporal_index,
+            group_by="groupby_col",
+            x_axis="segment_start",
+            y_axis="nsd",
+            plot_style={"xperiodalignment": None},
+            **(params_dict.get("nsd_chart") or {}),
+        )
+        .call()
+    )
+
+    nsd_chart_html_url = (
+        persist_text.validate()
+        .partial(
+            text=nsd_chart,
+            root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
+            **(params_dict.get("nsd_chart_html_url") or {}),
+        )
+        .call()
+    )
+
+    nsd_chart_widget = (
+        create_plot_widget_single_view.validate()
+        .partial(
+            data=nsd_chart_html_url,
+            title="Net Square Displacement",
+            **(params_dict.get("nsd_chart_widget") or {}),
+        )
+        .call()
+    )
+
+    subject_tracking_dashboard = (
+        gather_dashboard.validate()
+        .partial(
+            details=workflow_details,
+            widgets=[
+                traj_grouped_map_widget,
+                mean_speed_grouped_sv_widget,
+                max_speed_grouped_sv_widget,
+                num_location_grouped_sv_widget,
+                daynight_ratio_grouped_sv_widget,
+                total_dist_grouped_sv_widget,
+                total_time_grouped_sv_widget,
+                td_grouped_map_widget,
+                traj_daynight_grouped_map_widget,
+                nsd_chart_widget,
+            ],
+            groupers=groupers,
+            time_range=time_range,
+            **(params_dict.get("subject_tracking_dashboard") or {}),
+        )
+        .call()
+    )
+
+    return subject_tracking_dashboard

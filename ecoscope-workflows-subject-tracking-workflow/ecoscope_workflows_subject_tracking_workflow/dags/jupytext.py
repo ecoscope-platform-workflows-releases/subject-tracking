@@ -1,6 +1,6 @@
 # [generated]
 # by = { compiler = "ecoscope-workflows-core", version = "9999" }
-# from-spec-sha256 = "8e83a86b58a42b4e1651223cad2ef9e207d4b50645526dab5e441b82e6b02eee"
+# from-spec-sha256 = "82ed246d4e30f973c3e4c9693a511d5c6f9d016b0fc42192a1205c845edd25b1"
 
 
 # ruff: noqa: E402
@@ -40,6 +40,11 @@ from ecoscope_workflows_core.tasks.analysis import dataframe_column_max
 from ecoscope_workflows_core.tasks.analysis import dataframe_count
 from ecoscope_workflows_ext_ecoscope.tasks.analysis import get_day_night_ratio
 from ecoscope_workflows_core.tasks.analysis import dataframe_column_sum
+from ecoscope_workflows_ext_ecoscope.tasks.analysis import calculate_time_density
+from ecoscope_workflows_ext_ecoscope.tasks.results import create_polygon_layer
+from ecoscope_workflows_ext_ecoscope.tasks.results import draw_ecoplot
+from ecoscope_workflows_core.tasks.results import create_plot_widget_single_view
+from ecoscope_workflows_core.tasks.results import gather_dashboard
 
 # %% [markdown]
 # ## Set Workflow Details
@@ -814,3 +819,331 @@ total_distance_sv_widgets_params = dict(
 total_distance_sv_widgets = create_single_value_widget_single_view.partial(
     title="Total Distance", **total_distance_sv_widgets_params
 ).map(argnames=["view", "data"], argvalues=total_dist_converted)
+
+
+# %% [markdown]
+# ## Merge per group Total Distance SV widgets
+
+# %%
+# parameters
+
+total_dist_grouped_sv_widget_params = dict()
+
+# %%
+# call the task
+
+
+total_dist_grouped_sv_widget = merge_widget_views.partial(
+    widgets=total_distance_sv_widgets, **total_dist_grouped_sv_widget_params
+).call()
+
+
+# %% [markdown]
+# ## Calculate Total Time Per Group
+
+# %%
+# parameters
+
+total_time_params = dict()
+
+# %%
+# call the task
+
+
+total_time = dataframe_column_sum.partial(
+    column_name="timespan_seconds", **total_time_params
+).mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
+
+
+# %% [markdown]
+# ## Convert total time units
+
+# %%
+# parameters
+
+total_time_converted_params = dict()
+
+# %%
+# call the task
+
+
+total_time_converted = with_unit.partial(
+    original_unit="s", new_unit="h", **total_time_converted_params
+).mapvalues(argnames=["value"], argvalues=total_time)
+
+
+# %% [markdown]
+# ## Create Single Value Widgets for Total Distance Per Group
+
+# %%
+# parameters
+
+total_time_sv_widgets_params = dict(
+    decimal_places=...,
+)
+
+# %%
+# call the task
+
+
+total_time_sv_widgets = create_single_value_widget_single_view.partial(
+    title="Total Time", **total_time_sv_widgets_params
+).map(argnames=["view", "data"], argvalues=total_time_converted)
+
+
+# %% [markdown]
+# ## Merge per group Total Distance SV widgets
+
+# %%
+# parameters
+
+total_time_grouped_sv_widget_params = dict()
+
+# %%
+# call the task
+
+
+total_time_grouped_sv_widget = merge_widget_views.partial(
+    widgets=total_time_sv_widgets, **total_time_grouped_sv_widget_params
+).call()
+
+
+# %% [markdown]
+# ## Calculate Time Density from Trajectory
+
+# %%
+# parameters
+
+td_params = dict(
+    nodata_value=...,
+    band_count=...,
+    max_speed_factor=...,
+    expansion_factor=...,
+)
+
+# %%
+# call the task
+
+
+td = calculate_time_density.partial(
+    pixel_size=250.0,
+    crs="ESRI:102022",
+    percentiles=[50.0, 60.0, 70.0, 80.0, 90.0, 95.0],
+    **td_params,
+).mapvalues(argnames=["trajectory_gdf"], argvalues=split_subject_traj_groups)
+
+
+# %% [markdown]
+# ## Time Density Colormap
+
+# %%
+# parameters
+
+td_colormap_params = dict()
+
+# %%
+# call the task
+
+
+td_colormap = apply_color_map.partial(
+    input_column_name="percentile",
+    colormap="RdYlGn_r",
+    output_column_name="percentile_colormap",
+    **td_colormap_params,
+).mapvalues(argnames=["df"], argvalues=td)
+
+
+# %% [markdown]
+# ## Create map layer from Time Density
+
+# %%
+# parameters
+
+td_map_layer_params = dict(
+    legend=...,
+)
+
+# %%
+# call the task
+
+
+td_map_layer = create_polygon_layer.partial(
+    layer_style={
+        "fill_color_column": "percentile_colormap",
+        "opacity": 0.7,
+        "get_line_width": 0,
+    },
+    **td_map_layer_params,
+).mapvalues(argnames=["geodataframe"], argvalues=td_colormap)
+
+
+# %% [markdown]
+# ## Draw Ecomap from Time Density
+
+# %%
+# parameters
+
+td_ecomap_params = dict(
+    title=...,
+)
+
+# %%
+# call the task
+
+
+td_ecomap = draw_ecomap.partial(
+    tile_layers=[{"name": "TERRAIN"}, {"name": "SATELLITE", "opacity": 0.5}],
+    north_arrow_style={"placement": "top-left"},
+    legend_style={"placement": "bottom-right"},
+    static=False,
+    **td_ecomap_params,
+).mapvalues(argnames=["geo_layers"], argvalues=td_map_layer)
+
+
+# %% [markdown]
+# ## Persist Ecomap as Text
+
+# %%
+# parameters
+
+td_ecomap_html_url_params = dict(
+    filename=...,
+)
+
+# %%
+# call the task
+
+
+td_ecomap_html_url = persist_text.partial(
+    root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"], **td_ecomap_html_url_params
+).mapvalues(argnames=["text"], argvalues=td_ecomap)
+
+
+# %% [markdown]
+# ## Create Time Density Map Widget
+
+# %%
+# parameters
+
+td_map_widget_params = dict()
+
+# %%
+# call the task
+
+
+td_map_widget = create_map_widget_single_view.partial(
+    title="Home Range Map", **td_map_widget_params
+).map(argnames=["view", "data"], argvalues=td_ecomap_html_url)
+
+
+# %% [markdown]
+# ## Merge Time Density Map Widget Views
+
+# %%
+# parameters
+
+td_grouped_map_widget_params = dict()
+
+# %%
+# call the task
+
+
+td_grouped_map_widget = merge_widget_views.partial(
+    widgets=td_map_widget, **td_grouped_map_widget_params
+).call()
+
+
+# %% [markdown]
+# ## Draw NSD Scatter Chart
+
+# %%
+# parameters
+
+nsd_chart_params = dict(
+    color_column=...,
+)
+
+# %%
+# call the task
+
+
+nsd_chart = draw_ecoplot.partial(
+    dataframe=traj_add_temporal_index,
+    group_by="groupby_col",
+    x_axis="segment_start",
+    y_axis="nsd",
+    plot_style={"xperiodalignment": None},
+    **nsd_chart_params,
+).call()
+
+
+# %% [markdown]
+# ## Persist NSD Scatter Chart as Text
+
+# %%
+# parameters
+
+nsd_chart_html_url_params = dict(
+    filename=...,
+)
+
+# %%
+# call the task
+
+
+nsd_chart_html_url = persist_text.partial(
+    text=nsd_chart,
+    root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
+    **nsd_chart_html_url_params,
+).call()
+
+
+# %% [markdown]
+# ## Create NSD Plot Widget
+
+# %%
+# parameters
+
+nsd_chart_widget_params = dict(
+    view=...,
+)
+
+# %%
+# call the task
+
+
+nsd_chart_widget = create_plot_widget_single_view.partial(
+    data=nsd_chart_html_url, title="Net Square Displacement", **nsd_chart_widget_params
+).call()
+
+
+# %% [markdown]
+# ## Create Dashboard with Subject Tracking Widgets
+
+# %%
+# parameters
+
+subject_tracking_dashboard_params = dict()
+
+# %%
+# call the task
+
+
+subject_tracking_dashboard = gather_dashboard.partial(
+    details=workflow_details,
+    widgets=[
+        traj_grouped_map_widget,
+        mean_speed_grouped_sv_widget,
+        max_speed_grouped_sv_widget,
+        num_location_grouped_sv_widget,
+        daynight_ratio_grouped_sv_widget,
+        total_dist_grouped_sv_widget,
+        total_time_grouped_sv_widget,
+        td_grouped_map_widget,
+        traj_daynight_grouped_map_widget,
+        nsd_chart_widget,
+    ],
+    groupers=groupers,
+    time_range=time_range,
+    **subject_tracking_dashboard_params,
+).call()

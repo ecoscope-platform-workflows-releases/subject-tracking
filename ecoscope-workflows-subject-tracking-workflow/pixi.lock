@@ -5718,7 +5718,7 @@ packages:
   name: ecoscope-workflows-subject-tracking-workflow
   version: 0.0.0
   path: .
-  sha256: c0235435239ab04f562fa04cec9e6b1d25b383fa6c51adbb008963a4a3f0f262
+  sha256: 2129fafaee9aea81070d6a6f3525decff9edf1aa429c519679c10084f9353247
   requires_python: '>=3.10'
   editable: true
 - kind: conda
