@@ -1,6 +1,6 @@
 # [generated]
 # by = { compiler = "ecoscope-workflows-core", version = "9999" }
-# from-spec-sha256 = "82ed246d4e30f973c3e4c9693a511d5c6f9d016b0fc42192a1205c845edd25b1"
+# from-spec-sha256 = "3408cfd9669937e2de597b81f1046137aab1f26f3a3996fdd554082824ab5495"
 
 
 # ruff: noqa: E402
@@ -72,7 +72,7 @@ workflow_details = set_workflow_details.partial(**workflow_details_params).call(
 # parameters
 
 er_client_name_params = dict(
-    name=...,
+    EcoscopeWorkflowsNamedConnection=...,
 )
 
 # %%
