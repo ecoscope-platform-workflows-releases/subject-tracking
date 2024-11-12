@@ -1,6 +1,6 @@
 # [generated]
 # by = { compiler = "ecoscope-workflows-core", version = "9999" }
-# from-spec-sha256 = "d0c493838d84c0d82a65b62c82ee173db35afbb8ccc4be6f6ab41c1c3380eadf"
+# from-spec-sha256 = "2db5f5bc6b71e48af641ed8cbd2be783fff66abaad8b7557cc5574989a278cb6"
 import json
 import os
 
@@ -455,7 +455,7 @@ def main(params: Params):
         .partial(
             pixel_size=250.0,
             crs="ESRI:102022",
-            percentiles=[50.0, 60.0, 70.0, 80.0, 90.0, 95.0],
+            percentiles=[50.0, 60.0, 70.0, 80.0, 90.0, 95.0, 99.999],
             **(params_dict.get("td") or {}),
         )
         .mapvalues(argnames=["trajectory_gdf"], argvalues=split_subject_traj_groups)
@@ -465,7 +465,7 @@ def main(params: Params):
         apply_color_map.validate()
         .partial(
             input_column_name="percentile",
-            colormap="RdYlGn_r",
+            colormap="RdYlGn",
             output_column_name="percentile_colormap",
             **(params_dict.get("td_colormap") or {}),
         )
