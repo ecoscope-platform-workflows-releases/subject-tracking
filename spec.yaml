@@ -1,10 +1,10 @@
 id: subject_tracking
 requirements:
   - name: ecoscope-workflows-core
-    version: v0.0.18
+    version: v0.0.19
     channel: https://repo.prefix.dev/ecoscope-workflows/
   - name: ecoscope-workflows-ext-ecoscope
-    version: v0.0.18
+    version: v0.0.19
     channel: https://repo.prefix.dev/ecoscope-workflows/
 workflow:
   - name: Set Workflow Details
@@ -389,7 +389,7 @@ workflow:
     partial:
       pixel_size: 250.0
       crs: "ESRI:102022"
-      percentiles: [50.0, 60.0, 70.0, 80.0, 90.0, 95.0]
+      percentiles: [50.0, 60.0, 70.0, 80.0, 90.0, 95.0, 99.999]
     mapvalues:
       argnames: trajectory_gdf
       argvalues: ${{ workflow.split_subject_traj_groups.return }}
@@ -399,7 +399,7 @@ workflow:
     task: apply_color_map
     partial:
       input_column_name: "percentile"
-      colormap: "RdYlGn_r"
+      colormap: "RdYlGn"
       output_column_name: "percentile_colormap"
     mapvalues:
       argnames: df
