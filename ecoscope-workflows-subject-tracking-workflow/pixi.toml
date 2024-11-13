@@ -1,6 +1,6 @@
 # [generated]
 # by = { compiler = "ecoscope-workflows-core", version = "9999" }
-# from-spec-sha256 = "2db5f5bc6b71e48af641ed8cbd2be783fff66abaad8b7557cc5574989a278cb6"
+# from-spec-sha256 = "5e67f7af0105285f91ee15dbae77f1df9fe13f8a75a79ea1b17dadbd76b2e6e0"
 
 [project]
 name = "ecoscope-workflows-subject-tracking-workflow"
@@ -30,11 +30,11 @@ version = "*"
 version = "*"
 
 [dependencies.ecoscope-workflows-core]
-version = "==v0.0.19"
+version = "==v0.0.20"
 channel = "https://repo.prefix.dev/ecoscope-workflows/"
 
 [dependencies.ecoscope-workflows-ext-ecoscope]
-version = "==v0.0.19"
+version = "==v0.0.20"
 channel = "https://repo.prefix.dev/ecoscope-workflows/"
 
 [feature.test.dependencies.pytest]
