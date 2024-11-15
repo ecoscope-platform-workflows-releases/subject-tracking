@@ -32,6 +32,9 @@ test1:
       max_time_secs: 21600 # (<class 'float'>, FieldInfo(annotation=NoneType, required=True))
       max_speed_kmhr: 10 # (<class 'float'>, FieldInfo(annotation=NoneType, required=True))
 
+    td:
+      pixel_size: 250
+
   assertions:
     result_stdout_contains:
       - "A dashboard for visualizing subject trajectories and home range."
