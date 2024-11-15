@@ -1,6 +1,6 @@
 # [generated]
 # by = { compiler = "ecoscope-workflows-core", version = "9999" }
-# from-spec-sha256 = "735a0a8a6fd62c9a0010573c318cd3e8552ac07a7e6839c5ca0d332d8d9279c1"
+# from-spec-sha256 = "ffa2bcda007b63efada36400f15877913bbb27b8e2df3fb0fed01873db630c7d"
 
 # ruff: noqa: E402
 
@@ -592,7 +592,14 @@ def main(params: Params):
                 max_speed_grouped_sv_widget,
                 num_location_grouped_sv_widget,
                 nightday_ratio_grouped_sv_widget,
+                total_dist_grouped_sv_widget,
+                total_time_grouped_sv_widget,
+                td_grouped_map_widget,
+                traj_nightday_grouped_map_widget,
+                nsd_chart_widget,
             ],
+            groupers=groupers,
+            time_range=time_range,
             **(params_dict.get("subject_tracking_dashboard") or {}),
         )
         .call()

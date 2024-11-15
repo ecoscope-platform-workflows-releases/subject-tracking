@@ -1,15 +1,14 @@
 # [generated]
 # by = { compiler = "ecoscope-workflows-core", version = "9999" }
-# from-spec-sha256 = "735a0a8a6fd62c9a0010573c318cd3e8552ac07a7e6839c5ca0d332d8d9279c1"
+# from-spec-sha256 = "ffa2bcda007b63efada36400f15877913bbb27b8e2df3fb0fed01873db630c7d"
 
 
 from __future__ import annotations
 
 from enum import Enum
-from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import List, Optional, Union
 
-from pydantic import AnyUrl, AwareDatetime, BaseModel, ConfigDict, Field
+from pydantic import AwareDatetime, BaseModel, ConfigDict, Field
 
 
 class WorkflowDetails(BaseModel):
@@ -122,41 +121,10 @@ class TemporalGrouper(BaseModel):
     directive: Directive = Field(..., title="Directive")
 
 
-class TimeRangeModel(BaseModel):
-    model_config = ConfigDict(
-        extra="forbid",
-    )
+class TimeRange1(BaseModel):
     since: AwareDatetime = Field(..., title="Since")
     until: AwareDatetime = Field(..., title="Until")
     time_format: Optional[str] = Field("%d %b %Y %H:%M:%S %Z", title="Time Format")
-
-
-class WidgetType(str, Enum):
-    graph = "graph"
-    map = "map"
-    text = "text"
-    stat = "stat"
-
-
-class GroupedWidget(BaseModel):
-    widget_type: WidgetType = Field(..., title="Widget Type")
-    title: str = Field(..., title="Title")
-    is_filtered: bool = Field(..., title="Is Filtered")
-    views: Dict[str, Union[Path, AnyUrl, str]] = Field(..., title="Views")
-
-
-class WidgetSingleView(BaseModel):
-    widget_type: WidgetType = Field(..., title="Widget Type")
-    title: str = Field(..., title="Title")
-    is_filtered: bool = Field(..., title="Is Filtered")
-    data: Union[Path, AnyUrl, str] = Field(..., title="Data")
-    view: Optional[List[List]] = Field(None, title="View")
-
-
-class WorkflowDetails1(BaseModel):
-    name: str = Field(..., title="Name")
-    description: str = Field(..., title="Description")
-    image_url: Optional[str] = Field("", title="Image Url")
 
 
 class Groupers(BaseModel):
@@ -167,15 +135,6 @@ class Groupers(BaseModel):
         ...,
         description="            Index(es) and/or column(s) to group by, along with\n            optional display names and help text.\n            ",
         title="Groupers",
-    )
-
-
-class SubjectTrackingDashboard(BaseModel):
-    model_config = ConfigDict(
-        extra="forbid",
-    )
-    time_range: TimeRangeModel = Field(
-        ..., description="Time range filter", title="Time Range"
     )
 
 
@@ -201,6 +160,3 @@ class FormData(BaseModel):
         None, title="Sort Trajetories By Classification"
     )
     td: Optional[Td] = Field(None, title="Calculate Time Density from Trajectory")
-    subject_tracking_dashboard: Optional[SubjectTrackingDashboard] = Field(
-        None, title="Create Dashboard with Subject Tracking Widgets"
-    )

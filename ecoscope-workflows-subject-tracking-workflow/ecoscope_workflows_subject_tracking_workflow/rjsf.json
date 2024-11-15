@@ -171,21 +171,6 @@
       "required": [],
       "type": "object",
       "title": "Calculate Time Density from Trajectory"
-    },
-    "subject_tracking_dashboard": {
-      "additionalProperties": false,
-      "properties": {
-        "time_range": {
-          "$ref": "#/$defs/TimeRange",
-          "title": "Time Range",
-          "description": "Time range filter"
-        }
-      },
-      "required": [
-        "time_range"
-      ],
-      "type": "object",
-      "title": "Create Dashboard with Subject Tracking Widgets"
     }
   },
   "$defs": {
@@ -269,158 +254,6 @@
       ],
       "title": "TimeRange",
       "type": "object"
-    },
-    "GroupedWidget": {
-      "properties": {
-        "widget_type": {
-          "enum": [
-            "graph",
-            "map",
-            "text",
-            "stat"
-          ],
-          "title": "Widget Type",
-          "type": "string"
-        },
-        "title": {
-          "title": "Title",
-          "type": "string"
-        },
-        "is_filtered": {
-          "title": "Is Filtered",
-          "type": "boolean"
-        },
-        "views": {
-          "additionalProperties": {
-            "anyOf": [
-              {
-                "format": "path",
-                "type": "string"
-              },
-              {
-                "format": "uri",
-                "minLength": 1,
-                "type": "string"
-              },
-              {
-                "type": "string"
-              }
-            ]
-          },
-          "title": "Views",
-          "type": "object"
-        }
-      },
-      "required": [
-        "widget_type",
-        "title",
-        "is_filtered",
-        "views"
-      ],
-      "title": "GroupedWidget",
-      "type": "object"
-    },
-    "WidgetSingleView": {
-      "properties": {
-        "widget_type": {
-          "enum": [
-            "graph",
-            "map",
-            "text",
-            "stat"
-          ],
-          "title": "Widget Type",
-          "type": "string"
-        },
-        "title": {
-          "title": "Title",
-          "type": "string"
-        },
-        "is_filtered": {
-          "title": "Is Filtered",
-          "type": "boolean"
-        },
-        "data": {
-          "anyOf": [
-            {
-              "format": "path",
-              "type": "string"
-            },
-            {
-              "format": "uri",
-              "minLength": 1,
-              "type": "string"
-            },
-            {
-              "type": "string"
-            }
-          ],
-          "title": "Data"
-        },
-        "view": {
-          "anyOf": [
-            {
-              "items": {
-                "maxItems": 3,
-                "minItems": 3,
-                "prefixItems": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "const": "=",
-                    "enum": [
-                      "="
-                    ],
-                    "type": "string"
-                  },
-                  {
-                    "type": "string"
-                  }
-                ],
-                "type": "array"
-              },
-              "type": "array"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "View"
-        }
-      },
-      "required": [
-        "widget_type",
-        "title",
-        "is_filtered",
-        "data"
-      ],
-      "title": "WidgetSingleView",
-      "type": "object"
-    },
-    "WorkflowDetails": {
-      "properties": {
-        "name": {
-          "title": "Name",
-          "type": "string"
-        },
-        "description": {
-          "title": "Description",
-          "type": "string"
-        },
-        "image_url": {
-          "default": "",
-          "title": "Image Url",
-          "type": "string"
-        }
-      },
-      "required": [
-        "name",
-        "description"
-      ],
-      "title": "WorkflowDetails",
-      "type": "object"
     }
   },
   "additionalProperties": false,
@@ -433,8 +266,7 @@
       "subject_obs",
       "subject_traj",
       "sort_traj_speed",
-      "td",
-      "subject_tracking_dashboard"
+      "td"
     ]
   }
 }
