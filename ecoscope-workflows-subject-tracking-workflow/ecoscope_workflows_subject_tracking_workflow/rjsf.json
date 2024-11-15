@@ -133,6 +133,44 @@
       "required": [],
       "type": "object",
       "title": "Transform Relocations to Trajectories"
+    },
+    "sort_traj_speed": {
+      "additionalProperties": false,
+      "properties": {
+        "ascending": {
+          "default": true,
+          "title": "Ascending",
+          "type": "boolean",
+          "description": "Sort ascending if true"
+        },
+        "na_position": {
+          "default": "last",
+          "enum": [
+            "first",
+            "last"
+          ],
+          "title": "Na Position",
+          "type": "string",
+          "description": "Where to place NaN values in the sort"
+        }
+      },
+      "required": [],
+      "type": "object",
+      "title": "Sort Trajetories By Classification"
+    },
+    "td": {
+      "additionalProperties": false,
+      "properties": {
+        "pixel_size": {
+          "default": 250.0,
+          "title": "Pixel Size",
+          "type": "number",
+          "description": "Raster pixel size in meters."
+        }
+      },
+      "required": [],
+      "type": "object",
+      "title": "Calculate Time Density from Trajectory"
     }
   },
   "$defs": {
@@ -226,7 +264,9 @@
       "groupers",
       "time_range",
       "subject_obs",
-      "subject_traj"
+      "subject_traj",
+      "sort_traj_speed",
+      "td"
     ]
   }
 }

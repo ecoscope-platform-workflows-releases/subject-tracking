@@ -1,10 +1,10 @@
 id: subject_tracking
 requirements:
   - name: ecoscope-workflows-core
-    version: v0.0.21
+    version: v0.0.22
     channel: https://repo.prefix.dev/ecoscope-workflows/
   - name: ecoscope-workflows-ext-ecoscope
-    version: v0.0.21
+    version: v0.0.22
     channel: https://repo.prefix.dev/ecoscope-workflows/
 workflow:
   - name: Set Workflow Details
@@ -36,7 +36,7 @@ workflow:
     task: process_relocations
     partial:
       observations: ${{ workflow.subject_obs.return }}
-      relocs_columns: ["groupby_col", "fixtime", "junk_status", "geometry"]
+      relocs_columns: ["groupby_col", "fixtime", "junk_status", "geometry", "extra__subject__name"]
       filter_point_coords: [
         {"x": 180.0, "y": 90.0},
         {"x": 0.0, "y": 0.0},
@@ -80,6 +80,14 @@ workflow:
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_subject_traj_groups.return }}
+  - name: Sort Trajetories By Classification
+    id: sort_traj_speed
+    task: sort_values
+    partial:
+      column_name: "speed_bins"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.classify_traj_speed.return }}
   - name: Apply Color to Trajectories By Speed
     id: colormap_traj_speed
     task: apply_color_map
@@ -89,7 +97,7 @@ workflow:
       colormap: ["#1a9850", "#91cf60", "#d9ef8b", "#fee08b", "#fc8d59", "#d73027"]
     mapvalues:
       argnames: df
-      argvalues: ${{ workflow.classify_traj_speed.return }}
+      argvalues: ${{ workflow.sort_traj_speed.return }}
   - name: Format Speedmap Legend Label
     id: speedmap_legend_with_unit
     task: map_values_with_unit
@@ -175,7 +183,7 @@ workflow:
       argnames: geodataframe
       argvalues: ${{ workflow.colormap_traj_night.return }}
   - name: Draw Ecomaps for each trajectory group
-    id: traj_daynight_ecomap
+    id: traj_nightday_ecomap
     task: draw_ecomap
     partial:
       tile_layers:
@@ -191,26 +199,26 @@ workflow:
       argnames: geo_layers
       argvalues: ${{ workflow.traj_map_night_layers.return }}
   - name: Persist ecomap as Text
-    id: ecomap_daynight_html_urls
+    id: ecomap_nightday_html_urls
     task: persist_text
     partial:
       root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
     mapvalues:
       argnames: text
-      argvalues: ${{ workflow.traj_daynight_ecomap.return }}
+      argvalues: ${{ workflow.traj_nightday_ecomap.return }}
   - name: Create Map Widgets for Trajectories
-    id: traj_map_daynight_widgets_sv
+    id: traj_map_nightday_widgets_sv
     task: create_map_widget_single_view
     partial:
       title: "Subject Group Night/Day Map"
     map:
       argnames: [view, data]
-      argvalues: ${{ workflow.ecomap_daynight_html_urls.return }}
+      argvalues: ${{ workflow.ecomap_nightday_html_urls.return }}
   - name: Merge EcoMap Widget Views
-    id: traj_daynight_grouped_map_widget
+    id: traj_nightday_grouped_map_widget
     task: merge_widget_views
     partial:
-      widgets: ${{ workflow.traj_map_daynight_widgets_sv.return }}
+      widgets: ${{ workflow.traj_map_nightday_widgets_sv.return }}
 
   # Grouped single value widget (1) - mean speed per group
   - name: Calculate Mean Speed Per Group
@@ -297,26 +305,26 @@ workflow:
     partial:
       widgets: ${{ workflow.num_location_sv_widgets.return }}
 
-  # Grouped single value widget (4) - daynight ratio
+  # Grouped single value widget (4) - nightday ratio
   - name: Calculate Day/Night Ratio Per Group
-    id: daynight_ratio
-    task: get_day_night_ratio
+    id: nightday_ratio
+    task: get_night_day_ratio
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_subject_traj_groups.return }}
   - name: Create Single Value Widgets for Day/Night Ratio Per Group
-    id: daynight_ratio_sv_widgets
+    id: nightday_ratio_sv_widgets
     task: create_single_value_widget_single_view
     partial:
       title: "Night/Day Ratio"
     map:
       argnames: [view, data]
-      argvalues: ${{ workflow.daynight_ratio.return }}
+      argvalues: ${{ workflow.nightday_ratio.return }}
   - name: Merge per group Day/Night Ratio SV widgets
-    id: daynight_ratio_grouped_sv_widget
+    id: nightday_ratio_grouped_sv_widget
     task: merge_widget_views
     partial:
-      widgets: ${{ workflow.daynight_ratio_sv_widgets.return }}
+      widgets: ${{ workflow.nightday_ratio_sv_widgets.return }}
 
   # Grouped single value widget (5) - total distance
   - name: Calculate Total Distance Per Group
@@ -387,8 +395,7 @@ workflow:
     id: td
     task: calculate_time_density
     partial:
-      pixel_size: 250.0
-      crs: "ESRI:102022"
+      crs: "ESRI:53042"
       percentiles: [50.0, 60.0, 70.0, 80.0, 90.0, 95.0, 99.999]
     mapvalues:
       argnames: trajectory_gdf
@@ -459,7 +466,7 @@ workflow:
     task: draw_ecoplot
     partial:
       dataframe: ${{ workflow.traj_add_temporal_index.return }}
-      group_by: "groupby_col"
+      group_by: "extra__name"
       x_axis: "segment_start"
       y_axis: "nsd"
       plot_style:
@@ -488,11 +495,11 @@ workflow:
         - ${{ workflow.mean_speed_grouped_sv_widget.return }}
         - ${{ workflow.max_speed_grouped_sv_widget.return }}
         - ${{ workflow.num_location_grouped_sv_widget.return }}
-        - ${{ workflow.daynight_ratio_grouped_sv_widget.return }}
+        - ${{ workflow.nightday_ratio_grouped_sv_widget.return }}
         - ${{ workflow.total_dist_grouped_sv_widget.return }}
         - ${{ workflow.total_time_grouped_sv_widget.return }}
         - ${{ workflow.td_grouped_map_widget.return }}
-        - ${{ workflow.traj_daynight_grouped_map_widget.return }}
+        - ${{ workflow.traj_nightday_grouped_map_widget.return }}
         - ${{ workflow.nsd_chart_widget.return }}
       groupers: ${{ workflow.groupers.return }}
       time_range: ${{ workflow.time_range.return}}

@@ -1,6 +1,6 @@
 # [generated]
 # by = { compiler = "ecoscope-workflows-core", version = "9999" }
-# from-spec-sha256 = "0cab916fbd24d507ee56a5e1c55d5c802b0f2eaa7fd6472e41780e0af37527f4"
+# from-spec-sha256 = "ffa2bcda007b63efada36400f15877913bbb27b8e2df3fb0fed01873db630c7d"
 
 
 from __future__ import annotations
@@ -58,6 +58,32 @@ class SubjectTraj(BaseModel):
     max_length_meters: Optional[float] = Field(10000, title="Max Length Meters")
     max_time_secs: Optional[float] = Field(3600, title="Max Time Secs")
     max_speed_kmhr: Optional[float] = Field(120, title="Max Speed Kmhr")
+
+
+class NaPosition(str, Enum):
+    first = "first"
+    last = "last"
+
+
+class SortTrajSpeed(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    ascending: Optional[bool] = Field(
+        True, description="Sort ascending if true", title="Ascending"
+    )
+    na_position: Optional[NaPosition] = Field(
+        "last", description="Where to place NaN values in the sort", title="Na Position"
+    )
+
+
+class Td(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    pixel_size: Optional[float] = Field(
+        250.0, description="Raster pixel size in meters.", title="Pixel Size"
+    )
 
 
 class Grouper(BaseModel):
@@ -130,3 +156,7 @@ class Params(BaseModel):
     subject_traj: Optional[SubjectTraj] = Field(
         None, title="Transform Relocations to Trajectories"
     )
+    sort_traj_speed: Optional[SortTrajSpeed] = Field(
+        None, title="Sort Trajetories By Classification"
+    )
+    td: Optional[Td] = Field(None, title="Calculate Time Density from Trajectory")
