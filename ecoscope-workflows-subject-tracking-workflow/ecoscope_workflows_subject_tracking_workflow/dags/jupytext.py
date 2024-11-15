@@ -1,6 +1,6 @@
 # [generated]
 # by = { compiler = "ecoscope-workflows-core", version = "9999" }
-# from-spec-sha256 = "0cab916fbd24d507ee56a5e1c55d5c802b0f2eaa7fd6472e41780e0af37527f4"
+# from-spec-sha256 = "735a0a8a6fd62c9a0010573c318cd3e8552ac07a7e6839c5ca0d332d8d9279c1"
 
 
 # ruff: noqa: E402
@@ -26,6 +26,7 @@ from ecoscope_workflows_ext_ecoscope.tasks.preprocessing import (
 from ecoscope_workflows_core.tasks.transformation import add_temporal_index
 from ecoscope_workflows_core.tasks.groupby import split_groups
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import apply_classification
+from ecoscope_workflows_core.tasks.transformation import sort_values
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import apply_color_map
 from ecoscope_workflows_core.tasks.transformation import map_values_with_unit
 from ecoscope_workflows_ext_ecoscope.tasks.results import create_polyline_layer
@@ -38,7 +39,7 @@ from ecoscope_workflows_core.tasks.transformation import with_unit
 from ecoscope_workflows_core.tasks.results import create_single_value_widget_single_view
 from ecoscope_workflows_core.tasks.analysis import dataframe_column_max
 from ecoscope_workflows_core.tasks.analysis import dataframe_count
-from ecoscope_workflows_ext_ecoscope.tasks.analysis import get_day_night_ratio
+from ecoscope_workflows_ext_ecoscope.tasks.analysis import get_night_day_ratio
 from ecoscope_workflows_core.tasks.analysis import dataframe_column_sum
 from ecoscope_workflows_ext_ecoscope.tasks.analysis import calculate_time_density
 from ecoscope_workflows_ext_ecoscope.tasks.results import create_polygon_layer
@@ -152,7 +153,13 @@ subject_reloc_params = dict()
 
 subject_reloc = process_relocations.partial(
     observations=subject_obs,
-    relocs_columns=["groupby_col", "fixtime", "junk_status", "geometry"],
+    relocs_columns=[
+        "groupby_col",
+        "fixtime",
+        "junk_status",
+        "geometry",
+        "extra__subject__name",
+    ],
     filter_point_coords=[
         {"x": 180.0, "y": 90.0},
         {"x": 0.0, "y": 0.0},
@@ -266,6 +273,26 @@ classify_traj_speed = apply_classification.partial(
 
 
 # %% [markdown]
+# ## Sort Trajetories By Classification
+
+# %%
+# parameters
+
+sort_traj_speed_params = dict(
+    ascending=...,
+    na_position=...,
+)
+
+# %%
+# call the task
+
+
+sort_traj_speed = sort_values.partial(
+    column_name="speed_bins", **sort_traj_speed_params
+).mapvalues(argnames=["df"], argvalues=classify_traj_speed)
+
+
+# %% [markdown]
 # ## Apply Color to Trajectories By Speed
 
 # %%
@@ -282,7 +309,7 @@ colormap_traj_speed = apply_color_map.partial(
     output_column_name="speed_bins_colormap",
     colormap=["#1a9850", "#91cf60", "#d9ef8b", "#fee08b", "#fc8d59", "#d73027"],
     **colormap_traj_speed_params,
-).mapvalues(argnames=["df"], argvalues=classify_traj_speed)
+).mapvalues(argnames=["df"], argvalues=sort_traj_speed)
 
 
 # %% [markdown]
@@ -451,7 +478,7 @@ traj_map_night_layers = create_polyline_layer.partial(
 # %%
 # parameters
 
-traj_daynight_ecomap_params = dict(
+traj_nightday_ecomap_params = dict(
     title=...,
 )
 
@@ -459,12 +486,12 @@ traj_daynight_ecomap_params = dict(
 # call the task
 
 
-traj_daynight_ecomap = draw_ecomap.partial(
+traj_nightday_ecomap = draw_ecomap.partial(
     tile_layers=[{"name": "TERRAIN"}, {"name": "SATELLITE", "opacity": 0.5}],
     north_arrow_style={"placement": "top-left"},
     legend_style={"placement": "bottom-right"},
     static=False,
-    **traj_daynight_ecomap_params,
+    **traj_nightday_ecomap_params,
 ).mapvalues(argnames=["geo_layers"], argvalues=traj_map_night_layers)
 
 
@@ -474,7 +501,7 @@ traj_daynight_ecomap = draw_ecomap.partial(
 # %%
 # parameters
 
-ecomap_daynight_html_urls_params = dict(
+ecomap_nightday_html_urls_params = dict(
     filename=...,
 )
 
@@ -482,10 +509,10 @@ ecomap_daynight_html_urls_params = dict(
 # call the task
 
 
-ecomap_daynight_html_urls = persist_text.partial(
+ecomap_nightday_html_urls = persist_text.partial(
     root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-    **ecomap_daynight_html_urls_params,
-).mapvalues(argnames=["text"], argvalues=traj_daynight_ecomap)
+    **ecomap_nightday_html_urls_params,
+).mapvalues(argnames=["text"], argvalues=traj_nightday_ecomap)
 
 
 # %% [markdown]
@@ -494,15 +521,15 @@ ecomap_daynight_html_urls = persist_text.partial(
 # %%
 # parameters
 
-traj_map_daynight_widgets_sv_params = dict()
+traj_map_nightday_widgets_sv_params = dict()
 
 # %%
 # call the task
 
 
-traj_map_daynight_widgets_sv = create_map_widget_single_view.partial(
-    title="Subject Group Night/Day Map", **traj_map_daynight_widgets_sv_params
-).map(argnames=["view", "data"], argvalues=ecomap_daynight_html_urls)
+traj_map_nightday_widgets_sv = create_map_widget_single_view.partial(
+    title="Subject Group Night/Day Map", **traj_map_nightday_widgets_sv_params
+).map(argnames=["view", "data"], argvalues=ecomap_nightday_html_urls)
 
 
 # %% [markdown]
@@ -511,14 +538,14 @@ traj_map_daynight_widgets_sv = create_map_widget_single_view.partial(
 # %%
 # parameters
 
-traj_daynight_grouped_map_widget_params = dict()
+traj_nightday_grouped_map_widget_params = dict()
 
 # %%
 # call the task
 
 
-traj_daynight_grouped_map_widget = merge_widget_views.partial(
-    widgets=traj_map_daynight_widgets_sv, **traj_daynight_grouped_map_widget_params
+traj_nightday_grouped_map_widget = merge_widget_views.partial(
+    widgets=traj_map_nightday_widgets_sv, **traj_nightday_grouped_map_widget_params
 ).call()
 
 
@@ -721,13 +748,13 @@ num_location_grouped_sv_widget = merge_widget_views.partial(
 # %%
 # parameters
 
-daynight_ratio_params = dict()
+nightday_ratio_params = dict()
 
 # %%
 # call the task
 
 
-daynight_ratio = get_day_night_ratio.partial(**daynight_ratio_params).mapvalues(
+nightday_ratio = get_night_day_ratio.partial(**nightday_ratio_params).mapvalues(
     argnames=["df"], argvalues=split_subject_traj_groups
 )
 
@@ -738,7 +765,7 @@ daynight_ratio = get_day_night_ratio.partial(**daynight_ratio_params).mapvalues(
 # %%
 # parameters
 
-daynight_ratio_sv_widgets_params = dict(
+nightday_ratio_sv_widgets_params = dict(
     decimal_places=...,
 )
 
@@ -746,9 +773,9 @@ daynight_ratio_sv_widgets_params = dict(
 # call the task
 
 
-daynight_ratio_sv_widgets = create_single_value_widget_single_view.partial(
-    title="Night/Day Ratio", **daynight_ratio_sv_widgets_params
-).map(argnames=["view", "data"], argvalues=daynight_ratio)
+nightday_ratio_sv_widgets = create_single_value_widget_single_view.partial(
+    title="Night/Day Ratio", **nightday_ratio_sv_widgets_params
+).map(argnames=["view", "data"], argvalues=nightday_ratio)
 
 
 # %% [markdown]
@@ -757,14 +784,14 @@ daynight_ratio_sv_widgets = create_single_value_widget_single_view.partial(
 # %%
 # parameters
 
-daynight_ratio_grouped_sv_widget_params = dict()
+nightday_ratio_grouped_sv_widget_params = dict()
 
 # %%
 # call the task
 
 
-daynight_ratio_grouped_sv_widget = merge_widget_views.partial(
-    widgets=daynight_ratio_sv_widgets, **daynight_ratio_grouped_sv_widget_params
+nightday_ratio_grouped_sv_widget = merge_widget_views.partial(
+    widgets=nightday_ratio_sv_widgets, **nightday_ratio_grouped_sv_widget_params
 ).call()
 
 
@@ -915,6 +942,7 @@ total_time_grouped_sv_widget = merge_widget_views.partial(
 # parameters
 
 td_params = dict(
+    pixel_size=...,
     nodata_value=...,
     band_count=...,
     max_speed_factor=...,
@@ -926,8 +954,7 @@ td_params = dict(
 
 
 td = calculate_time_density.partial(
-    pixel_size=250.0,
-    crs="ESRI:102022",
+    crs="ESRI:53042",
     percentiles=[50.0, 60.0, 70.0, 80.0, 90.0, 95.0, 99.999],
     **td_params,
 ).mapvalues(argnames=["trajectory_gdf"], argvalues=split_subject_traj_groups)
@@ -1069,7 +1096,7 @@ nsd_chart_params = dict(
 
 nsd_chart = draw_ecoplot.partial(
     dataframe=traj_add_temporal_index,
-    group_by="groupby_col",
+    group_by="extra__name",
     x_axis="segment_start",
     y_axis="nsd",
     plot_style={"xperiodalignment": None},
@@ -1123,7 +1150,10 @@ nsd_chart_widget = create_plot_widget_single_view.partial(
 # %%
 # parameters
 
-subject_tracking_dashboard_params = dict()
+subject_tracking_dashboard_params = dict(
+    time_range=...,
+    groupers=...,
+)
 
 # %%
 # call the task
@@ -1136,14 +1166,7 @@ subject_tracking_dashboard = gather_dashboard.partial(
         mean_speed_grouped_sv_widget,
         max_speed_grouped_sv_widget,
         num_location_grouped_sv_widget,
-        daynight_ratio_grouped_sv_widget,
-        total_dist_grouped_sv_widget,
-        total_time_grouped_sv_widget,
-        td_grouped_map_widget,
-        traj_daynight_grouped_map_widget,
-        nsd_chart_widget,
+        nightday_ratio_grouped_sv_widget,
     ],
-    groupers=groupers,
-    time_range=time_range,
     **subject_tracking_dashboard_params,
 ).call()
