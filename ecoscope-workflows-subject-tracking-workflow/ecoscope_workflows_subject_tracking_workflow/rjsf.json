@@ -134,30 +134,6 @@
       "type": "object",
       "title": "Transform Relocations to Trajectories"
     },
-    "sort_traj_speed": {
-      "additionalProperties": false,
-      "properties": {
-        "ascending": {
-          "default": true,
-          "title": "Ascending",
-          "type": "boolean",
-          "description": "Sort ascending if true"
-        },
-        "na_position": {
-          "default": "last",
-          "enum": [
-            "first",
-            "last"
-          ],
-          "title": "Na Position",
-          "type": "string",
-          "description": "Where to place NaN values in the sort"
-        }
-      },
-      "required": [],
-      "type": "object",
-      "title": "Sort Trajetories By Classification"
-    },
     "td": {
       "additionalProperties": false,
       "properties": {
@@ -265,7 +241,6 @@
       "time_range",
       "subject_obs",
       "subject_traj",
-      "sort_traj_speed",
       "td"
     ]
   }

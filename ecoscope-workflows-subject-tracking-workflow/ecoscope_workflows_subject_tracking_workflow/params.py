@@ -1,14 +1,15 @@
 # [generated]
 # by = { compiler = "ecoscope-workflows-core", version = "9999" }
-# from-spec-sha256 = "e93db55295f4424eb879369e7ee7ab4cb9885d89269eae46ba49b15b941cfe36"
+# from-spec-sha256 = "11deae320a23ad025f16b3c8e871dd15f88933bbc3ccbba60a0d326780d50037"
 
 
 from __future__ import annotations
 
+from datetime import datetime
 from enum import Enum
 from typing import List, Optional, Union
 
-from pydantic import AwareDatetime, BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class WorkflowDetails(BaseModel):
@@ -33,8 +34,8 @@ class TimeRange(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
-    since: AwareDatetime = Field(..., description="The start time", title="Since")
-    until: AwareDatetime = Field(..., description="The end time", title="Until")
+    since: datetime = Field(..., description="The start time", title="Since")
+    until: datetime = Field(..., description="The end time", title="Until")
 
 
 class SubjectObs(BaseModel):
@@ -58,23 +59,6 @@ class SubjectTraj(BaseModel):
     max_length_meters: Optional[float] = Field(10000, title="Max Length Meters")
     max_time_secs: Optional[float] = Field(3600, title="Max Time Secs")
     max_speed_kmhr: Optional[float] = Field(120, title="Max Speed Kmhr")
-
-
-class NaPosition(str, Enum):
-    first = "first"
-    last = "last"
-
-
-class SortTrajSpeed(BaseModel):
-    model_config = ConfigDict(
-        extra="forbid",
-    )
-    ascending: Optional[bool] = Field(
-        True, description="Sort ascending if true", title="Ascending"
-    )
-    na_position: Optional[NaPosition] = Field(
-        "last", description="Where to place NaN values in the sort", title="Na Position"
-    )
 
 
 class Td(BaseModel):
@@ -122,8 +106,8 @@ class TemporalGrouper(BaseModel):
 
 
 class TimeRange1(BaseModel):
-    since: AwareDatetime = Field(..., title="Since")
-    until: AwareDatetime = Field(..., title="Until")
+    since: datetime = Field(..., title="Since")
+    until: datetime = Field(..., title="Until")
     time_format: Optional[str] = Field("%d %b %Y %H:%M:%S %Z", title="Time Format")
 
 
@@ -155,8 +139,5 @@ class Params(BaseModel):
     )
     subject_traj: Optional[SubjectTraj] = Field(
         None, title="Transform Relocations to Trajectories"
-    )
-    sort_traj_speed: Optional[SortTrajSpeed] = Field(
-        None, title="Sort Trajetories By Classification"
     )
     td: Optional[Td] = Field(None, title="Calculate Time Density from Trajectory")

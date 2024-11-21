@@ -1,8 +1,9 @@
 # [generated]
 # by = { compiler = "ecoscope-workflows-core", version = "9999" }
-# from-spec-sha256 = "e93db55295f4424eb879369e7ee7ab4cb9885d89269eae46ba49b15b941cfe36"
+# from-spec-sha256 = "11deae320a23ad025f16b3c8e871dd15f88933bbc3ccbba60a0d326780d50037"
 
 
+import sys
 from pathlib import Path
 from typing import get_args
 
@@ -17,7 +18,7 @@ from ecoscope_workflows_subject_tracking_workflow.formdata import FormData
 
 ARTIFACTS = Path(__file__).parent.parent
 TEST_CASES_YAML = ARTIFACTS.parent / "test-cases.yaml"
-ENTRYPOINT = "ecoscope-workflows-subject-tracking-workflow"
+ENTRYPOINT = f"{sys.executable} -m ecoscope_workflows_subject_tracking_workflow.cli"
 
 
 def pytest_addoption(parser: pytest.Parser):
