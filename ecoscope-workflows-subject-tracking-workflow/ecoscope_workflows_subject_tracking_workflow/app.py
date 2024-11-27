@@ -23,7 +23,7 @@ from .params import Params
 app = FastAPI(
     title="subject_tracking",
     debug=True,
-    version="043ce22",
+    version="4826810",
 )
 app.add_middleware(
     CORSMiddleware,
