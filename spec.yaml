@@ -83,7 +83,7 @@ workflow:
     task: sort_values
     partial:
       column_name: speed_bins
-      ascending: false
+      ascending: true
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.classify_traj_speed.return }}
