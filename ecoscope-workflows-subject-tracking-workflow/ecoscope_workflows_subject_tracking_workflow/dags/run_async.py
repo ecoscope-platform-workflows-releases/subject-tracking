@@ -222,7 +222,7 @@ def main(params: Params):
             async_task=sort_values.validate().set_executor("lithops"),
             partial={
                 "column_name": "speed_bins",
-                "ascending": True,
+                "ascending": False,
             }
             | (params_dict.get("sort_traj_speed") or {}),
             method="mapvalues",

@@ -164,7 +164,7 @@ def main(params: Params):
         sort_values.validate()
         .partial(
             column_name="speed_bins",
-            ascending=True,
+            ascending=False,
             **(params_dict.get("sort_traj_speed") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=classify_traj_speed)

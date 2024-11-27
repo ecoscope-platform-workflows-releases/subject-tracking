@@ -285,7 +285,7 @@ sort_traj_speed_params = dict(
 
 
 sort_traj_speed = sort_values.partial(
-    column_name="speed_bins", ascending=True, **sort_traj_speed_params
+    column_name="speed_bins", ascending=False, **sort_traj_speed_params
 ).mapvalues(argnames=["df"], argvalues=classify_traj_speed)
 
 
