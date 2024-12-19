@@ -245,6 +245,16 @@ def main(params: Params):
         .call()
     )
 
+    sort_traj_night_day = (
+        sort_values.validate()
+        .partial(
+            column_name="extra__is_night",
+            ascending=False,
+            **(params_dict.get("sort_traj_night_day") or {}),
+        )
+        .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
+    )
+
     colormap_traj_night = (
         apply_color_map.validate()
         .partial(
@@ -253,7 +263,7 @@ def main(params: Params):
             output_column_name="is_night_colors",
             **(params_dict.get("colormap_traj_night") or {}),
         )
-        .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
+        .mapvalues(argnames=["df"], argvalues=sort_traj_night_day)
     )
 
     traj_map_night_layers = (

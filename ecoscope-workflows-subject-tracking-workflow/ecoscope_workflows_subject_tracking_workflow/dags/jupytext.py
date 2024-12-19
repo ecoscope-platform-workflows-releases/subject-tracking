@@ -431,6 +431,25 @@ traj_grouped_map_widget = merge_widget_views.partial(
 
 
 # %% [markdown]
+# ## Sort Trajetories By Night/Day Classification
+
+# %%
+# parameters
+
+sort_traj_night_day_params = dict(
+    na_position=...,
+)
+
+# %%
+# call the task
+
+
+sort_traj_night_day = sort_values.partial(
+    column_name="extra__is_night", ascending=False, **sort_traj_night_day_params
+).mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
+
+
+# %% [markdown]
 # ## Apply Color to Trajectories By Day/Night
 
 # %%
@@ -447,7 +466,7 @@ colormap_traj_night = apply_color_map.partial(
     input_column_name="extra__is_night",
     output_column_name="is_night_colors",
     **colormap_traj_night_params,
-).mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
+).mapvalues(argnames=["df"], argvalues=sort_traj_night_day)
 
 
 # %% [markdown]
