@@ -81,7 +81,8 @@ def main(params: Params):
         "ecomap_html_urls": ["traj_ecomap"],
         "traj_map_widgets_single_views": ["ecomap_html_urls"],
         "traj_grouped_map_widget": ["traj_map_widgets_single_views"],
-        "colormap_traj_night": ["split_subject_traj_groups"],
+        "sort_traj_night_day": ["split_subject_traj_groups"],
+        "colormap_traj_night": ["sort_traj_night_day"],
         "traj_map_night_layers": ["colormap_traj_night"],
         "traj_nightday_ecomap": ["traj_map_night_layers"],
         "ecomap_nightday_html_urls": ["traj_nightday_ecomap"],
@@ -350,6 +351,19 @@ def main(params: Params):
             | (params_dict.get("traj_grouped_map_widget") or {}),
             method="call",
         ),
+        "sort_traj_night_day": Node(
+            async_task=sort_values.validate().set_executor("lithops"),
+            partial={
+                "column_name": "extra__is_night",
+                "ascending": False,
+            }
+            | (params_dict.get("sort_traj_night_day") or {}),
+            method="mapvalues",
+            kwargs={
+                "argnames": ["df"],
+                "argvalues": DependsOn("split_subject_traj_groups"),
+            },
+        ),
         "colormap_traj_night": Node(
             async_task=apply_color_map.validate().set_executor("lithops"),
             partial={
@@ -361,7 +375,7 @@ def main(params: Params):
             method="mapvalues",
             kwargs={
                 "argnames": ["df"],
-                "argvalues": DependsOn("split_subject_traj_groups"),
+                "argvalues": DependsOn("sort_traj_night_day"),
             },
         ),
         "traj_map_night_layers": Node(
