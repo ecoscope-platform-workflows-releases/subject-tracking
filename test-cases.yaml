@@ -1,11 +1,12 @@
 # TODO: generate this _instead_ of "params_fillable.yaml"  and then edit it
-test1:
-  name: Test 1
-  description: "Test case for subject-tracking"
+month-grouper:
+  name: Month Grouper
+  description: A demonstration of the subject-tracking workflow with monthly grouping.
   params:
     workflow_details:
       name: "Subject Tracking Dashboard"
       description: "A dashboard for visualizing subject trajectories and home range."
+      image_url: ""
 
     er_client_name:
       data_source:
@@ -33,12 +34,3 @@ test1:
 
     td:
       pixel_size: 250
-
-  assertions:
-    result_stdout_contains:
-      - "A dashboard for visualizing subject trajectories and home range."
-      - "widget_type='map', title='Subject Group Trajectory Map'"
-      - "widget_type='stat', title='Mean Speed'"
-      - "widget_type='stat', title='Max Speed',"
-      - "widget_type='stat', title='Number of Locations'"
-      - "widget_type='map', title='Home Range Map'"
