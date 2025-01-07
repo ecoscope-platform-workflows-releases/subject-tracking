@@ -43,9 +43,12 @@ class SubjectTraj(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
+    min_length_meters: Optional[float] = Field(0.001, title="Min Length Meters")
     max_length_meters: Optional[float] = Field(10000, title="Max Length Meters")
     max_time_secs: Optional[float] = Field(3600, title="Max Time Secs")
+    min_time_secs: Optional[float] = Field(1, title="Min Time Secs")
     max_speed_kmhr: Optional[float] = Field(120, title="Max Speed Kmhr")
+    min_speed_kmhr: Optional[float] = Field(0.0001, title="Min Speed Kmhr")
 
 
 class Td(BaseModel):
@@ -55,6 +58,8 @@ class Td(BaseModel):
     pixel_size: Optional[float] = Field(
         250.0, description="Raster pixel size in meters.", title="Pixel Size"
     )
+    max_speed_factor: Optional[float] = Field(1.05, title="Max Speed Factor")
+    expansion_factor: Optional[float] = Field(1.3, title="Expansion Factor")
 
 
 class EarthRangerConnection(BaseModel):

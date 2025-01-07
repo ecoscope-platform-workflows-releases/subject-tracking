@@ -138,7 +138,10 @@ def main(params: Params):
         ),
         "time_range": Node(
             async_task=set_time_range.validate().set_executor("lithops"),
-            partial=(params_dict.get("time_range") or {}),
+            partial={
+                "time_format": "%d %b %Y %H:%M:%S %Z",
+            }
+            | (params_dict.get("time_range") or {}),
             method="call",
         ),
         "subject_obs": Node(
@@ -192,6 +195,8 @@ def main(params: Params):
                 "df": DependsOn("subject_traj"),
                 "time_col": "segment_start",
                 "groupers": DependsOn("groupers"),
+                "cast_to_datetime": True,
+                "format": "mixed",
             }
             | (params_dict.get("traj_add_temporal_index") or {}),
             method="call",
@@ -211,6 +216,7 @@ def main(params: Params):
                 "input_column_name": "speed_kmhr",
                 "output_column_name": "speed_bins",
                 "classification_options": {"scheme": "equal_interval", "k": 6},
+                "labels": None,
             }
             | (params_dict.get("classify_traj_speed") or {}),
             method="mapvalues",
@@ -224,6 +230,7 @@ def main(params: Params):
             partial={
                 "column_name": "speed_bins",
                 "ascending": True,
+                "na_position": "last",
             }
             | (params_dict.get("sort_traj_speed") or {}),
             method="mapvalues",
@@ -260,6 +267,7 @@ def main(params: Params):
                 "output_column_name": "speed_bins_formatted",
                 "original_unit": "km/h",
                 "new_unit": "km/h",
+                "decimal_places": 1,
             }
             | (params_dict.get("speedmap_legend_with_unit") or {}),
             method="mapvalues",
@@ -294,6 +302,7 @@ def main(params: Params):
                 "north_arrow_style": {"placement": "top-left"},
                 "legend_style": {"placement": "bottom-right"},
                 "static": False,
+                "title": None,
             }
             | (params_dict.get("traj_ecomap") or {}),
             method="mapvalues",
@@ -339,6 +348,7 @@ def main(params: Params):
             partial={
                 "column_name": "extra__is_night",
                 "ascending": False,
+                "na_position": "last",
             }
             | (params_dict.get("sort_traj_night_day") or {}),
             method="mapvalues",
@@ -387,6 +397,7 @@ def main(params: Params):
                 "north_arrow_style": {"placement": "top-left"},
                 "legend_style": {"placement": "bottom-right"},
                 "static": False,
+                "title": None,
             }
             | (params_dict.get("traj_nightday_ecomap") or {}),
             method="mapvalues",
@@ -458,6 +469,7 @@ def main(params: Params):
             ),
             partial={
                 "title": "Mean Speed",
+                "decimal_places": 1,
             }
             | (params_dict.get("mean_speed_sv_widgets") or {}),
             method="map",
@@ -505,6 +517,7 @@ def main(params: Params):
             ),
             partial={
                 "title": "Max Speed",
+                "decimal_places": 1,
             }
             | (params_dict.get("max_speed_sv_widgets") or {}),
             method="map",
@@ -536,6 +549,7 @@ def main(params: Params):
             ),
             partial={
                 "title": "Number of Locations",
+                "decimal_places": 1,
             }
             | (params_dict.get("num_location_sv_widgets") or {}),
             method="map",
@@ -567,6 +581,7 @@ def main(params: Params):
             ),
             partial={
                 "title": "Night/Day Ratio",
+                "decimal_places": 1,
             }
             | (params_dict.get("nightday_ratio_sv_widgets") or {}),
             method="map",
@@ -614,6 +629,7 @@ def main(params: Params):
             ),
             partial={
                 "title": "Total Distance",
+                "decimal_places": 1,
             }
             | (params_dict.get("total_distance_sv_widgets") or {}),
             method="map",
@@ -661,6 +677,7 @@ def main(params: Params):
             ),
             partial={
                 "title": "Total Time",
+                "decimal_places": 1,
             }
             | (params_dict.get("total_time_sv_widgets") or {}),
             method="map",
@@ -682,6 +699,8 @@ def main(params: Params):
             partial={
                 "crs": "ESRI:53042",
                 "percentiles": [50.0, 60.0, 70.0, 80.0, 90.0, 95.0, 99.999],
+                "nodata_value": "nan",
+                "band_count": 1,
             }
             | (params_dict.get("td") or {}),
             method="mapvalues",
@@ -712,6 +731,7 @@ def main(params: Params):
                     "opacity": 0.7,
                     "get_line_width": 0,
                 },
+                "legend": None,
             }
             | (params_dict.get("td_map_layer") or {}),
             method="mapvalues",
@@ -730,6 +750,7 @@ def main(params: Params):
                 "north_arrow_style": {"placement": "top-left"},
                 "legend_style": {"placement": "bottom-right"},
                 "static": False,
+                "title": None,
             }
             | (params_dict.get("td_ecomap") or {}),
             method="mapvalues",
@@ -778,6 +799,7 @@ def main(params: Params):
                 "x_axis": "segment_start",
                 "y_axis": "nsd",
                 "plot_style": {"xperiodalignment": None},
+                "color_column": None,
             }
             | (params_dict.get("nsd_chart") or {}),
             method="call",
