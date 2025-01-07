@@ -28,9 +28,14 @@ month-grouper:
 
     # Parameters for 'Transform Relocations to Trajectories' using task `relocations_to_trajectory`.
     subject_traj:
-      max_length_meters: 10000 # (<class 'float'>, FieldInfo(annotation=NoneType, required=True))
-      max_time_secs: 21600 # (<class 'float'>, FieldInfo(annotation=NoneType, required=True))
-      max_speed_kmhr: 10 # (<class 'float'>, FieldInfo(annotation=NoneType, required=True))
+      min_length_meters: 0.001
+      max_length_meters: 10000.0
+      max_time_secs: 21600.0
+      min_time_secs: 1.0
+      max_speed_kmhr: 10.0
+      min_speed_kmhr: 0.0001
 
     td:
-      pixel_size: 250
+      pixel_size: 250.0
+      max_speed_factor: 1.05
+      expansion_factor: 1.3
