@@ -117,9 +117,10 @@ def main(params: Params):
         "td_ecomap_html_url": ["td_ecomap"],
         "td_map_widget": ["td_ecomap_html_url"],
         "td_grouped_map_widget": ["td_map_widget"],
-        "nsd_chart": ["traj_add_temporal_index"],
+        "nsd_chart": ["traj_add_temporal_index", "split_subject_traj_groups"],
         "nsd_chart_html_url": ["nsd_chart"],
         "nsd_chart_widget": ["nsd_chart_html_url"],
+        "grouped_nsd_chart_widget_merge": ["nsd_chart_widget"],
         "subject_tracking_dashboard": [
             "workflow_details",
             "traj_grouped_map_widget",
@@ -131,7 +132,7 @@ def main(params: Params):
             "total_time_grouped_sv_widget",
             "td_grouped_map_widget",
             "traj_nightday_grouped_map_widget",
-            "nsd_chart_widget",
+            "grouped_nsd_chart_widget_merge",
             "groupers",
             "time_range",
         ],
@@ -155,7 +156,10 @@ def main(params: Params):
         ),
         "time_range": Node(
             async_task=set_time_range.validate().set_executor("lithops"),
-            partial=(params_dict.get("time_range") or {}),
+            partial={
+                "time_format": "%d %b %Y %H:%M:%S %Z",
+            }
+            | (params_dict.get("time_range") or {}),
             method="call",
         ),
         "subject_obs": Node(
@@ -209,6 +213,8 @@ def main(params: Params):
                 "df": DependsOn("subject_traj"),
                 "time_col": "segment_start",
                 "groupers": DependsOn("groupers"),
+                "cast_to_datetime": True,
+                "format": "mixed",
             }
             | (params_dict.get("traj_add_temporal_index") or {}),
             method="call",
@@ -228,6 +234,7 @@ def main(params: Params):
                 "input_column_name": "speed_kmhr",
                 "output_column_name": "speed_bins",
                 "classification_options": {"scheme": "equal_interval", "k": 6},
+                "labels": None,
             }
             | (params_dict.get("classify_traj_speed") or {}),
             method="mapvalues",
@@ -241,6 +248,7 @@ def main(params: Params):
             partial={
                 "column_name": "speed_bins",
                 "ascending": True,
+                "na_position": "last",
             }
             | (params_dict.get("sort_traj_speed") or {}),
             method="mapvalues",
@@ -277,6 +285,7 @@ def main(params: Params):
                 "output_column_name": "speed_bins_formatted",
                 "original_unit": "km/h",
                 "new_unit": "km/h",
+                "decimal_places": 1,
             }
             | (params_dict.get("speedmap_legend_with_unit") or {}),
             method="mapvalues",
@@ -311,6 +320,7 @@ def main(params: Params):
                 "north_arrow_style": {"placement": "top-left"},
                 "legend_style": {"placement": "bottom-right"},
                 "static": False,
+                "title": None,
             }
             | (params_dict.get("traj_ecomap") or {}),
             method="mapvalues",
@@ -356,6 +366,7 @@ def main(params: Params):
             partial={
                 "column_name": "extra__is_night",
                 "ascending": False,
+                "na_position": "last",
             }
             | (params_dict.get("sort_traj_night_day") or {}),
             method="mapvalues",
@@ -404,6 +415,7 @@ def main(params: Params):
                 "north_arrow_style": {"placement": "top-left"},
                 "legend_style": {"placement": "bottom-right"},
                 "static": False,
+                "title": None,
             }
             | (params_dict.get("traj_nightday_ecomap") or {}),
             method="mapvalues",
@@ -475,6 +487,7 @@ def main(params: Params):
             ),
             partial={
                 "title": "Mean Speed",
+                "decimal_places": 1,
             }
             | (params_dict.get("mean_speed_sv_widgets") or {}),
             method="map",
@@ -522,6 +535,7 @@ def main(params: Params):
             ),
             partial={
                 "title": "Max Speed",
+                "decimal_places": 1,
             }
             | (params_dict.get("max_speed_sv_widgets") or {}),
             method="map",
@@ -553,6 +567,7 @@ def main(params: Params):
             ),
             partial={
                 "title": "Number of Locations",
+                "decimal_places": 1,
             }
             | (params_dict.get("num_location_sv_widgets") or {}),
             method="map",
@@ -584,6 +599,7 @@ def main(params: Params):
             ),
             partial={
                 "title": "Night/Day Ratio",
+                "decimal_places": 1,
             }
             | (params_dict.get("nightday_ratio_sv_widgets") or {}),
             method="map",
@@ -631,6 +647,7 @@ def main(params: Params):
             ),
             partial={
                 "title": "Total Distance",
+                "decimal_places": 1,
             }
             | (params_dict.get("total_distance_sv_widgets") or {}),
             method="map",
@@ -678,6 +695,7 @@ def main(params: Params):
             ),
             partial={
                 "title": "Total Time",
+                "decimal_places": 1,
             }
             | (params_dict.get("total_time_sv_widgets") or {}),
             method="map",
@@ -699,6 +717,8 @@ def main(params: Params):
             partial={
                 "crs": "ESRI:53042",
                 "percentiles": [50.0, 60.0, 70.0, 80.0, 90.0, 95.0, 99.999],
+                "nodata_value": "nan",
+                "band_count": 1,
             }
             | (params_dict.get("td") or {}),
             method="mapvalues",
@@ -729,6 +749,7 @@ def main(params: Params):
                     "opacity": 0.7,
                     "get_line_width": 0,
                 },
+                "legend": None,
             }
             | (params_dict.get("td_map_layer") or {}),
             method="mapvalues",
@@ -747,6 +768,7 @@ def main(params: Params):
                 "north_arrow_style": {"placement": "top-left"},
                 "legend_style": {"placement": "bottom-right"},
                 "static": False,
+                "title": None,
             }
             | (params_dict.get("td_ecomap") or {}),
             method="mapvalues",
@@ -795,28 +817,47 @@ def main(params: Params):
                 "x_axis": "segment_start",
                 "y_axis": "nsd",
                 "plot_style": {"xperiodalignment": None},
+                "color_column": None,
             }
             | (params_dict.get("nsd_chart") or {}),
-            method="call",
+            method="mapvalues",
+            kwargs={
+                "argnames": ["dataframe"],
+                "argvalues": DependsOn("split_subject_traj_groups"),
+            },
         ),
         "nsd_chart_html_url": Node(
             async_task=persist_text.validate().set_executor("lithops"),
             partial={
-                "text": DependsOn("nsd_chart"),
                 "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
             }
             | (params_dict.get("nsd_chart_html_url") or {}),
-            method="call",
+            method="mapvalues",
+            kwargs={
+                "argnames": ["text"],
+                "argvalues": DependsOn("nsd_chart"),
+            },
         ),
         "nsd_chart_widget": Node(
             async_task=create_plot_widget_single_view.validate().set_executor(
                 "lithops"
             ),
             partial={
-                "data": DependsOn("nsd_chart_html_url"),
                 "title": "Net Square Displacement",
             }
             | (params_dict.get("nsd_chart_widget") or {}),
+            method="map",
+            kwargs={
+                "argnames": ["view", "data"],
+                "argvalues": DependsOn("nsd_chart_html_url"),
+            },
+        ),
+        "grouped_nsd_chart_widget_merge": Node(
+            async_task=merge_widget_views.validate().set_executor("lithops"),
+            partial={
+                "widgets": DependsOn("nsd_chart_widget"),
+            }
+            | (params_dict.get("grouped_nsd_chart_widget_merge") or {}),
             method="call",
         ),
         "subject_tracking_dashboard": Node(
@@ -834,7 +875,7 @@ def main(params: Params):
                         DependsOn("total_time_grouped_sv_widget"),
                         DependsOn("td_grouped_map_widget"),
                         DependsOn("traj_nightday_grouped_map_widget"),
-                        DependsOn("nsd_chart_widget"),
+                        DependsOn("grouped_nsd_chart_widget_merge"),
                     ],
                 ),
                 "groupers": DependsOn("groupers"),
