@@ -77,7 +77,9 @@ def main(params: Params):
 
     time_range = (
         set_time_range.validate()
-        .partial(**(params_dict.get("time_range") or {}))
+        .partial(
+            time_format="%d %b %Y %H:%M:%S %Z", **(params_dict.get("time_range") or {})
+        )
         .call()
     )
 
@@ -134,6 +136,8 @@ def main(params: Params):
             df=subject_traj,
             time_col="segment_start",
             groupers=groupers,
+            cast_to_datetime=True,
+            format="mixed",
             **(params_dict.get("traj_add_temporal_index") or {}),
         )
         .call()
@@ -155,6 +159,7 @@ def main(params: Params):
             input_column_name="speed_kmhr",
             output_column_name="speed_bins",
             classification_options={"scheme": "equal_interval", "k": 6},
+            labels=None,
             **(params_dict.get("classify_traj_speed") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
@@ -165,6 +170,7 @@ def main(params: Params):
         .partial(
             column_name="speed_bins",
             ascending=True,
+            na_position="last",
             **(params_dict.get("sort_traj_speed") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=classify_traj_speed)
@@ -188,6 +194,7 @@ def main(params: Params):
             output_column_name="speed_bins_formatted",
             original_unit="km/h",
             new_unit="km/h",
+            decimal_places=1,
             **(params_dict.get("speedmap_legend_with_unit") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=colormap_traj_speed)
@@ -213,6 +220,7 @@ def main(params: Params):
             north_arrow_style={"placement": "top-left"},
             legend_style={"placement": "bottom-right"},
             static=False,
+            title=None,
             **(params_dict.get("traj_ecomap") or {}),
         )
         .mapvalues(argnames=["geo_layers"], argvalues=traj_map_layers)
@@ -250,6 +258,7 @@ def main(params: Params):
         .partial(
             column_name="extra__is_night",
             ascending=False,
+            na_position="last",
             **(params_dict.get("sort_traj_night_day") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
@@ -283,6 +292,7 @@ def main(params: Params):
             north_arrow_style={"placement": "top-left"},
             legend_style={"placement": "bottom-right"},
             static=False,
+            title=None,
             **(params_dict.get("traj_nightday_ecomap") or {}),
         )
         .mapvalues(argnames=["geo_layers"], argvalues=traj_map_night_layers)
@@ -333,7 +343,11 @@ def main(params: Params):
 
     mean_speed_sv_widgets = (
         create_single_value_widget_single_view.validate()
-        .partial(title="Mean Speed", **(params_dict.get("mean_speed_sv_widgets") or {}))
+        .partial(
+            title="Mean Speed",
+            decimal_places=1,
+            **(params_dict.get("mean_speed_sv_widgets") or {}),
+        )
         .map(argnames=["view", "data"], argvalues=average_speed_converted)
     )
 
@@ -364,7 +378,11 @@ def main(params: Params):
 
     max_speed_sv_widgets = (
         create_single_value_widget_single_view.validate()
-        .partial(title="Max Speed", **(params_dict.get("max_speed_sv_widgets") or {}))
+        .partial(
+            title="Max Speed",
+            decimal_places=1,
+            **(params_dict.get("max_speed_sv_widgets") or {}),
+        )
         .map(argnames=["view", "data"], argvalues=max_speed_converted)
     )
 
@@ -387,6 +405,7 @@ def main(params: Params):
         create_single_value_widget_single_view.validate()
         .partial(
             title="Number of Locations",
+            decimal_places=1,
             **(params_dict.get("num_location_sv_widgets") or {}),
         )
         .map(argnames=["view", "data"], argvalues=num_location)
@@ -411,6 +430,7 @@ def main(params: Params):
         create_single_value_widget_single_view.validate()
         .partial(
             title="Night/Day Ratio",
+            decimal_places=1,
             **(params_dict.get("nightday_ratio_sv_widgets") or {}),
         )
         .map(argnames=["view", "data"], argvalues=nightday_ratio)
@@ -445,6 +465,7 @@ def main(params: Params):
         create_single_value_widget_single_view.validate()
         .partial(
             title="Total Distance",
+            decimal_places=1,
             **(params_dict.get("total_distance_sv_widgets") or {}),
         )
         .map(argnames=["view", "data"], argvalues=total_dist_converted)
@@ -479,7 +500,11 @@ def main(params: Params):
 
     total_time_sv_widgets = (
         create_single_value_widget_single_view.validate()
-        .partial(title="Total Time", **(params_dict.get("total_time_sv_widgets") or {}))
+        .partial(
+            title="Total Time",
+            decimal_places=1,
+            **(params_dict.get("total_time_sv_widgets") or {}),
+        )
         .map(argnames=["view", "data"], argvalues=total_time_converted)
     )
 
@@ -497,6 +522,8 @@ def main(params: Params):
         .partial(
             crs="ESRI:53042",
             percentiles=[50.0, 60.0, 70.0, 80.0, 90.0, 95.0, 99.999],
+            nodata_value="nan",
+            band_count=1,
             **(params_dict.get("td") or {}),
         )
         .mapvalues(argnames=["trajectory_gdf"], argvalues=split_subject_traj_groups)
@@ -521,6 +548,7 @@ def main(params: Params):
                 "opacity": 0.7,
                 "get_line_width": 0,
             },
+            legend=None,
             **(params_dict.get("td_map_layer") or {}),
         )
         .mapvalues(argnames=["geodataframe"], argvalues=td_colormap)
@@ -533,6 +561,7 @@ def main(params: Params):
             north_arrow_style={"placement": "top-left"},
             legend_style={"placement": "bottom-right"},
             static=False,
+            title=None,
             **(params_dict.get("td_ecomap") or {}),
         )
         .mapvalues(argnames=["geo_layers"], argvalues=td_map_layer)
@@ -569,27 +598,35 @@ def main(params: Params):
             x_axis="segment_start",
             y_axis="nsd",
             plot_style={"xperiodalignment": None},
+            color_column=None,
             **(params_dict.get("nsd_chart") or {}),
         )
-        .call()
+        .mapvalues(argnames=["dataframe"], argvalues=split_subject_traj_groups)
     )
 
     nsd_chart_html_url = (
         persist_text.validate()
         .partial(
-            text=nsd_chart,
             root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
             **(params_dict.get("nsd_chart_html_url") or {}),
         )
-        .call()
+        .mapvalues(argnames=["text"], argvalues=nsd_chart)
     )
 
     nsd_chart_widget = (
         create_plot_widget_single_view.validate()
         .partial(
-            data=nsd_chart_html_url,
             title="Net Square Displacement",
             **(params_dict.get("nsd_chart_widget") or {}),
+        )
+        .map(argnames=["view", "data"], argvalues=nsd_chart_html_url)
+    )
+
+    grouped_nsd_chart_widget_merge = (
+        merge_widget_views.validate()
+        .partial(
+            widgets=nsd_chart_widget,
+            **(params_dict.get("grouped_nsd_chart_widget_merge") or {}),
         )
         .call()
     )
@@ -608,7 +645,7 @@ def main(params: Params):
                 total_time_grouped_sv_widget,
                 td_grouped_map_widget,
                 traj_nightday_grouped_map_widget,
-                nsd_chart_widget,
+                grouped_nsd_chart_widget_merge,
             ],
             groupers=groupers,
             time_range=time_range,
