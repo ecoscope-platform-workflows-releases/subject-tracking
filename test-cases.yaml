@@ -1,4 +1,32 @@
-# TODO: generate this _instead_ of "params_fillable.yaml"  and then edit it
+all-grouper:
+  name: All Grouper
+  description: A demonstration of the subject-tracking workflow with "all" (i.e. no) grouping.
+  params:
+    workflow_details:
+      name: "Subject Tracking Dashboard"
+      description: "A dashboard for visualizing subject trajectories and home range."
+      image_url: ""
+    er_client_name:
+      data_source:
+        name: "mep_dev"
+    groupers:
+      groupers: []
+    time_range:
+      since: "2017-01-01T00:00:00Z"
+      until: "2017-03-31T23:59:59Z"
+    subject_obs:
+      subject_group_name: "Ecoscope"
+      include_inactive: false
+    subject_traj:
+      min_length_meters: 0.001
+      max_length_meters: 10000.0
+      max_time_secs: 21600.0
+      min_time_secs: 1.0
+      max_speed_kmhr: 10.0
+      min_speed_kmhr: 0.0001
+    td:
+      pixel_size: 1000
+
 month-grouper:
   name: Month Grouper
   description: A demonstration of the subject-tracking workflow with monthly grouping.
@@ -7,30 +35,26 @@ month-grouper:
       name: "Subject Tracking Dashboard"
       description: "A dashboard for visualizing subject trajectories and home range."
       image_url: ""
-
     er_client_name:
       data_source:
         name: "mep_dev"
-
-    # Parameters for 'Set Groupers' using task `set_groupers`.
     groupers:
-      groupers: # (list[ecoscope_workflows.tasks.groupby._groupby.Grouper], FieldInfo(annotation=NoneType, required=True, description='            Index(es) and/or column(s) to group by, along with\n            optional display names and help text.\n            '))
+      groupers:
         - temporal_index: "%B"
-
     time_range:
       since: "2017-01-01T00:00:00Z"
       until: "2017-03-31T23:59:59Z"
-
-    # Parameters for 'Get Subject Group Observations from EarthRanger' using task `get_subjectgroup_observations`.
     subject_obs:
-      subject_group_name: "Ecoscope" # (<class 'str'>, FieldInfo(annotation=NoneType, required=True, description='Name of EarthRanger Subject'))
-      include_inactive: false # (<class 'bool'>, FieldInfo(annotation=NoneType, required=True, description='Whether or not to include inactive subjects'))
-
-    # Parameters for 'Transform Relocations to Trajectories' using task `relocations_to_trajectory`.
+      subject_group_name: "Ecoscope"
+      include_inactive: false
     subject_traj:
-      max_length_meters: 10000 # (<class 'float'>, FieldInfo(annotation=NoneType, required=True))
-      max_time_secs: 21600 # (<class 'float'>, FieldInfo(annotation=NoneType, required=True))
-      max_speed_kmhr: 10 # (<class 'float'>, FieldInfo(annotation=NoneType, required=True))
-
+      min_length_meters: 0.001
+      max_length_meters: 10000.0
+      max_time_secs: 21600.0
+      min_time_secs: 1.0
+      max_speed_kmhr: 10.0
+      min_speed_kmhr: 0.0001
     td:
-      pixel_size: 250
+      pixel_size: 1000
+      max_speed_factor: 1.05
+      expansion_factor: 1.3

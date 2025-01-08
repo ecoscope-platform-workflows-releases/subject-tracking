@@ -1,0 +1,110 @@
+{
+  "error": null,
+  "result": {
+    "filters": {
+      "schema": {
+        "properties": {
+          "All": {
+            "default": "True",
+            "oneOf": [
+              {
+                "const": "True",
+                "title": "True"
+              }
+            ],
+            "title": "All",
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "uiSchema": {
+          "All": {
+            "ui:title": "All",
+            "ui:widget": "select"
+          }
+        }
+      }
+    },
+    "layout": [],
+    "metadata": {
+      "description": "A dashboard for visualizing subject trajectories and home range.",
+      "time_range": "From 01 Jan 2017 00:00:00 UTC to 31 Mar 2017 23:59:59 UTC",
+      "title": "Subject Tracking Dashboard"
+    },
+    "views": {
+      "{\"All\": \"True\"}": [
+        {
+          "data": "str",
+          "id": 0,
+          "is_filtered": true,
+          "title": "Subject Group Trajectory Map",
+          "widget_type": "map"
+        },
+        {
+          "data": "str",
+          "id": 1,
+          "is_filtered": true,
+          "title": "Mean Speed",
+          "widget_type": "stat"
+        },
+        {
+          "data": "str",
+          "id": 2,
+          "is_filtered": true,
+          "title": "Max Speed",
+          "widget_type": "stat"
+        },
+        {
+          "data": "str",
+          "id": 3,
+          "is_filtered": true,
+          "title": "Number of Locations",
+          "widget_type": "stat"
+        },
+        {
+          "data": "str",
+          "id": 4,
+          "is_filtered": true,
+          "title": "Night/Day Ratio",
+          "widget_type": "stat"
+        },
+        {
+          "data": "str",
+          "id": 5,
+          "is_filtered": true,
+          "title": "Total Distance",
+          "widget_type": "stat"
+        },
+        {
+          "data": "str",
+          "id": 6,
+          "is_filtered": true,
+          "title": "Total Time",
+          "widget_type": "stat"
+        },
+        {
+          "data": "str",
+          "id": 7,
+          "is_filtered": true,
+          "title": "Home Range Map",
+          "widget_type": "map"
+        },
+        {
+          "data": "str",
+          "id": 8,
+          "is_filtered": true,
+          "title": "Subject Group Night/Day Map",
+          "widget_type": "map"
+        },
+        {
+          "data": "str",
+          "id": 9,
+          "is_filtered": true,
+          "title": "Net Square Displacement",
+          "widget_type": "graph"
+        }
+      ]
+    }
+  },
+  "traceback": null
+}
