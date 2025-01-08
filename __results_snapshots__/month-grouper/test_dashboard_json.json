@@ -107,7 +107,7 @@
         {
           "data": "str",
           "id": 9,
-          "is_filtered": false,
+          "is_filtered": true,
           "title": "Net Square Displacement",
           "widget_type": "graph"
         }
@@ -179,7 +179,7 @@
         {
           "data": "str",
           "id": 9,
-          "is_filtered": false,
+          "is_filtered": true,
           "title": "Net Square Displacement",
           "widget_type": "graph"
         }
@@ -251,7 +251,7 @@
         {
           "data": "str",
           "id": 9,
-          "is_filtered": false,
+          "is_filtered": true,
           "title": "Net Square Displacement",
           "widget_type": "graph"
         }
