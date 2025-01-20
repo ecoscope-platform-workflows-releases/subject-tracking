@@ -150,6 +150,7 @@ def main(params: Params):
             partial={
                 "client": DependsOn("er_client_name"),
                 "time_range": DependsOn("time_range"),
+                "raise_on_empty": True,
             }
             | (params_dict.get("subject_obs") or {}),
             method="call",
