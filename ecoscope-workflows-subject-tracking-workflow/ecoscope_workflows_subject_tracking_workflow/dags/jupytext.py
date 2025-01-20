@@ -134,7 +134,10 @@ subject_obs_params = dict(
 
 
 subject_obs = get_subjectgroup_observations.partial(
-    client=er_client_name, time_range=time_range, **subject_obs_params
+    client=er_client_name,
+    time_range=time_range,
+    raise_on_empty=True,
+    **subject_obs_params,
 ).call()
 
 
@@ -192,12 +195,7 @@ day_night_labels = classify_is_night.partial(
 # parameters
 
 subject_traj_params = dict(
-    min_length_meters=...,
-    max_length_meters=...,
-    max_time_secs=...,
-    min_time_secs=...,
-    max_speed_kmhr=...,
-    min_speed_kmhr=...,
+    trajectory_segment_filter=...,
 )
 
 # %%

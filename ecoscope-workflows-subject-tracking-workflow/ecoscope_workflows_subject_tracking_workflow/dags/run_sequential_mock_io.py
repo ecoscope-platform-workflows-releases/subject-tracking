@@ -88,6 +88,7 @@ def main(params: Params):
         .partial(
             client=er_client_name,
             time_range=time_range,
+            raise_on_empty=True,
             **(params_dict.get("subject_obs") or {}),
         )
         .call()
