@@ -123,22 +123,30 @@ def main(params: Params):
 
     nodes = {
         "workflow_details": Node(
-            async_task=set_workflow_details.validate().set_executor("lithops"),
+            async_task=set_workflow_details.validate()
+            .handle_errors(task_instance_id="workflow_details")
+            .set_executor("lithops"),
             partial=(params_dict.get("workflow_details") or {}),
             method="call",
         ),
         "er_client_name": Node(
-            async_task=set_er_connection.validate().set_executor("lithops"),
+            async_task=set_er_connection.validate()
+            .handle_errors(task_instance_id="er_client_name")
+            .set_executor("lithops"),
             partial=(params_dict.get("er_client_name") or {}),
             method="call",
         ),
         "groupers": Node(
-            async_task=set_groupers.validate().set_executor("lithops"),
+            async_task=set_groupers.validate()
+            .handle_errors(task_instance_id="groupers")
+            .set_executor("lithops"),
             partial=(params_dict.get("groupers") or {}),
             method="call",
         ),
         "time_range": Node(
-            async_task=set_time_range.validate().set_executor("lithops"),
+            async_task=set_time_range.validate()
+            .handle_errors(task_instance_id="time_range")
+            .set_executor("lithops"),
             partial={
                 "time_format": "%d %b %Y %H:%M:%S %Z",
             }
@@ -146,7 +154,9 @@ def main(params: Params):
             method="call",
         ),
         "subject_obs": Node(
-            async_task=get_subjectgroup_observations.validate().set_executor("lithops"),
+            async_task=get_subjectgroup_observations.validate()
+            .handle_errors(task_instance_id="subject_obs")
+            .set_executor("lithops"),
             partial={
                 "client": DependsOn("er_client_name"),
                 "time_range": DependsOn("time_range"),
@@ -156,7 +166,9 @@ def main(params: Params):
             method="call",
         ),
         "subject_reloc": Node(
-            async_task=process_relocations.validate().set_executor("lithops"),
+            async_task=process_relocations.validate()
+            .handle_errors(task_instance_id="subject_reloc")
+            .set_executor("lithops"),
             partial={
                 "observations": DependsOn("subject_obs"),
                 "relocs_columns": [
@@ -176,7 +188,9 @@ def main(params: Params):
             method="call",
         ),
         "day_night_labels": Node(
-            async_task=classify_is_night.validate().set_executor("lithops"),
+            async_task=classify_is_night.validate()
+            .handle_errors(task_instance_id="day_night_labels")
+            .set_executor("lithops"),
             partial={
                 "relocations": DependsOn("subject_reloc"),
             }
@@ -184,7 +198,9 @@ def main(params: Params):
             method="call",
         ),
         "subject_traj": Node(
-            async_task=relocations_to_trajectory.validate().set_executor("lithops"),
+            async_task=relocations_to_trajectory.validate()
+            .handle_errors(task_instance_id="subject_traj")
+            .set_executor("lithops"),
             partial={
                 "relocations": DependsOn("day_night_labels"),
             }
@@ -192,7 +208,9 @@ def main(params: Params):
             method="call",
         ),
         "traj_add_temporal_index": Node(
-            async_task=add_temporal_index.validate().set_executor("lithops"),
+            async_task=add_temporal_index.validate()
+            .handle_errors(task_instance_id="traj_add_temporal_index")
+            .set_executor("lithops"),
             partial={
                 "df": DependsOn("subject_traj"),
                 "time_col": "segment_start",
@@ -204,7 +222,9 @@ def main(params: Params):
             method="call",
         ),
         "split_subject_traj_groups": Node(
-            async_task=split_groups.validate().set_executor("lithops"),
+            async_task=split_groups.validate()
+            .handle_errors(task_instance_id="split_subject_traj_groups")
+            .set_executor("lithops"),
             partial={
                 "df": DependsOn("traj_add_temporal_index"),
                 "groupers": DependsOn("groupers"),
@@ -213,12 +233,14 @@ def main(params: Params):
             method="call",
         ),
         "classify_traj_speed": Node(
-            async_task=apply_classification.validate().set_executor("lithops"),
+            async_task=apply_classification.validate()
+            .handle_errors(task_instance_id="classify_traj_speed")
+            .set_executor("lithops"),
             partial={
                 "input_column_name": "speed_kmhr",
                 "output_column_name": "speed_bins",
                 "classification_options": {"scheme": "equal_interval", "k": 6},
-                "labels": None,
+                "label_options": {"label_ranges": False, "label_decimals": 1},
             }
             | (params_dict.get("classify_traj_speed") or {}),
             method="mapvalues",
@@ -228,7 +250,9 @@ def main(params: Params):
             },
         ),
         "sort_traj_speed": Node(
-            async_task=sort_values.validate().set_executor("lithops"),
+            async_task=sort_values.validate()
+            .handle_errors(task_instance_id="sort_traj_speed")
+            .set_executor("lithops"),
             partial={
                 "column_name": "speed_bins",
                 "ascending": True,
@@ -242,7 +266,9 @@ def main(params: Params):
             },
         ),
         "colormap_traj_speed": Node(
-            async_task=apply_color_map.validate().set_executor("lithops"),
+            async_task=apply_color_map.validate()
+            .handle_errors(task_instance_id="colormap_traj_speed")
+            .set_executor("lithops"),
             partial={
                 "input_column_name": "speed_bins",
                 "output_column_name": "speed_bins_colormap",
@@ -263,7 +289,9 @@ def main(params: Params):
             },
         ),
         "speedmap_legend_with_unit": Node(
-            async_task=map_values_with_unit.validate().set_executor("lithops"),
+            async_task=map_values_with_unit.validate()
+            .handle_errors(task_instance_id="speedmap_legend_with_unit")
+            .set_executor("lithops"),
             partial={
                 "input_column_name": "speed_bins",
                 "output_column_name": "speed_bins_formatted",
@@ -279,7 +307,9 @@ def main(params: Params):
             },
         ),
         "traj_map_layers": Node(
-            async_task=create_polyline_layer.validate().set_executor("lithops"),
+            async_task=create_polyline_layer.validate()
+            .handle_errors(task_instance_id="traj_map_layers")
+            .set_executor("lithops"),
             partial={
                 "layer_style": {"color_column": "speed_bins_colormap"},
                 "legend": {
@@ -295,7 +325,9 @@ def main(params: Params):
             },
         ),
         "traj_ecomap": Node(
-            async_task=draw_ecomap.validate().set_executor("lithops"),
+            async_task=draw_ecomap.validate()
+            .handle_errors(task_instance_id="traj_ecomap")
+            .set_executor("lithops"),
             partial={
                 "tile_layers": [
                     {"name": "TERRAIN"},
@@ -314,7 +346,9 @@ def main(params: Params):
             },
         ),
         "ecomap_html_urls": Node(
-            async_task=persist_text.validate().set_executor("lithops"),
+            async_task=persist_text.validate()
+            .handle_errors(task_instance_id="ecomap_html_urls")
+            .set_executor("lithops"),
             partial={
                 "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
             }
@@ -326,7 +360,9 @@ def main(params: Params):
             },
         ),
         "traj_map_widgets_single_views": Node(
-            async_task=create_map_widget_single_view.validate().set_executor("lithops"),
+            async_task=create_map_widget_single_view.validate()
+            .handle_errors(task_instance_id="traj_map_widgets_single_views")
+            .set_executor("lithops"),
             partial={
                 "title": "Subject Group Trajectory Map",
             }
@@ -338,7 +374,9 @@ def main(params: Params):
             },
         ),
         "traj_grouped_map_widget": Node(
-            async_task=merge_widget_views.validate().set_executor("lithops"),
+            async_task=merge_widget_views.validate()
+            .handle_errors(task_instance_id="traj_grouped_map_widget")
+            .set_executor("lithops"),
             partial={
                 "widgets": DependsOn("traj_map_widgets_single_views"),
             }
@@ -346,7 +384,9 @@ def main(params: Params):
             method="call",
         ),
         "sort_traj_night_day": Node(
-            async_task=sort_values.validate().set_executor("lithops"),
+            async_task=sort_values.validate()
+            .handle_errors(task_instance_id="sort_traj_night_day")
+            .set_executor("lithops"),
             partial={
                 "column_name": "extra__is_night",
                 "ascending": False,
@@ -360,7 +400,9 @@ def main(params: Params):
             },
         ),
         "colormap_traj_night": Node(
-            async_task=apply_color_map.validate().set_executor("lithops"),
+            async_task=apply_color_map.validate()
+            .handle_errors(task_instance_id="colormap_traj_night")
+            .set_executor("lithops"),
             partial={
                 "colormap": ["#292965", "#e7a553"],
                 "input_column_name": "extra__is_night",
@@ -374,7 +416,9 @@ def main(params: Params):
             },
         ),
         "traj_map_night_layers": Node(
-            async_task=create_polyline_layer.validate().set_executor("lithops"),
+            async_task=create_polyline_layer.validate()
+            .handle_errors(task_instance_id="traj_map_night_layers")
+            .set_executor("lithops"),
             partial={
                 "layer_style": {"color_column": "is_night_colors"},
                 "legend": {
@@ -390,7 +434,9 @@ def main(params: Params):
             },
         ),
         "traj_nightday_ecomap": Node(
-            async_task=draw_ecomap.validate().set_executor("lithops"),
+            async_task=draw_ecomap.validate()
+            .handle_errors(task_instance_id="traj_nightday_ecomap")
+            .set_executor("lithops"),
             partial={
                 "tile_layers": [
                     {"name": "TERRAIN"},
@@ -409,7 +455,9 @@ def main(params: Params):
             },
         ),
         "ecomap_nightday_html_urls": Node(
-            async_task=persist_text.validate().set_executor("lithops"),
+            async_task=persist_text.validate()
+            .handle_errors(task_instance_id="ecomap_nightday_html_urls")
+            .set_executor("lithops"),
             partial={
                 "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
             }
@@ -421,7 +469,9 @@ def main(params: Params):
             },
         ),
         "traj_map_nightday_widgets_sv": Node(
-            async_task=create_map_widget_single_view.validate().set_executor("lithops"),
+            async_task=create_map_widget_single_view.validate()
+            .handle_errors(task_instance_id="traj_map_nightday_widgets_sv")
+            .set_executor("lithops"),
             partial={
                 "title": "Subject Group Night/Day Map",
             }
@@ -433,7 +483,9 @@ def main(params: Params):
             },
         ),
         "traj_nightday_grouped_map_widget": Node(
-            async_task=merge_widget_views.validate().set_executor("lithops"),
+            async_task=merge_widget_views.validate()
+            .handle_errors(task_instance_id="traj_nightday_grouped_map_widget")
+            .set_executor("lithops"),
             partial={
                 "widgets": DependsOn("traj_map_nightday_widgets_sv"),
             }
@@ -441,7 +493,9 @@ def main(params: Params):
             method="call",
         ),
         "mean_speed": Node(
-            async_task=dataframe_column_mean.validate().set_executor("lithops"),
+            async_task=dataframe_column_mean.validate()
+            .handle_errors(task_instance_id="mean_speed")
+            .set_executor("lithops"),
             partial={
                 "column_name": "speed_kmhr",
             }
@@ -453,7 +507,9 @@ def main(params: Params):
             },
         ),
         "average_speed_converted": Node(
-            async_task=with_unit.validate().set_executor("lithops"),
+            async_task=with_unit.validate()
+            .handle_errors(task_instance_id="average_speed_converted")
+            .set_executor("lithops"),
             partial={
                 "original_unit": "km/h",
                 "new_unit": "km/h",
@@ -466,9 +522,9 @@ def main(params: Params):
             },
         ),
         "mean_speed_sv_widgets": Node(
-            async_task=create_single_value_widget_single_view.validate().set_executor(
-                "lithops"
-            ),
+            async_task=create_single_value_widget_single_view.validate()
+            .handle_errors(task_instance_id="mean_speed_sv_widgets")
+            .set_executor("lithops"),
             partial={
                 "title": "Mean Speed",
                 "decimal_places": 1,
@@ -481,7 +537,9 @@ def main(params: Params):
             },
         ),
         "mean_speed_grouped_sv_widget": Node(
-            async_task=merge_widget_views.validate().set_executor("lithops"),
+            async_task=merge_widget_views.validate()
+            .handle_errors(task_instance_id="mean_speed_grouped_sv_widget")
+            .set_executor("lithops"),
             partial={
                 "widgets": DependsOn("mean_speed_sv_widgets"),
             }
@@ -489,7 +547,9 @@ def main(params: Params):
             method="call",
         ),
         "max_speed": Node(
-            async_task=dataframe_column_max.validate().set_executor("lithops"),
+            async_task=dataframe_column_max.validate()
+            .handle_errors(task_instance_id="max_speed")
+            .set_executor("lithops"),
             partial={
                 "column_name": "speed_kmhr",
             }
@@ -501,7 +561,9 @@ def main(params: Params):
             },
         ),
         "max_speed_converted": Node(
-            async_task=with_unit.validate().set_executor("lithops"),
+            async_task=with_unit.validate()
+            .handle_errors(task_instance_id="max_speed_converted")
+            .set_executor("lithops"),
             partial={
                 "original_unit": "km/h",
                 "new_unit": "km/h",
@@ -514,9 +576,9 @@ def main(params: Params):
             },
         ),
         "max_speed_sv_widgets": Node(
-            async_task=create_single_value_widget_single_view.validate().set_executor(
-                "lithops"
-            ),
+            async_task=create_single_value_widget_single_view.validate()
+            .handle_errors(task_instance_id="max_speed_sv_widgets")
+            .set_executor("lithops"),
             partial={
                 "title": "Max Speed",
                 "decimal_places": 1,
@@ -529,7 +591,9 @@ def main(params: Params):
             },
         ),
         "max_speed_grouped_sv_widget": Node(
-            async_task=merge_widget_views.validate().set_executor("lithops"),
+            async_task=merge_widget_views.validate()
+            .handle_errors(task_instance_id="max_speed_grouped_sv_widget")
+            .set_executor("lithops"),
             partial={
                 "widgets": DependsOn("max_speed_sv_widgets"),
             }
@@ -537,7 +601,9 @@ def main(params: Params):
             method="call",
         ),
         "num_location": Node(
-            async_task=dataframe_count.validate().set_executor("lithops"),
+            async_task=dataframe_count.validate()
+            .handle_errors(task_instance_id="num_location")
+            .set_executor("lithops"),
             partial=(params_dict.get("num_location") or {}),
             method="mapvalues",
             kwargs={
@@ -546,9 +612,9 @@ def main(params: Params):
             },
         ),
         "num_location_sv_widgets": Node(
-            async_task=create_single_value_widget_single_view.validate().set_executor(
-                "lithops"
-            ),
+            async_task=create_single_value_widget_single_view.validate()
+            .handle_errors(task_instance_id="num_location_sv_widgets")
+            .set_executor("lithops"),
             partial={
                 "title": "Number of Locations",
                 "decimal_places": 1,
@@ -561,7 +627,9 @@ def main(params: Params):
             },
         ),
         "num_location_grouped_sv_widget": Node(
-            async_task=merge_widget_views.validate().set_executor("lithops"),
+            async_task=merge_widget_views.validate()
+            .handle_errors(task_instance_id="num_location_grouped_sv_widget")
+            .set_executor("lithops"),
             partial={
                 "widgets": DependsOn("num_location_sv_widgets"),
             }
@@ -569,7 +637,9 @@ def main(params: Params):
             method="call",
         ),
         "nightday_ratio": Node(
-            async_task=get_night_day_ratio.validate().set_executor("lithops"),
+            async_task=get_night_day_ratio.validate()
+            .handle_errors(task_instance_id="nightday_ratio")
+            .set_executor("lithops"),
             partial=(params_dict.get("nightday_ratio") or {}),
             method="mapvalues",
             kwargs={
@@ -578,9 +648,9 @@ def main(params: Params):
             },
         ),
         "nightday_ratio_sv_widgets": Node(
-            async_task=create_single_value_widget_single_view.validate().set_executor(
-                "lithops"
-            ),
+            async_task=create_single_value_widget_single_view.validate()
+            .handle_errors(task_instance_id="nightday_ratio_sv_widgets")
+            .set_executor("lithops"),
             partial={
                 "title": "Night/Day Ratio",
                 "decimal_places": 1,
@@ -593,7 +663,9 @@ def main(params: Params):
             },
         ),
         "nightday_ratio_grouped_sv_widget": Node(
-            async_task=merge_widget_views.validate().set_executor("lithops"),
+            async_task=merge_widget_views.validate()
+            .handle_errors(task_instance_id="nightday_ratio_grouped_sv_widget")
+            .set_executor("lithops"),
             partial={
                 "widgets": DependsOn("nightday_ratio_sv_widgets"),
             }
@@ -601,7 +673,9 @@ def main(params: Params):
             method="call",
         ),
         "total_distance": Node(
-            async_task=dataframe_column_sum.validate().set_executor("lithops"),
+            async_task=dataframe_column_sum.validate()
+            .handle_errors(task_instance_id="total_distance")
+            .set_executor("lithops"),
             partial={
                 "column_name": "dist_meters",
             }
@@ -613,7 +687,9 @@ def main(params: Params):
             },
         ),
         "total_dist_converted": Node(
-            async_task=with_unit.validate().set_executor("lithops"),
+            async_task=with_unit.validate()
+            .handle_errors(task_instance_id="total_dist_converted")
+            .set_executor("lithops"),
             partial={
                 "original_unit": "m",
                 "new_unit": "km",
@@ -626,9 +702,9 @@ def main(params: Params):
             },
         ),
         "total_distance_sv_widgets": Node(
-            async_task=create_single_value_widget_single_view.validate().set_executor(
-                "lithops"
-            ),
+            async_task=create_single_value_widget_single_view.validate()
+            .handle_errors(task_instance_id="total_distance_sv_widgets")
+            .set_executor("lithops"),
             partial={
                 "title": "Total Distance",
                 "decimal_places": 1,
@@ -641,7 +717,9 @@ def main(params: Params):
             },
         ),
         "total_dist_grouped_sv_widget": Node(
-            async_task=merge_widget_views.validate().set_executor("lithops"),
+            async_task=merge_widget_views.validate()
+            .handle_errors(task_instance_id="total_dist_grouped_sv_widget")
+            .set_executor("lithops"),
             partial={
                 "widgets": DependsOn("total_distance_sv_widgets"),
             }
@@ -649,7 +727,9 @@ def main(params: Params):
             method="call",
         ),
         "total_time": Node(
-            async_task=dataframe_column_sum.validate().set_executor("lithops"),
+            async_task=dataframe_column_sum.validate()
+            .handle_errors(task_instance_id="total_time")
+            .set_executor("lithops"),
             partial={
                 "column_name": "timespan_seconds",
             }
@@ -661,7 +741,9 @@ def main(params: Params):
             },
         ),
         "total_time_converted": Node(
-            async_task=with_unit.validate().set_executor("lithops"),
+            async_task=with_unit.validate()
+            .handle_errors(task_instance_id="total_time_converted")
+            .set_executor("lithops"),
             partial={
                 "original_unit": "s",
                 "new_unit": "h",
@@ -674,9 +756,9 @@ def main(params: Params):
             },
         ),
         "total_time_sv_widgets": Node(
-            async_task=create_single_value_widget_single_view.validate().set_executor(
-                "lithops"
-            ),
+            async_task=create_single_value_widget_single_view.validate()
+            .handle_errors(task_instance_id="total_time_sv_widgets")
+            .set_executor("lithops"),
             partial={
                 "title": "Total Time",
                 "decimal_places": 1,
@@ -689,7 +771,9 @@ def main(params: Params):
             },
         ),
         "total_time_grouped_sv_widget": Node(
-            async_task=merge_widget_views.validate().set_executor("lithops"),
+            async_task=merge_widget_views.validate()
+            .handle_errors(task_instance_id="total_time_grouped_sv_widget")
+            .set_executor("lithops"),
             partial={
                 "widgets": DependsOn("total_time_sv_widgets"),
             }
@@ -697,7 +781,9 @@ def main(params: Params):
             method="call",
         ),
         "td": Node(
-            async_task=calculate_time_density.validate().set_executor("lithops"),
+            async_task=calculate_time_density.validate()
+            .handle_errors(task_instance_id="td")
+            .set_executor("lithops"),
             partial={
                 "crs": "ESRI:53042",
                 "percentiles": [50.0, 60.0, 70.0, 80.0, 90.0, 95.0, 99.999],
@@ -712,7 +798,9 @@ def main(params: Params):
             },
         ),
         "td_colormap": Node(
-            async_task=apply_color_map.validate().set_executor("lithops"),
+            async_task=apply_color_map.validate()
+            .handle_errors(task_instance_id="td_colormap")
+            .set_executor("lithops"),
             partial={
                 "input_column_name": "percentile",
                 "colormap": "RdYlGn",
@@ -726,7 +814,9 @@ def main(params: Params):
             },
         ),
         "td_map_layer": Node(
-            async_task=create_polygon_layer.validate().set_executor("lithops"),
+            async_task=create_polygon_layer.validate()
+            .handle_errors(task_instance_id="td_map_layer")
+            .set_executor("lithops"),
             partial={
                 "layer_style": {
                     "fill_color_column": "percentile_colormap",
@@ -743,7 +833,9 @@ def main(params: Params):
             },
         ),
         "td_ecomap": Node(
-            async_task=draw_ecomap.validate().set_executor("lithops"),
+            async_task=draw_ecomap.validate()
+            .handle_errors(task_instance_id="td_ecomap")
+            .set_executor("lithops"),
             partial={
                 "tile_layers": [
                     {"name": "TERRAIN"},
@@ -762,7 +854,9 @@ def main(params: Params):
             },
         ),
         "td_ecomap_html_url": Node(
-            async_task=persist_text.validate().set_executor("lithops"),
+            async_task=persist_text.validate()
+            .handle_errors(task_instance_id="td_ecomap_html_url")
+            .set_executor("lithops"),
             partial={
                 "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
             }
@@ -774,7 +868,9 @@ def main(params: Params):
             },
         ),
         "td_map_widget": Node(
-            async_task=create_map_widget_single_view.validate().set_executor("lithops"),
+            async_task=create_map_widget_single_view.validate()
+            .handle_errors(task_instance_id="td_map_widget")
+            .set_executor("lithops"),
             partial={
                 "title": "Home Range Map",
             }
@@ -786,7 +882,9 @@ def main(params: Params):
             },
         ),
         "td_grouped_map_widget": Node(
-            async_task=merge_widget_views.validate().set_executor("lithops"),
+            async_task=merge_widget_views.validate()
+            .handle_errors(task_instance_id="td_grouped_map_widget")
+            .set_executor("lithops"),
             partial={
                 "widgets": DependsOn("td_map_widget"),
             }
@@ -794,7 +892,9 @@ def main(params: Params):
             method="call",
         ),
         "nsd_chart": Node(
-            async_task=draw_ecoplot.validate().set_executor("lithops"),
+            async_task=draw_ecoplot.validate()
+            .handle_errors(task_instance_id="nsd_chart")
+            .set_executor("lithops"),
             partial={
                 "dataframe": DependsOn("traj_add_temporal_index"),
                 "group_by": "extra__name",
@@ -811,7 +911,9 @@ def main(params: Params):
             },
         ),
         "nsd_chart_html_url": Node(
-            async_task=persist_text.validate().set_executor("lithops"),
+            async_task=persist_text.validate()
+            .handle_errors(task_instance_id="nsd_chart_html_url")
+            .set_executor("lithops"),
             partial={
                 "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
             }
@@ -823,9 +925,9 @@ def main(params: Params):
             },
         ),
         "nsd_chart_widget": Node(
-            async_task=create_plot_widget_single_view.validate().set_executor(
-                "lithops"
-            ),
+            async_task=create_plot_widget_single_view.validate()
+            .handle_errors(task_instance_id="nsd_chart_widget")
+            .set_executor("lithops"),
             partial={
                 "title": "Net Square Displacement",
             }
@@ -837,7 +939,9 @@ def main(params: Params):
             },
         ),
         "grouped_nsd_chart_widget_merge": Node(
-            async_task=merge_widget_views.validate().set_executor("lithops"),
+            async_task=merge_widget_views.validate()
+            .handle_errors(task_instance_id="grouped_nsd_chart_widget_merge")
+            .set_executor("lithops"),
             partial={
                 "widgets": DependsOn("nsd_chart_widget"),
             }
@@ -845,7 +949,9 @@ def main(params: Params):
             method="call",
         ),
         "subject_tracking_dashboard": Node(
-            async_task=gather_dashboard.validate().set_executor("lithops"),
+            async_task=gather_dashboard.validate()
+            .handle_errors(task_instance_id="subject_tracking_dashboard")
+            .set_executor("lithops"),
             partial={
                 "details": DependsOn("workflow_details"),
                 "widgets": DependsOnSequence(
