@@ -1,0 +1,5 @@
+{
+  "error": "Task instance 'subject_traj' raised ValueError('No Trajectory data left after applying segment filter')",
+  "result": null,
+  "traceback": "str"
+}

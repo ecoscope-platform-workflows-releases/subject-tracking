@@ -58,3 +58,36 @@ month-grouper:
       pixel_size: 1000
       max_speed_factor: 1.05
       expansion_factor: 1.3
+
+task-instance-error:
+  name: Task Instance Error
+  description: |
+    A demonstration of configuration that would raise a task instance error.
+    Specifically, `trajectory_segment_filter.min_length_meters` configuration is invalid.
+  raises: true
+  expected_status_code: 500
+  params:
+    workflow_details:
+      name: "Subject Tracking Dashboard"
+      description: "A dashboard for visualizing subject trajectories and home range."
+    er_client_name:
+      data_source:
+        name: "mep_dev"
+    groupers:
+      groupers: []
+    time_range:
+      since: "2017-01-01T00:00:00Z"
+      until: "2017-03-31T23:59:59Z"
+    subject_obs:
+      subject_group_name: "Ecoscope"
+      include_inactive: false
+    subject_traj:
+      trajectory_segment_filter:
+        min_length_meters: 100000000000000000.0
+        max_length_meters: 10000.0
+        max_time_secs: 21600.0
+        min_time_secs: 1.0
+        max_speed_kmhr: 10.0
+        min_speed_kmhr: 0.0001
+    td:
+      pixel_size: 1000
