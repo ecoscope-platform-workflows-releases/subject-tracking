@@ -1,10 +1,10 @@
 id: subject_tracking
 requirements:
   - name: ecoscope-workflows-core
-    version: 0.0.45
+    version: 0.0.46
     channel: https://repo.prefix.dev/ecoscope-workflows/
   - name: ecoscope-workflows-ext-ecoscope
-    version: 0.0.45
+    version: 0.0.46
     channel: https://repo.prefix.dev/ecoscope-workflows/
 workflow:
   - name: Set Workflow Details
@@ -80,7 +80,9 @@ workflow:
       classification_options:
         scheme: equal_interval
         k: 6
-      labels: null
+      label_options:
+        label_ranges: false
+        label_decimals: 1
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_subject_traj_groups.return }}
