@@ -585,7 +585,10 @@ def main(params: Params):
                 "opacity": 0.7,
                 "get_line_width": 0,
             },
-            legend=None,
+            legend={
+                "label_column": "percentile",
+                "color_column": "percentile_colormap",
+            },
             **(params_dict.get("td_map_layer") or {}),
         )
         .mapvalues(argnames=["geodataframe"], argvalues=td_colormap)
