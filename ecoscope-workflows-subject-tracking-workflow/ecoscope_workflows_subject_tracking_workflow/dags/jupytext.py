@@ -1176,7 +1176,7 @@ td_map_layer = (
             "opacity": 0.7,
             "get_line_width": 0,
         },
-        legend=None,
+        legend={"label_column": "percentile", "color_column": "percentile_colormap"},
         **td_map_layer_params,
     )
     .mapvalues(argnames=["geodataframe"], argvalues=td_colormap)
