@@ -22,6 +22,7 @@ from ecoscope_workflows_ext_ecoscope.tasks.preprocessing import (
     relocations_to_trajectory,
 )
 from ecoscope_workflows_core.tasks.transformation import add_temporal_index
+from ecoscope_workflows_core.tasks.transformation import map_columns
 from ecoscope_workflows_core.tasks.groupby import split_groups
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import apply_classification
 from ecoscope_workflows_core.tasks.transformation import sort_values
@@ -181,6 +182,7 @@ subject_reloc = (
             "junk_status",
             "geometry",
             "extra__subject__name",
+            "extra__subject__subject_subtype",
         ],
         filter_point_coords=[
             {"x": 180.0, "y": 90.0},
@@ -260,6 +262,34 @@ traj_add_temporal_index = (
 
 
 # %% [markdown]
+# ## Rename value grouper columns
+
+# %%
+# parameters
+
+rename_grouper_columns_params = dict()
+
+# %%
+# call the task
+
+
+rename_grouper_columns = (
+    map_columns.handle_errors(task_instance_id="rename_grouper_columns")
+    .partial(
+        df=traj_add_temporal_index,
+        drop_columns=[],
+        retain_columns=[],
+        rename_columns={
+            "extra__name": "subject_name",
+            "extra__subject_subtype": "subject_subtype",
+        },
+        **rename_grouper_columns_params,
+    )
+    .call()
+)
+
+
+# %% [markdown]
 # ## Split Subject Trajectories by Group
 
 # %%
@@ -274,9 +304,7 @@ split_subject_traj_groups_params = dict()
 split_subject_traj_groups = (
     split_groups.handle_errors(task_instance_id="split_subject_traj_groups")
     .partial(
-        df=traj_add_temporal_index,
-        groupers=groupers,
-        **split_subject_traj_groups_params,
+        df=rename_grouper_columns, groupers=groupers, **split_subject_traj_groups_params
     )
     .call()
 )
@@ -1286,7 +1314,7 @@ nsd_chart = (
     draw_ecoplot.handle_errors(task_instance_id="nsd_chart")
     .partial(
         dataframe=traj_add_temporal_index,
-        group_by="extra__name",
+        group_by="subject_name",
         x_axis="segment_start",
         y_axis="nsd",
         plot_style={"xperiodalignment": None},

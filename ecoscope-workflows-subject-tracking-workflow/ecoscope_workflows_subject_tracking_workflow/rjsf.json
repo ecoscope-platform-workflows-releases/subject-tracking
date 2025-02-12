@@ -175,7 +175,17 @@
       "properties": {
         "index_name": {
           "title": "Index Name",
-          "type": "string"
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "subject_name",
+              "title": "Subject Name"
+            },
+            {
+              "const": "subject_subtype",
+              "title": "Subject Subtype"
+            }
+          ]
         }
       },
       "required": [
