@@ -1,0 +1,201 @@
+{
+  "error": null,
+  "result": {
+    "filters": {
+      "schema": {
+        "properties": {
+          "subject_name": {
+            "default": "eco_1",
+            "oneOf": [
+              {
+                "const": "eco_1",
+                "title": "Eco_1"
+              },
+              {
+                "const": "eco_2",
+                "title": "Eco_2"
+              }
+            ],
+            "title": "Subject Name",
+            "type": "string"
+          },
+          "subject_subtype": {
+            "default": "ranger",
+            "oneOf": [
+              {
+                "const": "ranger",
+                "title": "Ranger"
+              }
+            ],
+            "title": "Subject Subtype",
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "uiSchema": {
+          "subject_name": {
+            "ui:title": "Subject Name",
+            "ui:widget": "select"
+          },
+          "subject_subtype": {
+            "ui:title": "Subject Subtype",
+            "ui:widget": "select"
+          }
+        }
+      }
+    },
+    "layout": [],
+    "metadata": {
+      "description": "A dashboard for visualizing subject trajectories and home range.",
+      "time_range": "From 01 Jan 2017 00:00:00 UTC to 31 Mar 2017 23:59:59 UTC",
+      "title": "Subject Tracking Dashboard"
+    },
+    "views": {
+      "{\"subject_name\": \"eco_1\", \"subject_subtype\": \"ranger\"}": [
+        {
+          "data": "str",
+          "id": 0,
+          "is_filtered": true,
+          "title": "Subject Group Trajectory Map",
+          "widget_type": "map"
+        },
+        {
+          "data": "str",
+          "id": 1,
+          "is_filtered": true,
+          "title": "Mean Speed",
+          "widget_type": "stat"
+        },
+        {
+          "data": "str",
+          "id": 2,
+          "is_filtered": true,
+          "title": "Max Speed",
+          "widget_type": "stat"
+        },
+        {
+          "data": "str",
+          "id": 3,
+          "is_filtered": true,
+          "title": "Number of Locations",
+          "widget_type": "stat"
+        },
+        {
+          "data": "str",
+          "id": 4,
+          "is_filtered": true,
+          "title": "Night/Day Ratio",
+          "widget_type": "stat"
+        },
+        {
+          "data": "str",
+          "id": 5,
+          "is_filtered": true,
+          "title": "Total Distance",
+          "widget_type": "stat"
+        },
+        {
+          "data": "str",
+          "id": 6,
+          "is_filtered": true,
+          "title": "Total Time",
+          "widget_type": "stat"
+        },
+        {
+          "data": "str",
+          "id": 7,
+          "is_filtered": true,
+          "title": "Home Range Map",
+          "widget_type": "map"
+        },
+        {
+          "data": "str",
+          "id": 8,
+          "is_filtered": true,
+          "title": "Subject Group Night/Day Map",
+          "widget_type": "map"
+        },
+        {
+          "data": "str",
+          "id": 9,
+          "is_filtered": true,
+          "title": "Net Square Displacement",
+          "widget_type": "graph"
+        }
+      ],
+      "{\"subject_name\": \"eco_2\", \"subject_subtype\": \"ranger\"}": [
+        {
+          "data": "str",
+          "id": 0,
+          "is_filtered": true,
+          "title": "Subject Group Trajectory Map",
+          "widget_type": "map"
+        },
+        {
+          "data": "str",
+          "id": 1,
+          "is_filtered": true,
+          "title": "Mean Speed",
+          "widget_type": "stat"
+        },
+        {
+          "data": "str",
+          "id": 2,
+          "is_filtered": true,
+          "title": "Max Speed",
+          "widget_type": "stat"
+        },
+        {
+          "data": "str",
+          "id": 3,
+          "is_filtered": true,
+          "title": "Number of Locations",
+          "widget_type": "stat"
+        },
+        {
+          "data": "str",
+          "id": 4,
+          "is_filtered": true,
+          "title": "Night/Day Ratio",
+          "widget_type": "stat"
+        },
+        {
+          "data": "str",
+          "id": 5,
+          "is_filtered": true,
+          "title": "Total Distance",
+          "widget_type": "stat"
+        },
+        {
+          "data": "str",
+          "id": 6,
+          "is_filtered": true,
+          "title": "Total Time",
+          "widget_type": "stat"
+        },
+        {
+          "data": "str",
+          "id": 7,
+          "is_filtered": true,
+          "title": "Home Range Map",
+          "widget_type": "map"
+        },
+        {
+          "data": "str",
+          "id": 8,
+          "is_filtered": true,
+          "title": "Subject Group Night/Day Map",
+          "widget_type": "map"
+        },
+        {
+          "data": "str",
+          "id": 9,
+          "is_filtered": true,
+          "title": "Net Square Displacement",
+          "widget_type": "graph"
+        }
+      ]
+    }
+  },
+  "trace": null
+}

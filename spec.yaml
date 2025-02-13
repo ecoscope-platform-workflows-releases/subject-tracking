@@ -1,11 +1,27 @@
 id: subject_tracking
 requirements:
   - name: ecoscope-workflows-core
-    version: 0.0.51
+    version: 0.0.53
     channel: https://repo.prefix.dev/ecoscope-workflows/
   - name: ecoscope-workflows-ext-ecoscope
-    version: 0.0.51
+    version: 0.0.53
     channel: https://repo.prefix.dev/ecoscope-workflows/
+rjsf-overrides:
+  $defs:
+    Grouper:
+      properties:
+        index_name:
+          title: Index Name
+          type: string
+          oneOf:
+            - const: subject_name
+              title: Subject Name
+            - const: subject_subtype
+              title: Subject Subtype
+      required:
+        - index_name
+      title: Grouper
+      type: object
 workflow:
   - name: Set Workflow Details
     id: workflow_details
@@ -39,6 +55,7 @@ workflow:
         - junk_status
         - geometry
         - extra__subject__name
+        - extra__subject__subject_subtype
       filter_point_coords:
         - x: 180.000000
           y: 90.000000
@@ -65,11 +82,21 @@ workflow:
       groupers: ${{ workflow.groupers.return }}
       cast_to_datetime: true
       format: mixed
+  - name: Rename value grouper columns
+    id: rename_grouper_columns
+    task: map_columns
+    partial:
+      df: ${{ workflow.traj_add_temporal_index.return }}
+      drop_columns: []
+      retain_columns: []
+      rename_columns:
+        extra__name: subject_name
+        extra__subject_subtype: subject_subtype
   - name: Split Subject Trajectories by Group
     id: split_subject_traj_groups
     task: split_groups
     partial:
-      df: ${{ workflow.traj_add_temporal_index.return }}
+      df: ${{ workflow.rename_grouper_columns.return }}
       groupers: ${{ workflow.groupers.return }}
   - name: Classify Trajectories By Speed
     id: classify_traj_speed
@@ -517,7 +544,7 @@ workflow:
     task: draw_ecoplot
     partial:
       dataframe: ${{ workflow.traj_add_temporal_index.return }}
-      group_by: extra__name
+      group_by: subject_name
       x_axis: segment_start
       y_axis: nsd
       plot_style:

@@ -15,6 +15,7 @@ from ecoscope_workflows_ext_ecoscope.tasks.preprocessing import (
     relocations_to_trajectory,
 )
 from ecoscope_workflows_core.tasks.transformation import add_temporal_index
+from ecoscope_workflows_core.tasks.transformation import map_columns
 from ecoscope_workflows_core.tasks.groupby import split_groups
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import apply_classification
 from ecoscope_workflows_core.tasks.transformation import sort_values
@@ -54,7 +55,8 @@ def main(params: Params):
         "day_night_labels": ["subject_reloc"],
         "subject_traj": ["day_night_labels"],
         "traj_add_temporal_index": ["subject_traj", "groupers"],
-        "split_subject_traj_groups": ["traj_add_temporal_index", "groupers"],
+        "rename_grouper_columns": ["traj_add_temporal_index"],
+        "split_subject_traj_groups": ["rename_grouper_columns", "groupers"],
         "classify_traj_speed": ["split_subject_traj_groups"],
         "sort_traj_speed": ["classify_traj_speed"],
         "colormap_traj_speed": ["sort_traj_speed"],
@@ -177,6 +179,7 @@ def main(params: Params):
                     "junk_status",
                     "geometry",
                     "extra__subject__name",
+                    "extra__subject__subject_subtype",
                 ],
                 "filter_point_coords": [
                     {"x": 180.0, "y": 90.0},
@@ -221,12 +224,28 @@ def main(params: Params):
             | (params_dict.get("traj_add_temporal_index") or {}),
             method="call",
         ),
+        "rename_grouper_columns": Node(
+            async_task=map_columns.validate()
+            .handle_errors(task_instance_id="rename_grouper_columns")
+            .set_executor("lithops"),
+            partial={
+                "df": DependsOn("traj_add_temporal_index"),
+                "drop_columns": [],
+                "retain_columns": [],
+                "rename_columns": {
+                    "extra__name": "subject_name",
+                    "extra__subject_subtype": "subject_subtype",
+                },
+            }
+            | (params_dict.get("rename_grouper_columns") or {}),
+            method="call",
+        ),
         "split_subject_traj_groups": Node(
             async_task=split_groups.validate()
             .handle_errors(task_instance_id="split_subject_traj_groups")
             .set_executor("lithops"),
             partial={
-                "df": DependsOn("traj_add_temporal_index"),
+                "df": DependsOn("rename_grouper_columns"),
                 "groupers": DependsOn("groupers"),
             }
             | (params_dict.get("split_subject_traj_groups") or {}),
@@ -900,7 +919,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "dataframe": DependsOn("traj_add_temporal_index"),
-                "group_by": "extra__name",
+                "group_by": "subject_name",
                 "x_axis": "segment_start",
                 "y_axis": "nsd",
                 "plot_style": {"xperiodalignment": None},
