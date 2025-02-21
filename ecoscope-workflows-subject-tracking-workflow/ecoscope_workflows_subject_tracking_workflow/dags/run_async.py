@@ -356,6 +356,7 @@ def main(params: Params):
                 "legend_style": {"placement": "bottom-right"},
                 "static": False,
                 "title": None,
+                "max_zoom": 20,
             }
             | (params_dict.get("traj_ecomap") or {}),
             method="mapvalues",
@@ -465,6 +466,7 @@ def main(params: Params):
                 "legend_style": {"placement": "bottom-right"},
                 "static": False,
                 "title": None,
+                "max_zoom": 20,
             }
             | (params_dict.get("traj_nightday_ecomap") or {}),
             method="mapvalues",
@@ -867,6 +869,7 @@ def main(params: Params):
                 "legend_style": {"placement": "bottom-right"},
                 "static": False,
                 "title": None,
+                "max_zoom": 20,
             }
             | (params_dict.get("td_ecomap") or {}),
             method="mapvalues",

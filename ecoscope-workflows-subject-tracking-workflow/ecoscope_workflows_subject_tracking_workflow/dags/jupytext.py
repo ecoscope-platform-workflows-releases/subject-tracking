@@ -455,6 +455,7 @@ traj_ecomap = (
         legend_style={"placement": "bottom-right"},
         static=False,
         title=None,
+        max_zoom=20,
         **traj_ecomap_params,
     )
     .mapvalues(argnames=["geo_layers"], argvalues=traj_map_layers)
@@ -617,6 +618,7 @@ traj_nightday_ecomap = (
         legend_style={"placement": "bottom-right"},
         static=False,
         title=None,
+        max_zoom=20,
         **traj_nightday_ecomap_params,
     )
     .mapvalues(argnames=["geo_layers"], argvalues=traj_map_night_layers)
@@ -1231,6 +1233,7 @@ td_ecomap = (
         legend_style={"placement": "bottom-right"},
         static=False,
         title=None,
+        max_zoom=20,
         **td_ecomap_params,
     )
     .mapvalues(argnames=["geo_layers"], argvalues=td_map_layer)
