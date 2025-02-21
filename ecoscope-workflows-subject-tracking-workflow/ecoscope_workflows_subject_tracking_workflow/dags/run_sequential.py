@@ -227,6 +227,7 @@ def main(params: Params):
                 "label_column": "speed_bins_formatted",
                 "color_column": "speed_bins_colormap",
             },
+            tooltip_columns=["subject_name", "subject_subtype", "speed_kmhr"],
             **(params_dict.get("traj_map_layers") or {}),
         )
         .mapvalues(argnames=["geodataframe"], argvalues=speedmap_legend_with_unit)
@@ -241,6 +242,7 @@ def main(params: Params):
             legend_style={"placement": "bottom-right"},
             static=False,
             title=None,
+            max_zoom=20,
             **(params_dict.get("traj_ecomap") or {}),
         )
         .mapvalues(argnames=["geo_layers"], argvalues=traj_map_layers)
@@ -306,6 +308,7 @@ def main(params: Params):
         .partial(
             layer_style={"color_column": "is_night_colors"},
             legend={"labels": ["Night", "Day"], "colors": ["#292965", "#e7a553"]},
+            tooltip_columns=["subject_name", "subject_subtype", "extra__is_night"],
             **(params_dict.get("traj_map_night_layers") or {}),
         )
         .mapvalues(argnames=["geodataframe"], argvalues=colormap_traj_night)
@@ -320,6 +323,7 @@ def main(params: Params):
             legend_style={"placement": "bottom-right"},
             static=False,
             title=None,
+            max_zoom=20,
             **(params_dict.get("traj_nightday_ecomap") or {}),
         )
         .mapvalues(argnames=["geo_layers"], argvalues=traj_map_night_layers)
@@ -607,6 +611,7 @@ def main(params: Params):
                 "label_column": "percentile",
                 "color_column": "percentile_colormap",
             },
+            tooltip_columns=["percentile"],
             **(params_dict.get("td_map_layer") or {}),
         )
         .mapvalues(argnames=["geodataframe"], argvalues=td_colormap)
@@ -621,6 +626,7 @@ def main(params: Params):
             legend_style={"placement": "bottom-right"},
             static=False,
             title=None,
+            max_zoom=20,
             **(params_dict.get("td_ecomap") or {}),
         )
         .mapvalues(argnames=["geo_layers"], argvalues=td_map_layer)

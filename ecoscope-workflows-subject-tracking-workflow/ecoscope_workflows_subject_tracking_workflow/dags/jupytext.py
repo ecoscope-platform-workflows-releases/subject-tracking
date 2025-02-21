@@ -429,6 +429,7 @@ traj_map_layers = (
             "label_column": "speed_bins_formatted",
             "color_column": "speed_bins_colormap",
         },
+        tooltip_columns=["subject_name", "subject_subtype", "speed_kmhr"],
         **traj_map_layers_params,
     )
     .mapvalues(argnames=["geodataframe"], argvalues=speedmap_legend_with_unit)
@@ -455,6 +456,7 @@ traj_ecomap = (
         legend_style={"placement": "bottom-right"},
         static=False,
         title=None,
+        max_zoom=20,
         **traj_ecomap_params,
     )
     .mapvalues(argnames=["geo_layers"], argvalues=traj_map_layers)
@@ -591,6 +593,7 @@ traj_map_night_layers = (
     .partial(
         layer_style={"color_column": "is_night_colors"},
         legend={"labels": ["Night", "Day"], "colors": ["#292965", "#e7a553"]},
+        tooltip_columns=["subject_name", "subject_subtype", "extra__is_night"],
         **traj_map_night_layers_params,
     )
     .mapvalues(argnames=["geodataframe"], argvalues=colormap_traj_night)
@@ -617,6 +620,7 @@ traj_nightday_ecomap = (
         legend_style={"placement": "bottom-right"},
         static=False,
         title=None,
+        max_zoom=20,
         **traj_nightday_ecomap_params,
     )
     .mapvalues(argnames=["geo_layers"], argvalues=traj_map_night_layers)
@@ -1205,6 +1209,7 @@ td_map_layer = (
             "get_line_width": 0,
         },
         legend={"label_column": "percentile", "color_column": "percentile_colormap"},
+        tooltip_columns=["percentile"],
         **td_map_layer_params,
     )
     .mapvalues(argnames=["geodataframe"], argvalues=td_colormap)
@@ -1231,6 +1236,7 @@ td_ecomap = (
         legend_style={"placement": "bottom-right"},
         static=False,
         title=None,
+        max_zoom=20,
         **td_ecomap_params,
     )
     .mapvalues(argnames=["geo_layers"], argvalues=td_map_layer)

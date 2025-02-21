@@ -352,6 +352,7 @@ def main(params: Params):
                     "label_column": "speed_bins_formatted",
                     "color_column": "speed_bins_colormap",
                 },
+                "tooltip_columns": ["subject_name", "subject_subtype", "speed_kmhr"],
             }
             | (params_dict.get("traj_map_layers") or {}),
             method="mapvalues",
@@ -373,6 +374,7 @@ def main(params: Params):
                 "legend_style": {"placement": "bottom-right"},
                 "static": False,
                 "title": None,
+                "max_zoom": 20,
             }
             | (params_dict.get("traj_ecomap") or {}),
             method="mapvalues",
@@ -461,6 +463,11 @@ def main(params: Params):
                     "labels": ["Night", "Day"],
                     "colors": ["#292965", "#e7a553"],
                 },
+                "tooltip_columns": [
+                    "subject_name",
+                    "subject_subtype",
+                    "extra__is_night",
+                ],
             }
             | (params_dict.get("traj_map_night_layers") or {}),
             method="mapvalues",
@@ -482,6 +489,7 @@ def main(params: Params):
                 "legend_style": {"placement": "bottom-right"},
                 "static": False,
                 "title": None,
+                "max_zoom": 20,
             }
             | (params_dict.get("traj_nightday_ecomap") or {}),
             method="mapvalues",
@@ -863,6 +871,7 @@ def main(params: Params):
                     "label_column": "percentile",
                     "color_column": "percentile_colormap",
                 },
+                "tooltip_columns": ["percentile"],
             }
             | (params_dict.get("td_map_layer") or {}),
             method="mapvalues",
@@ -884,6 +893,7 @@ def main(params: Params):
                 "legend_style": {"placement": "bottom-right"},
                 "static": False,
                 "title": None,
+                "max_zoom": 20,
             }
             | (params_dict.get("td_ecomap") or {}),
             method="mapvalues",
