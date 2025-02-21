@@ -1,10 +1,10 @@
 id: subject_tracking
 requirements:
   - name: ecoscope-workflows-core
-    version: 0.0.54
+    version: 0.0.56
     channel: https://repo.prefix.dev/ecoscope-workflows/
   - name: ecoscope-workflows-ext-ecoscope
-    version: 0.0.54
+    version: 0.0.56
     channel: https://repo.prefix.dev/ecoscope-workflows/
 rjsf-overrides:
   $defs:
@@ -160,6 +160,10 @@ workflow:
       legend:
         label_column: speed_bins_formatted
         color_column: speed_bins_colormap
+      tooltip_columns:
+        - subject_name
+        - subject_subtype
+        - speed_kmhr
     mapvalues:
       argnames: geodataframe
       argvalues: ${{ workflow.speedmap_legend_with_unit.return }}
@@ -177,6 +181,7 @@ workflow:
         placement: bottom-right
       static: false
       title: null
+      max_zoom: 20
     mapvalues:
       argnames: geo_layers
       argvalues: ${{ workflow.traj_map_layers.return }}
@@ -238,6 +243,10 @@ workflow:
         colors:
           - '#292965'
           - '#e7a553'
+      tooltip_columns:
+        - subject_name
+        - subject_subtype
+        - extra__is_night
     mapvalues:
       argnames: geodataframe
       argvalues: ${{ workflow.colormap_traj_night.return }}
@@ -255,6 +264,7 @@ workflow:
         placement: bottom-right
       static: false
       title: null
+      max_zoom: 20
     mapvalues:
       argnames: geo_layers
       argvalues: ${{ workflow.traj_map_night_layers.return }}
@@ -496,6 +506,8 @@ workflow:
       legend:
         label_column: percentile
         color_column: percentile_colormap
+      tooltip_columns:
+        - percentile
     mapvalues:
       argnames: geodataframe
       argvalues: ${{ workflow.td_colormap.return }}
@@ -513,6 +525,7 @@ workflow:
         placement: bottom-right
       static: false
       title: null
+      max_zoom: 20
     mapvalues:
       argnames: geo_layers
       argvalues: ${{ workflow.td_map_layer.return }}
