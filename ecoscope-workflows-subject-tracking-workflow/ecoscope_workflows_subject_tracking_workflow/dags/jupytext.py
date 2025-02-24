@@ -415,7 +415,9 @@ speedmap_legend_with_unit = (
 # %%
 # parameters
 
-traj_map_layers_params = dict()
+traj_map_layers_params = dict(
+    zoom=...,
+)
 
 # %%
 # call the task
@@ -442,7 +444,9 @@ traj_map_layers = (
 # %%
 # parameters
 
-traj_ecomap_params = dict()
+traj_ecomap_params = dict(
+    view_state=...,
+)
 
 # %%
 # call the task
@@ -582,7 +586,9 @@ colormap_traj_night = (
 # %%
 # parameters
 
-traj_map_night_layers_params = dict()
+traj_map_night_layers_params = dict(
+    zoom=...,
+)
 
 # %%
 # call the task
@@ -606,7 +612,9 @@ traj_map_night_layers = (
 # %%
 # parameters
 
-traj_nightday_ecomap_params = dict()
+traj_nightday_ecomap_params = dict(
+    view_state=...,
+)
 
 # %%
 # call the task
@@ -1194,7 +1202,9 @@ td_colormap = (
 # %%
 # parameters
 
-td_map_layer_params = dict()
+td_map_layer_params = dict(
+    zoom=...,
+)
 
 # %%
 # call the task
@@ -1222,7 +1232,9 @@ td_map_layer = (
 # %%
 # parameters
 
-td_ecomap_params = dict()
+td_ecomap_params = dict(
+    view_state=...,
+)
 
 # %%
 # call the task
