@@ -29,6 +29,7 @@ from ecoscope_workflows_ext_ecoscope.tasks.preprocessing import (
 )
 from ecoscope_workflows_core.tasks.transformation import add_temporal_index
 from ecoscope_workflows_core.tasks.transformation import map_columns
+from ecoscope_workflows_core.tasks.transformation import map_values
 from ecoscope_workflows_core.tasks.groupby import split_groups
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import apply_classification
 from ecoscope_workflows_core.tasks.transformation import sort_values
@@ -114,6 +115,7 @@ def main(params: Params):
                 "geometry",
                 "extra__subject__name",
                 "extra__subject__subject_subtype",
+                "extra__subject__sex",
             ],
             filter_point_coords=[
                 {"x": 180.0, "y": 90.0},
@@ -167,8 +169,23 @@ def main(params: Params):
             rename_columns={
                 "extra__name": "subject_name",
                 "extra__subject_subtype": "subject_subtype",
+                "extra__sex": "subject_sex",
             },
             **(params_dict.get("rename_grouper_columns") or {}),
+        )
+        .call()
+    )
+
+    map_subject_sex = (
+        map_values.validate()
+        .handle_errors(task_instance_id="map_subject_sex")
+        .partial(
+            df=rename_grouper_columns,
+            column_name="subject_sex",
+            value_map={"male": "male", "female": "female"},
+            missing_values="replace",
+            replacement="unknown",
+            **(params_dict.get("map_subject_sex") or {}),
         )
         .call()
     )
@@ -177,7 +194,7 @@ def main(params: Params):
         split_groups.validate()
         .handle_errors(task_instance_id="split_subject_traj_groups")
         .partial(
-            df=rename_grouper_columns,
+            df=map_subject_sex,
             groupers=groupers,
             **(params_dict.get("split_subject_traj_groups") or {}),
         )
