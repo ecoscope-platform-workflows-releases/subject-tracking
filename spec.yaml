@@ -1,10 +1,10 @@
 id: subject_tracking
 requirements:
   - name: ecoscope-workflows-core
-    version: 0.0.57
+    version: 0.0.58
     channel: https://repo.prefix.dev/ecoscope-workflows/
   - name: ecoscope-workflows-ext-ecoscope
-    version: 0.0.57
+    version: 0.0.58
     channel: https://repo.prefix.dev/ecoscope-workflows/
 rjsf-overrides:
   $defs:
@@ -18,6 +18,8 @@ rjsf-overrides:
               title: Subject Name
             - const: subject_subtype
               title: Subject Subtype
+            - const: subject_sex
+              title: Subject Sex
       required:
         - index_name
       title: Grouper
@@ -56,6 +58,7 @@ workflow:
         - geometry
         - extra__subject__name
         - extra__subject__subject_subtype
+        - extra__subject__sex
       filter_point_coords:
         - x: 180.000000
           y: 90.000000
@@ -92,11 +95,23 @@ workflow:
       rename_columns:
         extra__name: subject_name
         extra__subject_subtype: subject_subtype
+        extra__sex: subject_sex
+  - name: Map Subject Sex Values
+    id: map_subject_sex
+    task: map_values
+    partial:
+      df: ${{ workflow.rename_grouper_columns.return }}
+      column_name: subject_sex
+      value_map:
+        male: male
+        female: female
+      missing_values: replace
+      replacement: unknown
   - name: Split Subject Trajectories by Group
     id: split_subject_traj_groups
     task: split_groups
     partial:
-      df: ${{ workflow.rename_grouper_columns.return }}
+      df: ${{ workflow.map_subject_sex.return }}
       groupers: ${{ workflow.groupers.return }}
   - name: Classify Trajectories By Speed
     id: classify_traj_speed

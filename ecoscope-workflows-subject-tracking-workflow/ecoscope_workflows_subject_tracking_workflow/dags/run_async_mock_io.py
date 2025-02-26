@@ -31,6 +31,7 @@ from ecoscope_workflows_ext_ecoscope.tasks.preprocessing import (
 )
 from ecoscope_workflows_core.tasks.transformation import add_temporal_index
 from ecoscope_workflows_core.tasks.transformation import map_columns
+from ecoscope_workflows_core.tasks.transformation import map_values
 from ecoscope_workflows_core.tasks.groupby import split_groups
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import apply_classification
 from ecoscope_workflows_core.tasks.transformation import sort_values
@@ -73,7 +74,8 @@ def main(params: Params):
         "subject_traj": ["day_night_labels"],
         "traj_add_temporal_index": ["subject_traj", "groupers"],
         "rename_grouper_columns": ["traj_add_temporal_index"],
-        "split_subject_traj_groups": ["rename_grouper_columns", "groupers"],
+        "map_subject_sex": ["rename_grouper_columns"],
+        "split_subject_traj_groups": ["map_subject_sex", "groupers"],
         "classify_traj_speed": ["split_subject_traj_groups"],
         "sort_traj_speed": ["classify_traj_speed"],
         "colormap_traj_speed": ["sort_traj_speed"],
@@ -197,6 +199,7 @@ def main(params: Params):
                     "geometry",
                     "extra__subject__name",
                     "extra__subject__subject_subtype",
+                    "extra__subject__sex",
                 ],
                 "filter_point_coords": [
                     {"x": 180.0, "y": 90.0},
@@ -252,9 +255,24 @@ def main(params: Params):
                 "rename_columns": {
                     "extra__name": "subject_name",
                     "extra__subject_subtype": "subject_subtype",
+                    "extra__sex": "subject_sex",
                 },
             }
             | (params_dict.get("rename_grouper_columns") or {}),
+            method="call",
+        ),
+        "map_subject_sex": Node(
+            async_task=map_values.validate()
+            .handle_errors(task_instance_id="map_subject_sex")
+            .set_executor("lithops"),
+            partial={
+                "df": DependsOn("rename_grouper_columns"),
+                "column_name": "subject_sex",
+                "value_map": {"male": "male", "female": "female"},
+                "missing_values": "replace",
+                "replacement": "unknown",
+            }
+            | (params_dict.get("map_subject_sex") or {}),
             method="call",
         ),
         "split_subject_traj_groups": Node(
@@ -262,7 +280,7 @@ def main(params: Params):
             .handle_errors(task_instance_id="split_subject_traj_groups")
             .set_executor("lithops"),
             partial={
-                "df": DependsOn("rename_grouper_columns"),
+                "df": DependsOn("map_subject_sex"),
                 "groupers": DependsOn("groupers"),
             }
             | (params_dict.get("split_subject_traj_groups") or {}),

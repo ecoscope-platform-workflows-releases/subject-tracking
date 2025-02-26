@@ -19,6 +19,21 @@
             "title": "Subject Name",
             "type": "string"
           },
+          "subject_sex": {
+            "default": "female",
+            "oneOf": [
+              {
+                "const": "female",
+                "title": "female"
+              },
+              {
+                "const": "male",
+                "title": "male"
+              }
+            ],
+            "title": "Subject Sex",
+            "type": "string"
+          },
           "subject_subtype": {
             "default": "ranger",
             "oneOf": [
@@ -37,6 +52,10 @@
             "ui:title": "Subject Name",
             "ui:widget": "select"
           },
+          "subject_sex": {
+            "ui:title": "Subject Sex",
+            "ui:widget": "select"
+          },
           "subject_subtype": {
             "ui:title": "Subject Subtype",
             "ui:widget": "select"
@@ -51,7 +70,7 @@
       "title": "Subject Tracking Dashboard"
     },
     "views": {
-      "{\"subject_name\": \"eco_1\", \"subject_subtype\": \"ranger\"}": [
+      "{\"subject_name\": \"eco_1\", \"subject_sex\": \"male\", \"subject_subtype\": \"ranger\"}": [
         {
           "data": "str",
           "id": 0,
@@ -123,7 +142,7 @@
           "widget_type": "graph"
         }
       ],
-      "{\"subject_name\": \"eco_2\", \"subject_subtype\": \"ranger\"}": [
+      "{\"subject_name\": \"eco_2\", \"subject_sex\": \"female\", \"subject_subtype\": \"ranger\"}": [
         {
           "data": "str",
           "id": 0,

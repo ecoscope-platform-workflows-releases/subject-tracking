@@ -177,6 +177,10 @@
             {
               "const": "subject_subtype",
               "title": "Subject Subtype"
+            },
+            {
+              "const": "subject_sex",
+              "title": "Subject Sex"
             }
           ]
         }

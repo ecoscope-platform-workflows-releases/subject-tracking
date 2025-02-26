@@ -73,6 +73,7 @@ value-grouper:
       groupers:
         - index_name: "subject_name"
         - index_name: "subject_subtype"
+        - index_name: "subject_sex"
     time_range:
       since: "2017-01-01T00:00:00Z"
       until: "2017-03-31T23:59:59Z"
