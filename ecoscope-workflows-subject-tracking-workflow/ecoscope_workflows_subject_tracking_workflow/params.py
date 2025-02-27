@@ -113,7 +113,16 @@ class SubjectTraj(BaseModel):
         extra="forbid",
     )
     trajectory_segment_filter: Optional[TrajectorySegmentFilter] = Field(
-        None,
+        default_factory=lambda: TrajectorySegmentFilter.model_validate(
+            {
+                "min_length_meters": 0.001,
+                "max_length_meters": 10000,
+                "min_time_secs": 1,
+                "max_time_secs": 3600,
+                "min_speed_kmhr": 0.0001,
+                "max_speed_kmhr": 120,
+            }
+        ),
         description="Trajectory Segments outside these bounds will be removed",
         title="Trajectory Segment Filter",
     )
