@@ -182,6 +182,7 @@ def main(params: Params):
                 "client": DependsOn("er_client_name"),
                 "time_range": DependsOn("time_range"),
                 "raise_on_empty": True,
+                "include_details": False,
             }
             | (params_dict.get("subject_obs") or {}),
             method="call",
