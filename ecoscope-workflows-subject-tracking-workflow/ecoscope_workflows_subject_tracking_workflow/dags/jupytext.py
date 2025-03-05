@@ -155,6 +155,7 @@ subject_obs = (
         client=er_client_name,
         time_range=time_range,
         raise_on_empty=True,
+        include_details=False,
         **subject_obs_params,
     )
     .call()
