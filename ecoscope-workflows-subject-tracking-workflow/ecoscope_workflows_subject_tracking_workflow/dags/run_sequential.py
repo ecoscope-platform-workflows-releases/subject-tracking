@@ -4,9 +4,9 @@ import os
 
 from ecoscope_workflows_core.tasks.config import set_workflow_details
 from ecoscope_workflows_core.tasks.io import set_er_connection
-from ecoscope_workflows_core.tasks.groupby import set_groupers
 from ecoscope_workflows_core.tasks.filter import set_time_range
 from ecoscope_workflows_ext_ecoscope.tasks.io import get_subjectgroup_observations
+from ecoscope_workflows_core.tasks.groupby import set_groupers
 from ecoscope_workflows_ext_ecoscope.tasks.preprocessing import process_relocations
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import classify_is_night
 from ecoscope_workflows_ext_ecoscope.tasks.preprocessing import (
@@ -58,13 +58,6 @@ def main(params: Params):
         .call()
     )
 
-    groupers = (
-        set_groupers.validate()
-        .handle_errors(task_instance_id="groupers")
-        .partial(**(params_dict.get("groupers") or {}))
-        .call()
-    )
-
     time_range = (
         set_time_range.validate()
         .handle_errors(task_instance_id="time_range")
@@ -81,8 +74,16 @@ def main(params: Params):
             client=er_client_name,
             time_range=time_range,
             raise_on_empty=True,
+            include_details=False,
             **(params_dict.get("subject_obs") or {}),
         )
+        .call()
+    )
+
+    groupers = (
+        set_groupers.validate()
+        .handle_errors(task_instance_id="groupers")
+        .partial(**(params_dict.get("groupers") or {}))
         .call()
     )
 
@@ -681,10 +682,15 @@ def main(params: Params):
         .partial(
             dataframe=traj_add_temporal_index,
             group_by="subject_name",
-            x_axis="segment_start",
-            y_axis="nsd",
-            plot_style={"xperiodalignment": None},
-            color_column=None,
+            ecoplot_configs=[
+                {
+                    "x_col": "segment_start",
+                    "y_col": "nsd",
+                    "plot_style": {"xperiodalignment": None},
+                    "color_column": None,
+                }
+            ],
+            tickformat="%b-%Y",
             **(params_dict.get("nsd_chart") or {}),
         )
         .mapvalues(argnames=["dataframe"], argvalues=split_subject_traj_groups)
