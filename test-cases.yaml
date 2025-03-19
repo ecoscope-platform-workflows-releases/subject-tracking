@@ -25,7 +25,7 @@ all-grouper:
         max_speed_kmhr: 10.0
         min_speed_kmhr: 0.0001
     td:
-      pixel_size: 1000
+      pixel_size: 1000.0
 
 month-grouper:
   name: Month Grouper
@@ -39,7 +39,7 @@ month-grouper:
         name: "mep_dev"
     groupers:
       groupers:
-        - temporal_index: "%B"
+        - "%B"
     time_range:
       since: "2017-01-01T00:00:00Z"
       until: "2017-03-31T23:59:59Z"
@@ -55,7 +55,7 @@ month-grouper:
         max_speed_kmhr: 10.0
         min_speed_kmhr: 0.0001
     td:
-      pixel_size: 1000
+      pixel_size: 1000.0
       max_speed_factor: 1.05
       expansion_factor: 1.3
 
@@ -71,9 +71,9 @@ value-grouper:
         name: "mep_dev"
     groupers:
       groupers:
-        - index_name: "subject_name"
-        - index_name: "subject_subtype"
-        - index_name: "subject_sex"
+        - "subject_name"
+        - "subject_subtype"
+        - "subject_sex"
     time_range:
       since: "2017-01-01T00:00:00Z"
       until: "2017-03-31T23:59:59Z"
@@ -89,7 +89,7 @@ value-grouper:
         max_speed_kmhr: 10.0
         min_speed_kmhr: 0.0001
     td:
-      pixel_size: 1000
+      pixel_size: 1000.0
       max_speed_factor: 1.05
       expansion_factor: 1.3
 
@@ -124,4 +124,4 @@ task-instance-error:
         max_speed_kmhr: 10.0
         min_speed_kmhr: 0.0001
     td:
-      pixel_size: 1000
+      pixel_size: 1000.0
