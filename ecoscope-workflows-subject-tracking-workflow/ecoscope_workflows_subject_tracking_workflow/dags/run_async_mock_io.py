@@ -17,13 +17,13 @@ from ecoscope_workflows_core.graph import DependsOn, DependsOnSequence, Graph, N
 
 from ecoscope_workflows_core.tasks.config import set_workflow_details
 from ecoscope_workflows_core.tasks.io import set_er_connection
-from ecoscope_workflows_core.tasks.groupby import set_groupers
 from ecoscope_workflows_core.tasks.filter import set_time_range
 
 get_subjectgroup_observations = create_task_magicmock(  # 🧪
     anchor="ecoscope_workflows_ext_ecoscope.tasks.io",  # 🧪
     func_name="get_subjectgroup_observations",  # 🧪
 )  # 🧪
+from ecoscope_workflows_core.tasks.groupby import set_groupers
 from ecoscope_workflows_ext_ecoscope.tasks.preprocessing import process_relocations
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import classify_is_night
 from ecoscope_workflows_ext_ecoscope.tasks.preprocessing import (
@@ -66,9 +66,9 @@ def main(params: Params):
     dependencies = {
         "workflow_details": [],
         "er_client_name": [],
-        "groupers": [],
         "time_range": [],
         "subject_obs": ["er_client_name", "time_range"],
+        "groupers": [],
         "subject_reloc": ["subject_obs"],
         "day_night_labels": ["subject_reloc"],
         "subject_traj": ["day_night_labels"],
@@ -157,13 +157,6 @@ def main(params: Params):
             partial=(params_dict.get("er_client_name") or {}),
             method="call",
         ),
-        "groupers": Node(
-            async_task=set_groupers.validate()
-            .handle_errors(task_instance_id="groupers")
-            .set_executor("lithops"),
-            partial=(params_dict.get("groupers") or {}),
-            method="call",
-        ),
         "time_range": Node(
             async_task=set_time_range.validate()
             .handle_errors(task_instance_id="time_range")
@@ -182,8 +175,16 @@ def main(params: Params):
                 "client": DependsOn("er_client_name"),
                 "time_range": DependsOn("time_range"),
                 "raise_on_empty": True,
+                "include_details": False,
             }
             | (params_dict.get("subject_obs") or {}),
+            method="call",
+        ),
+        "groupers": Node(
+            async_task=set_groupers.validate()
+            .handle_errors(task_instance_id="groupers")
+            .set_executor("lithops"),
+            partial=(params_dict.get("groupers") or {}),
             method="call",
         ),
         "subject_reloc": Node(
@@ -965,10 +966,15 @@ def main(params: Params):
             partial={
                 "dataframe": DependsOn("traj_add_temporal_index"),
                 "group_by": "subject_name",
-                "x_axis": "segment_start",
-                "y_axis": "nsd",
-                "plot_style": {"xperiodalignment": None},
-                "color_column": None,
+                "ecoplot_configs": [
+                    {
+                        "x_col": "segment_start",
+                        "y_col": "nsd",
+                        "plot_style": {"xperiodalignment": None},
+                        "color_column": None,
+                    }
+                ],
+                "tickformat": "%b-%Y",
             }
             | (params_dict.get("nsd_chart") or {}),
             method="mapvalues",
