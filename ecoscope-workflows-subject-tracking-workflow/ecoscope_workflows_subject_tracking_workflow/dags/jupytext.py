@@ -13,9 +13,9 @@
 import os
 from ecoscope_workflows_core.tasks.config import set_workflow_details
 from ecoscope_workflows_core.tasks.io import set_er_connection
-from ecoscope_workflows_core.tasks.groupby import set_groupers
 from ecoscope_workflows_core.tasks.filter import set_time_range
 from ecoscope_workflows_ext_ecoscope.tasks.io import get_subjectgroup_observations
+from ecoscope_workflows_core.tasks.groupby import set_groupers
 from ecoscope_workflows_ext_ecoscope.tasks.preprocessing import process_relocations
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import classify_is_night
 from ecoscope_workflows_ext_ecoscope.tasks.preprocessing import (
@@ -48,7 +48,7 @@ from ecoscope_workflows_core.tasks.results import create_plot_widget_single_view
 from ecoscope_workflows_core.tasks.results import gather_dashboard
 
 # %% [markdown]
-# ## Set Workflow Details
+# ## Workflow Details
 
 # %%
 # parameters
@@ -71,7 +71,7 @@ workflow_details = (
 
 
 # %% [markdown]
-# ## Select EarthRanger Data Source
+# ## Data Source
 
 # %%
 # parameters
@@ -92,28 +92,7 @@ er_client_name = (
 
 
 # %% [markdown]
-# ## Set Groupers
-
-# %%
-# parameters
-
-groupers_params = dict(
-    groupers=...,
-)
-
-# %%
-# call the task
-
-
-groupers = (
-    set_groupers.handle_errors(task_instance_id="groupers")
-    .partial(**groupers_params)
-    .call()
-)
-
-
-# %% [markdown]
-# ## Set Time Range Filters
+# ## Time Range
 
 # %%
 # parameters
@@ -155,8 +134,30 @@ subject_obs = (
         client=er_client_name,
         time_range=time_range,
         raise_on_empty=True,
+        include_details=False,
         **subject_obs_params,
     )
+    .call()
+)
+
+
+# %% [markdown]
+# ## Group Data
+
+# %%
+# parameters
+
+groupers_params = dict(
+    groupers=...,
+)
+
+# %%
+# call the task
+
+
+groupers = (
+    set_groupers.handle_errors(task_instance_id="groupers")
+    .partial(**groupers_params)
     .call()
 )
 
@@ -1360,10 +1361,15 @@ nsd_chart = (
     .partial(
         dataframe=traj_add_temporal_index,
         group_by="subject_name",
-        x_axis="segment_start",
-        y_axis="nsd",
-        plot_style={"xperiodalignment": None},
-        color_column=None,
+        ecoplot_configs=[
+            {
+                "x_col": "segment_start",
+                "y_col": "nsd",
+                "plot_style": {"xperiodalignment": None},
+                "color_column": None,
+            }
+        ],
+        tickformat="%b-%Y",
         **nsd_chart_params,
     )
     .mapvalues(argnames=["dataframe"], argvalues=split_subject_traj_groups)

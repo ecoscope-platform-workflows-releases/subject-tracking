@@ -5,15 +5,15 @@ from __future__ import annotations
 
 from typing import List, Optional, Union
 
-from pydantic import AwareDatetime, BaseModel, ConfigDict, Field
+from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, RootModel
 
 
 class WorkflowDetails(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
-    name: str = Field(..., description="The name of your workflow", title="Name")
-    description: str = Field(..., description="A description", title="Description")
+    name: str = Field(..., title="Workflow Name")
+    description: Optional[str] = Field("", title="Workflow Description")
 
 
 class TimeRange(BaseModel):
@@ -50,15 +50,15 @@ class Td(BaseModel):
 
 
 class EarthRangerConnection(BaseModel):
-    name: str = Field(..., title="Connection Name")
+    name: str = Field(..., title="Data Source")
 
 
-class Grouper(BaseModel):
-    index_name: str = Field(..., title="Index Name")
+class TemporalGrouper(RootModel[str]):
+    root: str = Field(..., title="Time")
 
 
-class TemporalGrouper(BaseModel):
-    temporal_index: str = Field(..., title="Temporal Index")
+class ValueGrouper(RootModel[str]):
+    root: str = Field(..., title="Category")
 
 
 class TrajectorySegmentFilter(BaseModel):
@@ -91,9 +91,7 @@ class ErClientName(BaseModel):
         extra="forbid",
     )
     data_source: EarthRangerConnection = Field(
-        ...,
-        description="Select one of your configured data sources by name.",
-        title="Data Source",
+        ..., description="Select one of your configured data sources.", title=""
     )
 
 
@@ -101,10 +99,10 @@ class Groupers(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
-    groupers: Optional[List[Union[Grouper, TemporalGrouper]]] = Field(
+    groupers: Optional[List[Union[ValueGrouper, TemporalGrouper]]] = Field(
         None,
-        description="            Temporal index(es) and/or column(s) to group by. This field is optional.\n            If left unfilled, all data will be presented together in a single group.\n            ",
-        title="Groupers",
+        description="            Specify how the data should be grouped to create the views for your dashboard.\n            This field is optional; if left blank, all the data will appear in a single view.\n            ",
+        title=" ",
     )
 
 
@@ -133,16 +131,18 @@ class FormData(BaseModel):
         extra="forbid",
     )
     workflow_details: Optional[WorkflowDetails] = Field(
-        None, title="Set Workflow Details"
+        None,
+        description="Add information that will help to differentiate this workflow from another.",
+        title="Workflow Details",
     )
-    er_client_name: Optional[ErClientName] = Field(
-        None, title="Select EarthRanger Data Source"
+    er_client_name: Optional[ErClientName] = Field(None, title="Data Source")
+    time_range: Optional[TimeRange] = Field(
+        None, description="Choose the period of time to analyze.", title="Time Range"
     )
-    groupers: Optional[Groupers] = Field(None, title="Set Groupers")
-    time_range: Optional[TimeRange] = Field(None, title="Set Time Range Filters")
     subject_obs: Optional[SubjectObs] = Field(
         None, title="Get Subject Group Observations from EarthRanger"
     )
+    groupers: Optional[Groupers] = Field(None, title="Group Data")
     subject_traj: Optional[SubjectTraj] = Field(
         None, title="Transform Relocations to Trajectories"
     )
