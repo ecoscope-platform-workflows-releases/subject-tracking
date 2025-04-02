@@ -1,10 +1,10 @@
 id: subject_tracking
 requirements:
   - name: ecoscope-workflows-core
-    version: 0.0.65
+    version: 0.0.67
     channel: https://repo.prefix.dev/ecoscope-workflows/
   - name: ecoscope-workflows-ext-ecoscope
-    version: 0.0.65
+    version: 0.0.67
     channel: https://repo.prefix.dev/ecoscope-workflows/
 rjsf-overrides:
   $defs:
@@ -99,16 +99,11 @@ workflow:
         female: female
       missing_values: replace
       replacement: unknown
-  - name: Split Subject Trajectories by Group
-    id: split_subject_traj_groups
-    task: split_groups
-    partial:
-      df: ${{ workflow.map_subject_sex.return }}
-      groupers: ${{ workflow.groupers.return }}
   - name: Classify Trajectories By Speed
     id: classify_traj_speed
     task: apply_classification
     partial:
+      df: ${{ workflow.map_subject_sex.return }}
       input_column_name: speed_kmhr
       output_column_name: speed_bins
       classification_options:
@@ -117,9 +112,12 @@ workflow:
       label_options:
         label_ranges: false
         label_decimals: 1
-    mapvalues:
-      argnames: df
-      argvalues: ${{ workflow.split_subject_traj_groups.return }}
+  - name: Split Subject Trajectories by Group
+    id: split_subject_traj_groups
+    task: split_groups
+    partial:
+      df: ${{ workflow.classify_traj_speed.return }}
+      groupers: ${{ workflow.groupers.return }}
   - name: Sort Trajetories By Classification
     id: sort_traj_speed
     task: sort_values
@@ -129,7 +127,7 @@ workflow:
       na_position: last
     mapvalues:
       argnames: df
-      argvalues: ${{ workflow.classify_traj_speed.return }}
+      argvalues: ${{ workflow.split_subject_traj_groups.return }}
   - name: Apply Color to Trajectories By Speed
     id: colormap_traj_speed
     task: apply_color_map
