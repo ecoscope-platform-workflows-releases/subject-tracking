@@ -30,8 +30,8 @@ from ecoscope_workflows_ext_ecoscope.tasks.preprocessing import (
 from ecoscope_workflows_core.tasks.transformation import add_temporal_index
 from ecoscope_workflows_core.tasks.transformation import map_columns
 from ecoscope_workflows_core.tasks.transformation import map_values
-from ecoscope_workflows_core.tasks.groupby import split_groups
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import apply_classification
+from ecoscope_workflows_core.tasks.groupby import split_groups
 from ecoscope_workflows_core.tasks.transformation import sort_values
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import apply_color_map
 from ecoscope_workflows_core.tasks.transformation import map_values_with_unit
@@ -191,28 +191,29 @@ def main(params: Params):
         .call()
     )
 
-    split_subject_traj_groups = (
-        split_groups.validate()
-        .handle_errors(task_instance_id="split_subject_traj_groups")
-        .partial(
-            df=map_subject_sex,
-            groupers=groupers,
-            **(params_dict.get("split_subject_traj_groups") or {}),
-        )
-        .call()
-    )
-
     classify_traj_speed = (
         apply_classification.validate()
         .handle_errors(task_instance_id="classify_traj_speed")
         .partial(
+            df=map_subject_sex,
             input_column_name="speed_kmhr",
             output_column_name="speed_bins",
             classification_options={"scheme": "equal_interval", "k": 6},
             label_options={"label_ranges": False, "label_decimals": 1},
             **(params_dict.get("classify_traj_speed") or {}),
         )
-        .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
+        .call()
+    )
+
+    split_subject_traj_groups = (
+        split_groups.validate()
+        .handle_errors(task_instance_id="split_subject_traj_groups")
+        .partial(
+            df=classify_traj_speed,
+            groupers=groupers,
+            **(params_dict.get("split_subject_traj_groups") or {}),
+        )
+        .call()
     )
 
     sort_traj_speed = (
@@ -224,7 +225,7 @@ def main(params: Params):
             na_position="last",
             **(params_dict.get("sort_traj_speed") or {}),
         )
-        .mapvalues(argnames=["df"], argvalues=classify_traj_speed)
+        .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
     )
 
     colormap_traj_speed = (

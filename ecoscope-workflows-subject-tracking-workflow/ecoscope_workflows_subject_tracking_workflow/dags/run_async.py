@@ -17,8 +17,8 @@ from ecoscope_workflows_ext_ecoscope.tasks.preprocessing import (
 from ecoscope_workflows_core.tasks.transformation import add_temporal_index
 from ecoscope_workflows_core.tasks.transformation import map_columns
 from ecoscope_workflows_core.tasks.transformation import map_values
-from ecoscope_workflows_core.tasks.groupby import split_groups
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import apply_classification
+from ecoscope_workflows_core.tasks.groupby import split_groups
 from ecoscope_workflows_core.tasks.transformation import sort_values
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import apply_color_map
 from ecoscope_workflows_core.tasks.transformation import map_values_with_unit
@@ -58,9 +58,9 @@ def main(params: Params):
         "traj_add_temporal_index": ["subject_traj", "groupers"],
         "rename_grouper_columns": ["traj_add_temporal_index"],
         "map_subject_sex": ["rename_grouper_columns"],
-        "split_subject_traj_groups": ["map_subject_sex", "groupers"],
-        "classify_traj_speed": ["split_subject_traj_groups"],
-        "sort_traj_speed": ["classify_traj_speed"],
+        "classify_traj_speed": ["map_subject_sex"],
+        "split_subject_traj_groups": ["classify_traj_speed", "groupers"],
+        "sort_traj_speed": ["split_subject_traj_groups"],
         "colormap_traj_speed": ["sort_traj_speed"],
         "speedmap_legend_with_unit": ["colormap_traj_speed"],
         "traj_map_layers": ["speedmap_legend_with_unit"],
@@ -259,33 +259,30 @@ def main(params: Params):
             | (params_dict.get("map_subject_sex") or {}),
             method="call",
         ),
-        "split_subject_traj_groups": Node(
-            async_task=split_groups.validate()
-            .handle_errors(task_instance_id="split_subject_traj_groups")
-            .set_executor("lithops"),
-            partial={
-                "df": DependsOn("map_subject_sex"),
-                "groupers": DependsOn("groupers"),
-            }
-            | (params_dict.get("split_subject_traj_groups") or {}),
-            method="call",
-        ),
         "classify_traj_speed": Node(
             async_task=apply_classification.validate()
             .handle_errors(task_instance_id="classify_traj_speed")
             .set_executor("lithops"),
             partial={
+                "df": DependsOn("map_subject_sex"),
                 "input_column_name": "speed_kmhr",
                 "output_column_name": "speed_bins",
                 "classification_options": {"scheme": "equal_interval", "k": 6},
                 "label_options": {"label_ranges": False, "label_decimals": 1},
             }
             | (params_dict.get("classify_traj_speed") or {}),
-            method="mapvalues",
-            kwargs={
-                "argnames": ["df"],
-                "argvalues": DependsOn("split_subject_traj_groups"),
-            },
+            method="call",
+        ),
+        "split_subject_traj_groups": Node(
+            async_task=split_groups.validate()
+            .handle_errors(task_instance_id="split_subject_traj_groups")
+            .set_executor("lithops"),
+            partial={
+                "df": DependsOn("classify_traj_speed"),
+                "groupers": DependsOn("groupers"),
+            }
+            | (params_dict.get("split_subject_traj_groups") or {}),
+            method="call",
         ),
         "sort_traj_speed": Node(
             async_task=sort_values.validate()
@@ -300,7 +297,7 @@ def main(params: Params):
             method="mapvalues",
             kwargs={
                 "argnames": ["df"],
-                "argvalues": DependsOn("classify_traj_speed"),
+                "argvalues": DependsOn("split_subject_traj_groups"),
             },
         ),
         "colormap_traj_speed": Node(
