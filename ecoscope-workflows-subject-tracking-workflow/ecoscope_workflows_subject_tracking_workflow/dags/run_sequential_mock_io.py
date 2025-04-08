@@ -32,6 +32,7 @@ from ecoscope_workflows_core.tasks.transformation import map_columns
 from ecoscope_workflows_core.tasks.transformation import map_values
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import apply_classification
 from ecoscope_workflows_core.tasks.groupby import split_groups
+from ecoscope_workflows_ext_ecoscope.tasks.results import set_base_maps
 from ecoscope_workflows_core.tasks.transformation import sort_values
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import apply_color_map
 from ecoscope_workflows_core.tasks.transformation import map_values_with_unit
@@ -216,6 +217,13 @@ def main(params: Params):
         .call()
     )
 
+    base_map_defs = (
+        set_base_maps.validate()
+        .handle_errors(task_instance_id="base_map_defs")
+        .partial(**(params_dict.get("base_map_defs") or {}))
+        .call()
+    )
+
     sort_traj_speed = (
         sort_values.validate()
         .handle_errors(task_instance_id="sort_traj_speed")
@@ -273,7 +281,7 @@ def main(params: Params):
         draw_ecomap.validate()
         .handle_errors(task_instance_id="traj_ecomap")
         .partial(
-            tile_layers=[{"name": "TERRAIN"}, {"name": "SATELLITE", "opacity": 0.5}],
+            tile_layers=base_map_defs,
             north_arrow_style={"placement": "top-left"},
             legend_style={"placement": "bottom-right"},
             static=False,
@@ -354,7 +362,7 @@ def main(params: Params):
         draw_ecomap.validate()
         .handle_errors(task_instance_id="traj_nightday_ecomap")
         .partial(
-            tile_layers=[{"name": "TERRAIN"}, {"name": "SATELLITE", "opacity": 0.5}],
+            tile_layers=base_map_defs,
             north_arrow_style={"placement": "top-left"},
             legend_style={"placement": "bottom-right"},
             static=False,
@@ -657,7 +665,7 @@ def main(params: Params):
         draw_ecomap.validate()
         .handle_errors(task_instance_id="td_ecomap")
         .partial(
-            tile_layers=[{"name": "TERRAIN"}, {"name": "SATELLITE", "opacity": 0.5}],
+            tile_layers=base_map_defs,
             north_arrow_style={"placement": "top-left"},
             legend_style={"placement": "bottom-right"},
             static=False,
