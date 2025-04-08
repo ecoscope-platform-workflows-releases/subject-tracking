@@ -23,7 +23,7 @@ from .response import ResponseModel
 app = FastAPI(
     title="subject_tracking",
     debug=True,
-    version="3093911",
+    version="53f04e8",
 )
 app.add_middleware(
     CORSMiddleware,

@@ -1,10 +1,10 @@
 id: subject_tracking
 requirements:
   - name: ecoscope-workflows-core
-    version: 0.0.67
+    version: 0.0.68
     channel: https://repo.prefix.dev/ecoscope-workflows/
   - name: ecoscope-workflows-ext-ecoscope
-    version: 0.0.67
+    version: 0.0.68
     channel: https://repo.prefix.dev/ecoscope-workflows/
 rjsf-overrides:
   $defs:
@@ -118,6 +118,9 @@ workflow:
     partial:
       df: ${{ workflow.classify_traj_speed.return }}
       groupers: ${{ workflow.groupers.return }}
+  - name: Base Maps
+    id: base_map_defs
+    task: set_base_maps
   - name: Sort Trajetories By Classification
     id: sort_traj_speed
     task: sort_values
@@ -176,10 +179,7 @@ workflow:
     id: traj_ecomap
     task: draw_ecomap
     partial:
-      tile_layers:
-        - name: TERRAIN
-        - name: SATELLITE
-          opacity: 0.500000
+      tile_layers: ${{ workflow.base_map_defs.return }}
       north_arrow_style:
         placement: top-left
       legend_style:
@@ -259,10 +259,7 @@ workflow:
     id: traj_nightday_ecomap
     task: draw_ecomap
     partial:
-      tile_layers:
-        - name: TERRAIN
-        - name: SATELLITE
-          opacity: 0.500000
+      tile_layers: ${{ workflow.base_map_defs.return }}
       north_arrow_style:
         placement: top-left
       legend_style:
@@ -520,10 +517,7 @@ workflow:
     id: td_ecomap
     task: draw_ecomap
     partial:
-      tile_layers:
-        - name: TERRAIN
-        - name: SATELLITE
-          opacity: 0.500000
+      tile_layers: ${{ workflow.base_map_defs.return }}
       north_arrow_style:
         placement: top-left
       legend_style:

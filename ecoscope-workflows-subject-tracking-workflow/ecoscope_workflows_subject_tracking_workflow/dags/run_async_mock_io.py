@@ -34,6 +34,7 @@ from ecoscope_workflows_core.tasks.transformation import map_columns
 from ecoscope_workflows_core.tasks.transformation import map_values
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import apply_classification
 from ecoscope_workflows_core.tasks.groupby import split_groups
+from ecoscope_workflows_ext_ecoscope.tasks.results import set_base_maps
 from ecoscope_workflows_core.tasks.transformation import sort_values
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import apply_color_map
 from ecoscope_workflows_core.tasks.transformation import map_values_with_unit
@@ -77,18 +78,19 @@ def main(params: Params):
         "map_subject_sex": ["rename_grouper_columns"],
         "classify_traj_speed": ["map_subject_sex"],
         "split_subject_traj_groups": ["classify_traj_speed", "groupers"],
+        "base_map_defs": [],
         "sort_traj_speed": ["split_subject_traj_groups"],
         "colormap_traj_speed": ["sort_traj_speed"],
         "speedmap_legend_with_unit": ["colormap_traj_speed"],
         "traj_map_layers": ["speedmap_legend_with_unit"],
-        "traj_ecomap": ["traj_map_layers"],
+        "traj_ecomap": ["base_map_defs", "traj_map_layers"],
         "ecomap_html_urls": ["traj_ecomap"],
         "traj_map_widgets_single_views": ["ecomap_html_urls"],
         "traj_grouped_map_widget": ["traj_map_widgets_single_views"],
         "sort_traj_night_day": ["split_subject_traj_groups"],
         "colormap_traj_night": ["sort_traj_night_day"],
         "traj_map_night_layers": ["colormap_traj_night"],
-        "traj_nightday_ecomap": ["traj_map_night_layers"],
+        "traj_nightday_ecomap": ["base_map_defs", "traj_map_night_layers"],
         "ecomap_nightday_html_urls": ["traj_nightday_ecomap"],
         "traj_map_nightday_widgets_sv": ["ecomap_nightday_html_urls"],
         "traj_nightday_grouped_map_widget": ["traj_map_nightday_widgets_sv"],
@@ -117,7 +119,7 @@ def main(params: Params):
         "td": ["split_subject_traj_groups"],
         "td_colormap": ["td"],
         "td_map_layer": ["td_colormap"],
-        "td_ecomap": ["td_map_layer"],
+        "td_ecomap": ["base_map_defs", "td_map_layer"],
         "td_ecomap_html_url": ["td_ecomap"],
         "td_map_widget": ["td_ecomap_html_url"],
         "td_grouped_map_widget": ["td_map_widget"],
@@ -301,6 +303,13 @@ def main(params: Params):
             | (params_dict.get("split_subject_traj_groups") or {}),
             method="call",
         ),
+        "base_map_defs": Node(
+            async_task=set_base_maps.validate()
+            .handle_errors(task_instance_id="base_map_defs")
+            .set_executor("lithops"),
+            partial=(params_dict.get("base_map_defs") or {}),
+            method="call",
+        ),
         "sort_traj_speed": Node(
             async_task=sort_values.validate()
             .handle_errors(task_instance_id="sort_traj_speed")
@@ -382,10 +391,7 @@ def main(params: Params):
             .handle_errors(task_instance_id="traj_ecomap")
             .set_executor("lithops"),
             partial={
-                "tile_layers": [
-                    {"name": "TERRAIN"},
-                    {"name": "SATELLITE", "opacity": 0.5},
-                ],
+                "tile_layers": DependsOn("base_map_defs"),
                 "north_arrow_style": {"placement": "top-left"},
                 "legend_style": {"placement": "bottom-right"},
                 "static": False,
@@ -497,10 +503,7 @@ def main(params: Params):
             .handle_errors(task_instance_id="traj_nightday_ecomap")
             .set_executor("lithops"),
             partial={
-                "tile_layers": [
-                    {"name": "TERRAIN"},
-                    {"name": "SATELLITE", "opacity": 0.5},
-                ],
+                "tile_layers": DependsOn("base_map_defs"),
                 "north_arrow_style": {"placement": "top-left"},
                 "legend_style": {"placement": "bottom-right"},
                 "static": False,
@@ -901,10 +904,7 @@ def main(params: Params):
             .handle_errors(task_instance_id="td_ecomap")
             .set_executor("lithops"),
             partial={
-                "tile_layers": [
-                    {"name": "TERRAIN"},
-                    {"name": "SATELLITE", "opacity": 0.5},
-                ],
+                "tile_layers": DependsOn("base_map_defs"),
                 "north_arrow_style": {"placement": "top-left"},
                 "legend_style": {"placement": "bottom-right"},
                 "static": False,
