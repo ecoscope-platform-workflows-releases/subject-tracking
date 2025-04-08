@@ -24,6 +24,12 @@ all-grouper:
         min_time_secs: 1.0
         max_speed_kmhr: 10.0
         min_speed_kmhr: 0.0001
+    base_map_defs:
+      base_maps:
+        - url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"
+          opacity: 1.0
+        - url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+          opacity: 0.5
     td:
       pixel_size: 1000.0
 
@@ -54,6 +60,12 @@ month-grouper:
         min_time_secs: 1.0
         max_speed_kmhr: 10.0
         min_speed_kmhr: 0.0001
+    base_map_defs:
+      base_maps:
+        - url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"
+          opacity: 1.0
+        - url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+          opacity: 0.5
     td:
       pixel_size: 1000.0
       max_speed_factor: 1.05
@@ -88,6 +100,12 @@ value-grouper:
         min_time_secs: 1.0
         max_speed_kmhr: 10.0
         min_speed_kmhr: 0.0001
+    base_map_defs:
+      base_maps:
+        - url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"
+          opacity: 1.0
+        - url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+          opacity: 0.5
     td:
       pixel_size: 1000.0
       max_speed_factor: 1.05
@@ -123,5 +141,11 @@ task-instance-error:
         min_time_secs: 1.0
         max_speed_kmhr: 10.0
         min_speed_kmhr: 0.0001
+    base_map_defs:
+      base_maps:
+        - url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"
+          opacity: 1.0
+        - url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+          opacity: 0.5
     td:
       pixel_size: 1000.0
