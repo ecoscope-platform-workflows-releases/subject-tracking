@@ -706,7 +706,6 @@ def main(params: Params):
         draw_ecoplot.validate()
         .handle_errors(task_instance_id="nsd_chart")
         .partial(
-            dataframe=traj_add_temporal_index,
             group_by="subject_name",
             ecoplot_configs=[
                 {

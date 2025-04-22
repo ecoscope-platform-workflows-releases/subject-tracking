@@ -1384,7 +1384,6 @@ nsd_chart_params = dict()
 nsd_chart = (
     draw_ecoplot.handle_errors(task_instance_id="nsd_chart")
     .partial(
-        dataframe=traj_add_temporal_index,
         group_by="subject_name",
         ecoplot_configs=[
             {

@@ -123,7 +123,7 @@ def main(params: Params):
         "td_ecomap_html_url": ["td_ecomap"],
         "td_map_widget": ["td_ecomap_html_url"],
         "td_grouped_map_widget": ["td_map_widget"],
-        "nsd_chart": ["traj_add_temporal_index", "split_subject_traj_groups"],
+        "nsd_chart": ["split_subject_traj_groups"],
         "nsd_chart_html_url": ["nsd_chart"],
         "nsd_chart_widget": ["nsd_chart_html_url"],
         "grouped_nsd_chart_widget_merge": ["nsd_chart_widget"],
@@ -961,7 +961,6 @@ def main(params: Params):
             .handle_errors(task_instance_id="nsd_chart")
             .set_executor("lithops"),
             partial={
-                "dataframe": DependsOn("traj_add_temporal_index"),
                 "group_by": "subject_name",
                 "ecoplot_configs": [
                     {
