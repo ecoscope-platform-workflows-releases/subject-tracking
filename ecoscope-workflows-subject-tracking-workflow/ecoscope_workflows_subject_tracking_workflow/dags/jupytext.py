@@ -437,28 +437,85 @@ colormap_traj_speed = (
 
 
 # %% [markdown]
-# ## Format Speedmap Legend Label
+# ## Format Speedmap bins for legend
 
 # %%
 # parameters
 
-speedmap_legend_with_unit_params = dict()
+speed_bin_legend_with_unit_params = dict()
 
 # %%
 # call the task
 
 
-speedmap_legend_with_unit = (
-    map_values_with_unit.handle_errors(task_instance_id="speedmap_legend_with_unit")
+speed_bin_legend_with_unit = (
+    map_values_with_unit.handle_errors(task_instance_id="speed_bin_legend_with_unit")
     .partial(
         input_column_name="speed_bins",
         output_column_name="speed_bins_formatted",
         original_unit="km/h",
         new_unit="km/h",
         decimal_places=1,
-        **speedmap_legend_with_unit_params,
+        **speed_bin_legend_with_unit_params,
     )
     .mapvalues(argnames=["df"], argvalues=colormap_traj_speed)
+)
+
+
+# %% [markdown]
+# ## Format speed values for display
+
+# %%
+# parameters
+
+speed_val_with_unit_params = dict()
+
+# %%
+# call the task
+
+
+speed_val_with_unit = (
+    map_values_with_unit.handle_errors(task_instance_id="speed_val_with_unit")
+    .partial(
+        input_column_name="speed_kmhr",
+        output_column_name="speed_kmhr",
+        original_unit="km/h",
+        new_unit="km/h",
+        decimal_places=1,
+        **speed_val_with_unit_params,
+    )
+    .mapvalues(argnames=["df"], argvalues=speed_bin_legend_with_unit)
+)
+
+
+# %% [markdown]
+# ## Rename columns for map tooltip display
+
+# %%
+# parameters
+
+rename_speed_display_columns_params = dict()
+
+# %%
+# call the task
+
+
+rename_speed_display_columns = (
+    map_columns.handle_errors(task_instance_id="rename_speed_display_columns")
+    .partial(
+        drop_columns=[],
+        retain_columns=[],
+        rename_columns={
+            "segment_start": "Start",
+            "timespan_seconds": "Duration (s)",
+            "speed_kmhr": "Speed (kph)",
+            "extra__is_night": "Nighttime",
+            "subject_name": "Subject Name",
+            "subject_sex": "Subject Sex",
+        },
+        **rename_speed_display_columns_params,
+    )
+    .mapvalues(argnames=["df"], argvalues=speed_val_with_unit)
 )
 
 
@@ -484,10 +541,17 @@ traj_map_layers = (
             "label_column": "speed_bins_formatted",
             "color_column": "speed_bins_colormap",
         },
-        tooltip_columns=["subject_name", "subject_subtype", "speed_kmhr"],
+        tooltip_columns=[
+            "Start",
+            "Duration (s)",
+            "Speed (kph)",
+            "Nighttime",
+            "Subject Name",
+            "Subject Sex",
+        ],
         **traj_map_layers_params,
     )
-    .mapvalues(argnames=["geodataframe"], argvalues=speedmap_legend_with_unit)
+    .mapvalues(argnames=["geodataframe"], argvalues=rename_speed_display_columns)
 )
 
 
@@ -634,6 +698,34 @@ colormap_traj_night = (
 
 
 # %% [markdown]
+# ## Rename columns for map tooltip display
+
+# %%
+# parameters
+
+rename_nightday_display_columns_params = dict()
+
+# %%
+# call the task
+
+
+rename_nightday_display_columns = (
+    map_columns.handle_errors(task_instance_id="rename_nightday_display_columns")
+    .partial(
+        drop_columns=[],
+        retain_columns=[],
+        rename_columns={
+            "subject_name": "Subject Name",
+            "subject_subtype": "Subject Sex",
+            "extra__is_night": "Nighttime",
+        },
+        **rename_nightday_display_columns_params,
+    )
+    .mapvalues(argnames=["df"], argvalues=colormap_traj_night)
+)
+
+
+# %% [markdown]
 # ## Create map layer for each trajectory group
 
 # %%
@@ -652,10 +744,10 @@ traj_map_night_layers = (
     .partial(
         layer_style={"color_column": "is_night_colors"},
         legend={"labels": ["Night", "Day"], "colors": ["#292965", "#e7a553"]},
-        tooltip_columns=["subject_name", "subject_subtype", "extra__is_night"],
+        tooltip_columns=["Subject Name", "Subject Sex", "Nighttime"],
         **traj_map_night_layers_params,
     )
-    .mapvalues(argnames=["geodataframe"], argvalues=colormap_traj_night)
+    .mapvalues(argnames=["geodataframe"], argvalues=rename_nightday_display_columns)
 )
 
 

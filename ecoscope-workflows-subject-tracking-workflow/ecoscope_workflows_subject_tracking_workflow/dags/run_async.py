@@ -64,15 +64,18 @@ def main(params: Params):
         "base_map_defs": [],
         "sort_traj_speed": ["split_subject_traj_groups"],
         "colormap_traj_speed": ["sort_traj_speed"],
-        "speedmap_legend_with_unit": ["colormap_traj_speed"],
-        "traj_map_layers": ["speedmap_legend_with_unit"],
+        "speed_bin_legend_with_unit": ["colormap_traj_speed"],
+        "speed_val_with_unit": ["speed_bin_legend_with_unit"],
+        "rename_speed_display_columns": ["speed_val_with_unit"],
+        "traj_map_layers": ["rename_speed_display_columns"],
         "traj_ecomap": ["base_map_defs", "traj_map_layers"],
         "ecomap_html_urls": ["traj_ecomap"],
         "traj_map_widgets_single_views": ["ecomap_html_urls"],
         "traj_grouped_map_widget": ["traj_map_widgets_single_views"],
         "sort_traj_night_day": ["split_subject_traj_groups"],
         "colormap_traj_night": ["sort_traj_night_day"],
-        "traj_map_night_layers": ["colormap_traj_night"],
+        "rename_nightday_display_columns": ["colormap_traj_night"],
+        "traj_map_night_layers": ["rename_nightday_display_columns"],
         "traj_nightday_ecomap": ["base_map_defs", "traj_map_night_layers"],
         "ecomap_nightday_html_urls": ["traj_nightday_ecomap"],
         "traj_map_nightday_widgets_sv": ["ecomap_nightday_html_urls"],
@@ -332,9 +335,9 @@ def main(params: Params):
                 "argvalues": DependsOn("sort_traj_speed"),
             },
         ),
-        "speedmap_legend_with_unit": Node(
+        "speed_bin_legend_with_unit": Node(
             async_task=map_values_with_unit.validate()
-            .handle_errors(task_instance_id="speedmap_legend_with_unit")
+            .handle_errors(task_instance_id="speed_bin_legend_with_unit")
             .set_executor("lithops"),
             partial={
                 "input_column_name": "speed_bins",
@@ -343,11 +346,52 @@ def main(params: Params):
                 "new_unit": "km/h",
                 "decimal_places": 1,
             }
-            | (params_dict.get("speedmap_legend_with_unit") or {}),
+            | (params_dict.get("speed_bin_legend_with_unit") or {}),
             method="mapvalues",
             kwargs={
                 "argnames": ["df"],
                 "argvalues": DependsOn("colormap_traj_speed"),
+            },
+        ),
+        "speed_val_with_unit": Node(
+            async_task=map_values_with_unit.validate()
+            .handle_errors(task_instance_id="speed_val_with_unit")
+            .set_executor("lithops"),
+            partial={
+                "input_column_name": "speed_kmhr",
+                "output_column_name": "speed_kmhr",
+                "original_unit": "km/h",
+                "new_unit": "km/h",
+                "decimal_places": 1,
+            }
+            | (params_dict.get("speed_val_with_unit") or {}),
+            method="mapvalues",
+            kwargs={
+                "argnames": ["df"],
+                "argvalues": DependsOn("speed_bin_legend_with_unit"),
+            },
+        ),
+        "rename_speed_display_columns": Node(
+            async_task=map_columns.validate()
+            .handle_errors(task_instance_id="rename_speed_display_columns")
+            .set_executor("lithops"),
+            partial={
+                "drop_columns": [],
+                "retain_columns": [],
+                "rename_columns": {
+                    "segment_start": "Start",
+                    "timespan_seconds": "Duration (s)",
+                    "speed_kmhr": "Speed (kph)",
+                    "extra__is_night": "Nighttime",
+                    "subject_name": "Subject Name",
+                    "subject_sex": "Subject Sex",
+                },
+            }
+            | (params_dict.get("rename_speed_display_columns") or {}),
+            method="mapvalues",
+            kwargs={
+                "argnames": ["df"],
+                "argvalues": DependsOn("speed_val_with_unit"),
             },
         ),
         "traj_map_layers": Node(
@@ -360,13 +404,20 @@ def main(params: Params):
                     "label_column": "speed_bins_formatted",
                     "color_column": "speed_bins_colormap",
                 },
-                "tooltip_columns": ["subject_name", "subject_subtype", "speed_kmhr"],
+                "tooltip_columns": [
+                    "Start",
+                    "Duration (s)",
+                    "Speed (kph)",
+                    "Nighttime",
+                    "Subject Name",
+                    "Subject Sex",
+                ],
             }
             | (params_dict.get("traj_map_layers") or {}),
             method="mapvalues",
             kwargs={
                 "argnames": ["geodataframe"],
-                "argvalues": DependsOn("speedmap_legend_with_unit"),
+                "argvalues": DependsOn("rename_speed_display_columns"),
             },
         ),
         "traj_ecomap": Node(
@@ -458,6 +509,26 @@ def main(params: Params):
                 "argvalues": DependsOn("sort_traj_night_day"),
             },
         ),
+        "rename_nightday_display_columns": Node(
+            async_task=map_columns.validate()
+            .handle_errors(task_instance_id="rename_nightday_display_columns")
+            .set_executor("lithops"),
+            partial={
+                "drop_columns": [],
+                "retain_columns": [],
+                "rename_columns": {
+                    "subject_name": "Subject Name",
+                    "subject_subtype": "Subject Sex",
+                    "extra__is_night": "Nighttime",
+                },
+            }
+            | (params_dict.get("rename_nightday_display_columns") or {}),
+            method="mapvalues",
+            kwargs={
+                "argnames": ["df"],
+                "argvalues": DependsOn("colormap_traj_night"),
+            },
+        ),
         "traj_map_night_layers": Node(
             async_task=create_polyline_layer.validate()
             .handle_errors(task_instance_id="traj_map_night_layers")
@@ -468,17 +539,13 @@ def main(params: Params):
                     "labels": ["Night", "Day"],
                     "colors": ["#292965", "#e7a553"],
                 },
-                "tooltip_columns": [
-                    "subject_name",
-                    "subject_subtype",
-                    "extra__is_night",
-                ],
+                "tooltip_columns": ["Subject Name", "Subject Sex", "Nighttime"],
             }
             | (params_dict.get("traj_map_night_layers") or {}),
             method="mapvalues",
             kwargs={
                 "argnames": ["geodataframe"],
-                "argvalues": DependsOn("colormap_traj_night"),
+                "argvalues": DependsOn("rename_nightday_display_columns"),
             },
         ),
         "traj_nightday_ecomap": Node(

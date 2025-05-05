@@ -231,18 +231,51 @@ def main(params: Params):
         .mapvalues(argnames=["df"], argvalues=sort_traj_speed)
     )
 
-    speedmap_legend_with_unit = (
+    speed_bin_legend_with_unit = (
         map_values_with_unit.validate()
-        .handle_errors(task_instance_id="speedmap_legend_with_unit")
+        .handle_errors(task_instance_id="speed_bin_legend_with_unit")
         .partial(
             input_column_name="speed_bins",
             output_column_name="speed_bins_formatted",
             original_unit="km/h",
             new_unit="km/h",
             decimal_places=1,
-            **(params_dict.get("speedmap_legend_with_unit") or {}),
+            **(params_dict.get("speed_bin_legend_with_unit") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=colormap_traj_speed)
+    )
+
+    speed_val_with_unit = (
+        map_values_with_unit.validate()
+        .handle_errors(task_instance_id="speed_val_with_unit")
+        .partial(
+            input_column_name="speed_kmhr",
+            output_column_name="speed_kmhr",
+            original_unit="km/h",
+            new_unit="km/h",
+            decimal_places=1,
+            **(params_dict.get("speed_val_with_unit") or {}),
+        )
+        .mapvalues(argnames=["df"], argvalues=speed_bin_legend_with_unit)
+    )
+
+    rename_speed_display_columns = (
+        map_columns.validate()
+        .handle_errors(task_instance_id="rename_speed_display_columns")
+        .partial(
+            drop_columns=[],
+            retain_columns=[],
+            rename_columns={
+                "segment_start": "Start",
+                "timespan_seconds": "Duration (s)",
+                "speed_kmhr": "Speed (kph)",
+                "extra__is_night": "Nighttime",
+                "subject_name": "Subject Name",
+                "subject_sex": "Subject Sex",
+            },
+            **(params_dict.get("rename_speed_display_columns") or {}),
+        )
+        .mapvalues(argnames=["df"], argvalues=speed_val_with_unit)
     )
 
     traj_map_layers = (
@@ -254,10 +287,17 @@ def main(params: Params):
                 "label_column": "speed_bins_formatted",
                 "color_column": "speed_bins_colormap",
             },
-            tooltip_columns=["subject_name", "subject_subtype", "speed_kmhr"],
+            tooltip_columns=[
+                "Start",
+                "Duration (s)",
+                "Speed (kph)",
+                "Nighttime",
+                "Subject Name",
+                "Subject Sex",
+            ],
             **(params_dict.get("traj_map_layers") or {}),
         )
-        .mapvalues(argnames=["geodataframe"], argvalues=speedmap_legend_with_unit)
+        .mapvalues(argnames=["geodataframe"], argvalues=rename_speed_display_columns)
     )
 
     traj_ecomap = (
@@ -329,16 +369,32 @@ def main(params: Params):
         .mapvalues(argnames=["df"], argvalues=sort_traj_night_day)
     )
 
+    rename_nightday_display_columns = (
+        map_columns.validate()
+        .handle_errors(task_instance_id="rename_nightday_display_columns")
+        .partial(
+            drop_columns=[],
+            retain_columns=[],
+            rename_columns={
+                "subject_name": "Subject Name",
+                "subject_subtype": "Subject Sex",
+                "extra__is_night": "Nighttime",
+            },
+            **(params_dict.get("rename_nightday_display_columns") or {}),
+        )
+        .mapvalues(argnames=["df"], argvalues=colormap_traj_night)
+    )
+
     traj_map_night_layers = (
         create_polyline_layer.validate()
         .handle_errors(task_instance_id="traj_map_night_layers")
         .partial(
             layer_style={"color_column": "is_night_colors"},
             legend={"labels": ["Night", "Day"], "colors": ["#292965", "#e7a553"]},
-            tooltip_columns=["subject_name", "subject_subtype", "extra__is_night"],
+            tooltip_columns=["Subject Name", "Subject Sex", "Nighttime"],
             **(params_dict.get("traj_map_night_layers") or {}),
         )
-        .mapvalues(argnames=["geodataframe"], argvalues=colormap_traj_night)
+        .mapvalues(argnames=["geodataframe"], argvalues=rename_nightday_display_columns)
     )
 
     traj_nightday_ecomap = (
