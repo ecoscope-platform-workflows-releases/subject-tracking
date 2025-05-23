@@ -332,31 +332,49 @@
       "required": [],
       "title": "Base Maps"
     },
-    "td": {
-      "additionalProperties": false,
+    "Time Density Map": {
+      "type": "object",
+      "description": "These settings show a grid-based heatmap showing where subjects spent the most time.",
+      "ecoscope:task_group": true,
       "properties": {
-        "pixel_size": {
-          "default": 250.0,
-          "title": "Pixel Size",
-          "type": "number",
-          "description": "Raster pixel size in meters."
-        },
-        "max_speed_factor": {
-          "default": 1.05,
-          "title": "Max Speed Factor",
-          "type": "number",
-          "ecoscope:advanced": true
-        },
-        "expansion_factor": {
-          "default": 1.3,
-          "title": "Expansion Factor",
-          "type": "number",
-          "ecoscope:advanced": true
+        "td": {
+          "additionalProperties": false,
+          "properties": {
+            "auto_scale_or_custom_cell_size": {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/AutoScaleOrCustomCellSize"
+                }
+              ],
+              "default": {
+                "auto_scale_or_custom": "Auto-scale"
+              },
+              "title": "",
+              "ecoscope:advanced": true
+            },
+            "max_speed_factor": {
+              "default": 1.05,
+              "title": "Max Speed Factor",
+              "type": "number",
+              "ecoscope:advanced": true
+            },
+            "expansion_factor": {
+              "default": 1.3,
+              "title": "Expansion Factor",
+              "type": "number",
+              "ecoscope:advanced": true
+            }
+          },
+          "required": [],
+          "type": "object",
+          "title": ""
         }
       },
-      "required": [],
-      "type": "object",
-      "title": "Calculate Time Density from Trajectory"
+      "uiSchema": {
+        "ui:order": [
+          "td"
+        ]
+      }
     }
   },
   "$defs": {
@@ -476,6 +494,54 @@
       },
       "title": "TrajectorySegmentFilter",
       "type": "object"
+    },
+    "AutoScaleOrCustomCellSize": {
+      "dependencies": {
+        "auto_scale_or_custom": {
+          "oneOf": [
+            {
+              "properties": {
+                "auto_scale_or_custom": {
+                  "enum": [
+                    "Auto-Scale"
+                  ]
+                }
+              }
+            },
+            {
+              "properties": {
+                "auto_scale_or_custom": {
+                  "enum": [
+                    "Customize"
+                  ]
+                },
+                "grid_cell_size": {
+                  "default": 5000,
+                  "title": "Custom Raster Pixel Size (Meters)",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "grid_cell_size"
+              ]
+            }
+          ]
+        }
+      },
+      "properties": {
+        "auto_scale_or_custom": {
+          "default": "Auto-scale",
+          "description": "Define the resolution of the raster grid (in meters per pixel). Auto-scale for an optimized grid based on the data, or Customize to set a specific resolution.",
+          "enum": [
+            "Auto-scale",
+            "Customize"
+          ],
+          "title": "Auto Scale Or Custom",
+          "type": "string"
+        }
+      },
+      "title": "AutoScaleOrCustomCellSize",
+      "type": "object"
     }
   },
   "additionalProperties": false,
@@ -488,7 +554,7 @@
       "groupers",
       "subject_traj",
       "base_map_defs",
-      "td"
+      "Time Density Map"
     ]
   }
 }
