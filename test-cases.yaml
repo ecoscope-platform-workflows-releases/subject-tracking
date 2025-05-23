@@ -33,7 +33,8 @@ all-grouper:
           max_zoom: 17
           min_zoom: null
     td:
-      pixel_size: 1000.0
+      auto_scale_or_custom_cell_size:
+        auto_scale_or_custom: "Auto-scale"
 
 month-grouper:
   name: Month Grouper
@@ -69,7 +70,8 @@ month-grouper:
         - url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
           opacity: 0.5
     td:
-      pixel_size: 1000.0
+      auto_scale_or_custom_cell_size:
+        auto_scale_or_custom: "Auto-scale"
       max_speed_factor: 1.05
       expansion_factor: 1.3
 
@@ -109,7 +111,8 @@ value-grouper:
         - url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
           opacity: 0.5
     td:
-      pixel_size: 1000.0
+      auto_scale_or_custom_cell_size:
+        auto_scale_or_custom: "Auto-scale"
       max_speed_factor: 1.05
       expansion_factor: 1.3
 
@@ -150,4 +153,5 @@ task-instance-error:
         - url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
           opacity: 0.5
     td:
-      pixel_size: 1000.0
+      auto_scale_or_custom_cell_size:
+        auto_scale_or_custom: "Auto-scale"
