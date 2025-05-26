@@ -1,37 +1,34 @@
 id: subject_tracking
 requirements:
   - name: ecoscope-workflows-core
-    version: "*"
-    channel: file:///tmp/ecoscope-workflows/release/artifacts/
+    version: 0.2.3
+    channel: https://repo.prefix.dev/ecoscope-workflows/
   - name: ecoscope-workflows-ext-ecoscope
-    version: "*"
-    channel: file:///tmp/ecoscope-workflows/release/artifacts/
+    version: 0.2.3
+    channel: https://repo.prefix.dev/ecoscope-workflows/
 rjsf-overrides:
   properties:
-    subject_obs.properties.subject_group_name.ecoscope:subject_group_name: "properties.er_client_name.properties.data_source.properties.name"
+    subject_obs.properties.subject_group_name.ecoscope:subject_group_name: properties.er_client_name.properties.data_source.properties.name
   $defs:
-    ValueGrouper.oneOf: [
-      {"const": "subject_name", "title": "Subject Name"},
-      {"const": "subject_subtype", "title": "Subject Subtype"},
-      {"const": "subject_sex", "title": "Subject Sex"},
-    ]
-
+    ValueGrouper.oneOf:
+      - const: subject_name
+        title: Subject Name
+      - const: subject_subtype
+        title: Subject Subtype
+      - const: subject_sex
+        title: Subject Sex
 workflow:
   - name: Workflow Details
     id: workflow_details
     task: set_workflow_details
-
   - name: Data Source
     id: er_client_name
     task: set_er_connection
-
   - name: Time Range
     id: time_range
     task: set_time_range
     partial:
-      time_format: "%d %b %Y %H:%M:%S %Z"
-
-  # subject group observations
+      time_format: '%d %b %Y %H:%M:%S %Z'
   - name: Get Subject Group Observations from EarthRanger
     id: subject_obs
     task: get_subjectgroup_observations
@@ -40,31 +37,29 @@ workflow:
       time_range: ${{ workflow.time_range.return }}
       raise_on_empty: true
       include_details: false
-
-  # set 'global' groupers
   - name: Group Data
     id: groupers
     task: set_groupers
-
   - name: Transform Observations to Relocations
     id: subject_reloc
     task: process_relocations
     partial:
       observations: ${{ workflow.subject_obs.return }}
-      relocs_columns: [
-        "groupby_col",
-        "fixtime",
-        "junk_status",
-        "geometry",
-        "extra__subject__name",
-        "extra__subject__subject_subtype",
-        "extra__subject__sex",
-      ]
-      filter_point_coords: [
-        {"x": 180.0, "y": 90.0},
-        {"x": 0.0, "y": 0.0},
-        {"x": 1.0, "y": 1.0},
-      ]
+      relocs_columns:
+        - groupby_col
+        - fixtime
+        - junk_status
+        - geometry
+        - extra__subject__name
+        - extra__subject__subject_subtype
+        - extra__subject__sex
+      filter_point_coords:
+        - x: 180.000000
+          y: 90.000000
+        - x: 0.000000
+          y: 0.000000
+        - x: 1.000000
+          y: 1.000000
   - name: Apply Day/Night Labels to Relocations
     id: day_night_labels
     task: classify_is_night
@@ -80,10 +75,10 @@ workflow:
     task: add_temporal_index
     partial:
       df: ${{ workflow.subject_traj.return }}
-      time_col: "segment_start"
+      time_col: segment_start
       groupers: ${{ workflow.groupers.return }}
       cast_to_datetime: true
-      format: "mixed"
+      format: mixed
   - name: Rename value grouper columns
     id: rename_grouper_columns
     task: map_columns
@@ -92,54 +87,49 @@ workflow:
       drop_columns: []
       retain_columns: []
       rename_columns:
-        extra__name: "subject_name"
-        extra__subject_subtype: "subject_subtype"
-        extra__sex: "subject_sex"
+        extra__name: subject_name
+        extra__subject_subtype: subject_subtype
+        extra__sex: subject_sex
   - name: Map Subject Sex Values
     id: map_subject_sex
     task: map_values
     partial:
       df: ${{ workflow.rename_grouper_columns.return }}
-      column_name: "subject_sex"
+      column_name: subject_sex
       value_map:
-        "male": "male"
-        "female": "female"
-      missing_values: "replace"
-      replacement: "unknown"
+        male: male
+        female: female
+      missing_values: replace
+      replacement: unknown
   - name: Classify Trajectories By Speed
     id: classify_traj_speed
     task: apply_classification
     partial:
       df: ${{ workflow.map_subject_sex.return }}
-      input_column_name: "speed_kmhr"
-      output_column_name: "speed_bins"
+      input_column_name: speed_kmhr
+      output_column_name: speed_bins
       classification_options:
-        scheme: "equal_interval"
+        scheme: equal_interval
         k: 6
       label_options:
         label_ranges: false
         label_decimals: 1
-
   - name: Split Subject Trajectories by Group
     id: split_subject_traj_groups
     task: split_groups
     partial:
       df: ${{ workflow.classify_traj_speed.return }}
       groupers: ${{ workflow.groupers.return }}
-
-  # Set base maps
   - name: Base Maps
     id: base_map_defs
     task: set_base_maps
-
-  # subject group trajectories speed map
   - name: Sort Trajetories By Classification
     id: sort_traj_speed
     task: sort_values
     partial:
-      column_name: "speed_bins"
+      column_name: speed_bins
       ascending: true
-      na_position: "last"
+      na_position: last
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_subject_traj_groups.return }}
@@ -147,9 +137,15 @@ workflow:
     id: colormap_traj_speed
     task: apply_color_map
     partial:
-      input_column_name: "speed_bins"
-      output_column_name: "speed_bins_colormap"
-      colormap: ["#1a9850", "#91cf60", "#d9ef8b", "#fee08b", "#fc8d59", "#d73027"]
+      input_column_name: speed_bins
+      output_column_name: speed_bins_colormap
+      colormap:
+        - '#1a9850'
+        - '#91cf60'
+        - '#d9ef8b'
+        - '#fee08b'
+        - '#fc8d59'
+        - '#d73027'
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.sort_traj_speed.return }}
@@ -157,10 +153,10 @@ workflow:
     id: speed_bin_legend_with_unit
     task: map_values_with_unit
     partial:
-      input_column_name: "speed_bins"
-      output_column_name: "speed_bins_formatted"
-      original_unit: "km/h"
-      new_unit: "km/h"
+      input_column_name: speed_bins
+      output_column_name: speed_bins_formatted
+      original_unit: km/h
+      new_unit: km/h
       decimal_places: 1
     mapvalues:
       argnames: df
@@ -169,10 +165,10 @@ workflow:
     id: speed_val_with_unit
     task: map_values_with_unit
     partial:
-      input_column_name: "speed_kmhr"
-      output_column_name: "speed_kmhr"
-      original_unit: "km/h"
-      new_unit: "km/h"
+      input_column_name: speed_kmhr
+      output_column_name: speed_kmhr
+      original_unit: km/h
+      new_unit: km/h
       decimal_places: 1
     mapvalues:
       argnames: df
@@ -184,12 +180,12 @@ workflow:
       drop_columns: []
       retain_columns: []
       rename_columns:
-        segment_start: "Start"
-        timespan_seconds: "Duration (s)"
-        speed_kmhr: "Speed (kph)"
-        extra__is_night: "Nighttime"
-        subject_name: "Subject Name"
-        subject_sex: "Subject Sex"
+        segment_start: Start
+        timespan_seconds: Duration (s)
+        speed_kmhr: Speed (kph)
+        extra__is_night: Nighttime
+        subject_name: Subject Name
+        subject_sex: Subject Sex
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.speed_val_with_unit.return }}
@@ -198,11 +194,17 @@ workflow:
     task: create_polyline_layer
     partial:
       layer_style:
-        color_column: "speed_bins_colormap"
+        color_column: speed_bins_colormap
       legend:
-        label_column: "speed_bins_formatted"
-        color_column: "speed_bins_colormap"
-      tooltip_columns: ["Start", "Duration (s)", "Speed (kph)", "Nighttime", "Subject Name", "Subject Sex"]
+        label_column: speed_bins_formatted
+        color_column: speed_bins_colormap
+      tooltip_columns:
+        - Start
+        - Duration (s)
+        - Speed (kph)
+        - Nighttime
+        - Subject Name
+        - Subject Sex
     mapvalues:
       argnames: geodataframe
       argvalues: ${{ workflow.rename_speed_display_columns.return }}
@@ -212,9 +214,9 @@ workflow:
     partial:
       tile_layers: ${{ workflow.base_map_defs.return }}
       north_arrow_style:
-        placement: "top-left"
+        placement: top-left
       legend_style:
-        placement: "bottom-right"
+        placement: bottom-right
       static: false
       title: null
       max_zoom: 20
@@ -233,24 +235,24 @@ workflow:
     id: traj_map_widgets_single_views
     task: create_map_widget_single_view
     partial:
-      title: "Subject Group Trajectory Map"
+      title: Subject Group Trajectory Map
     map:
-      argnames: [view, data]
+      argnames:
+        - view
+        - data
       argvalues: ${{ workflow.ecomap_html_urls.return }}
   - name: Merge EcoMap Widget Views
     id: traj_grouped_map_widget
     task: merge_widget_views
     partial:
       widgets: ${{ workflow.traj_map_widgets_single_views.return }}
-
-  # subject group trajectories day/night map
   - name: Sort Trajetories By Night/Day Classification
     id: sort_traj_night_day
     task: sort_values
     partial:
-      column_name: "extra__is_night"
+      column_name: extra__is_night
       ascending: false
-      na_position: "last"
+      na_position: last
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_subject_traj_groups.return }}
@@ -258,9 +260,11 @@ workflow:
     id: colormap_traj_night
     task: apply_color_map
     partial:
-      colormap: ["#292965", "#e7a553"]
-      input_column_name: "extra__is_night"
-      output_column_name: "is_night_colors"
+      colormap:
+        - '#292965'
+        - '#e7a553'
+      input_column_name: extra__is_night
+      output_column_name: is_night_colors
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.sort_traj_night_day.return }}
@@ -271,9 +275,9 @@ workflow:
       drop_columns: []
       retain_columns: []
       rename_columns:
-        subject_name: "Subject Name"
-        subject_subtype: "Subject Sex"
-        extra__is_night: "Nighttime"
+        subject_name: Subject Name
+        subject_subtype: Subject Sex
+        extra__is_night: Nighttime
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.colormap_traj_night.return }}
@@ -282,11 +286,18 @@ workflow:
     task: create_polyline_layer
     partial:
       layer_style:
-        color_column: "is_night_colors"
+        color_column: is_night_colors
       legend:
-        labels: ["Night", "Day"]
-        colors: ["#292965", "#e7a553"]
-      tooltip_columns: ["Subject Name", "Subject Sex", "Nighttime"]
+        labels:
+          - Night
+          - Day
+        colors:
+          - '#292965'
+          - '#e7a553'
+      tooltip_columns:
+        - Subject Name
+        - Subject Sex
+        - Nighttime
     mapvalues:
       argnames: geodataframe
       argvalues: ${{ workflow.rename_nightday_display_columns.return }}
@@ -296,9 +307,9 @@ workflow:
     partial:
       tile_layers: ${{ workflow.base_map_defs.return }}
       north_arrow_style:
-        placement: "top-left"
+        placement: top-left
       legend_style:
-        placement: "bottom-right"
+        placement: bottom-right
       static: false
       title: null
       max_zoom: 20
@@ -317,22 +328,22 @@ workflow:
     id: traj_map_nightday_widgets_sv
     task: create_map_widget_single_view
     partial:
-      title: "Subject Group Night/Day Map"
+      title: Subject Group Night/Day Map
     map:
-      argnames: [view, data]
+      argnames:
+        - view
+        - data
       argvalues: ${{ workflow.ecomap_nightday_html_urls.return }}
   - name: Merge EcoMap Widget Views
     id: traj_nightday_grouped_map_widget
     task: merge_widget_views
     partial:
       widgets: ${{ workflow.traj_map_nightday_widgets_sv.return }}
-
-  # Grouped single value widget (1) - mean speed per group
   - name: Calculate Mean Speed Per Group
     id: mean_speed
     task: dataframe_column_mean
     partial:
-      column_name: "speed_kmhr"
+      column_name: speed_kmhr
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_subject_traj_groups.return }}
@@ -340,8 +351,8 @@ workflow:
     id: average_speed_converted
     task: with_unit
     partial:
-      original_unit: "km/h"
-      new_unit: "km/h"
+      original_unit: km/h
+      new_unit: km/h
     mapvalues:
       argnames: value
       argvalues: ${{ workflow.mean_speed.return }}
@@ -349,23 +360,23 @@ workflow:
     id: mean_speed_sv_widgets
     task: create_single_value_widget_single_view
     partial:
-      title: "Mean Speed"
+      title: Mean Speed
       decimal_places: 1
     map:
-      argnames: [view, data]
+      argnames:
+        - view
+        - data
       argvalues: ${{ workflow.average_speed_converted.return }}
   - name: Merge per group Mean Speed SV widgets
     id: mean_speed_grouped_sv_widget
     task: merge_widget_views
     partial:
       widgets: ${{ workflow.mean_speed_sv_widgets.return }}
-
-  # Grouped single value widget (2) - max speed per group
   - name: Calculate Max Speed Per Group
     id: max_speed
     task: dataframe_column_max
     partial:
-      column_name: "speed_kmhr"
+      column_name: speed_kmhr
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_subject_traj_groups.return }}
@@ -373,8 +384,8 @@ workflow:
     id: max_speed_converted
     task: with_unit
     partial:
-      original_unit: "km/h"
-      new_unit: "km/h"
+      original_unit: km/h
+      new_unit: km/h
     mapvalues:
       argnames: value
       argvalues: ${{ workflow.max_speed.return }}
@@ -382,18 +393,18 @@ workflow:
     id: max_speed_sv_widgets
     task: create_single_value_widget_single_view
     partial:
-      title: "Max Speed"
+      title: Max Speed
       decimal_places: 1
     map:
-      argnames: [view, data]
+      argnames:
+        - view
+        - data
       argvalues: ${{ workflow.max_speed_converted.return }}
   - name: Merge per group Max Speed SV widgets
     id: max_speed_grouped_sv_widget
     task: merge_widget_views
     partial:
       widgets: ${{ workflow.max_speed_sv_widgets.return }}
-
-  # Grouped single value widget (3) - number of locations per group
   - name: Calculate Number of Locations Per Group
     id: num_location
     task: dataframe_count
@@ -404,18 +415,18 @@ workflow:
     id: num_location_sv_widgets
     task: create_single_value_widget_single_view
     partial:
-      title: "Number of Locations"
+      title: Number of Locations
       decimal_places: 1
     map:
-      argnames: [view, data]
+      argnames:
+        - view
+        - data
       argvalues: ${{ workflow.num_location.return }}
   - name: Merge per group Number of Locations SV widgets
     id: num_location_grouped_sv_widget
     task: merge_widget_views
     partial:
       widgets: ${{ workflow.num_location_sv_widgets.return }}
-
-  # Grouped single value widget (4) - nightday ratio
   - name: Calculate Day/Night Ratio Per Group
     id: nightday_ratio
     task: get_night_day_ratio
@@ -426,23 +437,23 @@ workflow:
     id: nightday_ratio_sv_widgets
     task: create_single_value_widget_single_view
     partial:
-      title: "Night/Day Ratio"
+      title: Night/Day Ratio
       decimal_places: 1
     map:
-      argnames: [view, data]
+      argnames:
+        - view
+        - data
       argvalues: ${{ workflow.nightday_ratio.return }}
   - name: Merge per group Day/Night Ratio SV widgets
     id: nightday_ratio_grouped_sv_widget
     task: merge_widget_views
     partial:
       widgets: ${{ workflow.nightday_ratio_sv_widgets.return }}
-
-  # Grouped single value widget (5) - total distance
   - name: Calculate Total Distance Per Group
     id: total_distance
     task: dataframe_column_sum
     partial:
-      column_name: "dist_meters"
+      column_name: dist_meters
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_subject_traj_groups.return }}
@@ -450,8 +461,8 @@ workflow:
     id: total_dist_converted
     task: with_unit
     partial:
-      original_unit: "m"
-      new_unit: "km"
+      original_unit: m
+      new_unit: km
     mapvalues:
       argnames: value
       argvalues: ${{ workflow.total_distance.return }}
@@ -459,23 +470,23 @@ workflow:
     id: total_distance_sv_widgets
     task: create_single_value_widget_single_view
     partial:
-      title: "Total Distance"
+      title: Total Distance
       decimal_places: 1
     map:
-      argnames: [view, data]
+      argnames:
+        - view
+        - data
       argvalues: ${{ workflow.total_dist_converted.return }}
   - name: Merge per group Total Distance SV widgets
     id: total_dist_grouped_sv_widget
     task: merge_widget_views
     partial:
       widgets: ${{ workflow.total_distance_sv_widgets.return }}
-
-  # Grouped single value widget (6) - total time
   - name: Calculate Total Time Per Group
     id: total_time
     task: dataframe_column_sum
     partial:
-      column_name: "timespan_seconds"
+      column_name: timespan_seconds
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_subject_traj_groups.return }}
@@ -483,8 +494,8 @@ workflow:
     id: total_time_converted
     task: with_unit
     partial:
-      original_unit: "s"
-      new_unit: "h"
+      original_unit: s
+      new_unit: h
     mapvalues:
       argnames: value
       argvalues: ${{ workflow.total_time.return }}
@@ -492,42 +503,47 @@ workflow:
     id: total_time_sv_widgets
     task: create_single_value_widget_single_view
     partial:
-      title: "Total Time"
+      title: Total Time
       decimal_places: 1
     map:
-      argnames: [view, data]
+      argnames:
+        - view
+        - data
       argvalues: ${{ workflow.total_time_converted.return }}
   - name: Merge per group Total Distance SV widgets
     id: total_time_grouped_sv_widget
     task: merge_widget_views
     partial:
       widgets: ${{ workflow.total_time_sv_widgets.return }}
-
-  # time density
   - title: Time Density Map
     type: task-group
-    description: >-
-      These settings show a grid-based heatmap showing where subjects spent the most time.
+    description: These settings show a grid-based heatmap showing where subjects spent the most time.
     tasks:
-      - name: "" # Calculate Time Density from Trajectory
+      - name: null
         id: td
         task: calculate_time_density
         partial:
-          crs: "ESRI:53042"
-          percentiles: [50.0, 60.0, 70.0, 80.0, 90.0, 95.0, 99.999]
-          nodata_value: "nan"
+          crs: ESRI:53042
+          percentiles:
+            - 50.000000
+            - 60.000000
+            - 70.000000
+            - 80.000000
+            - 90.000000
+            - 95.000000
+            - 99.999000
+          nodata_value: nan
           band_count: 1
         mapvalues:
           argnames: trajectory_gdf
           argvalues: ${{ workflow.split_subject_traj_groups.return }}
-      # Colormap time density
       - name: Time Density Colormap
         id: td_colormap
         task: apply_color_map
         partial:
-          input_column_name: "percentile"
-          colormap: "RdYlGn"
-          output_column_name: "percentile_colormap"
+          input_column_name: percentile
+          colormap: RdYlGn
+          output_column_name: percentile_colormap
         mapvalues:
           argnames: df
           argvalues: ${{ workflow.td.return }}
@@ -536,13 +552,14 @@ workflow:
         task: create_polygon_layer
         partial:
           layer_style:
-            fill_color_column: "percentile_colormap"
-            opacity: 0.7
+            fill_color_column: percentile_colormap
+            opacity: 0.700000
             get_line_width: 0
           legend:
-            label_column: "percentile"
-            color_column: "percentile_colormap"
-          tooltip_columns: ["percentile"]
+            label_column: percentile
+            color_column: percentile_colormap
+          tooltip_columns:
+            - percentile
         mapvalues:
           argnames: geodataframe
           argvalues: ${{ workflow.td_colormap.return }}
@@ -552,9 +569,9 @@ workflow:
         partial:
           tile_layers: ${{ workflow.base_map_defs.return }}
           north_arrow_style:
-            placement: "top-left"
+            placement: top-left
           legend_style:
-            placement: "bottom-right"
+            placement: bottom-right
           static: false
           title: null
           max_zoom: 20
@@ -573,29 +590,29 @@ workflow:
         id: td_map_widget
         task: create_map_widget_single_view
         partial:
-          title: "Home Range Map"
+          title: Home Range Map
         map:
-          argnames: [view, data]
+          argnames:
+            - view
+            - data
           argvalues: ${{ workflow.td_ecomap_html_url.return }}
       - name: Merge Time Density Map Widget Views
         id: td_grouped_map_widget
         task: merge_widget_views
         partial:
           widgets: ${{ workflow.td_map_widget.return }}
-
-  # Events NSD Scatter Chart
   - name: Draw NSD Scatter Chart
     id: nsd_chart
     task: draw_ecoplot
     partial:
-      group_by: "subject_name"
+      group_by: subject_name
       ecoplot_configs:
-        - x_col: "segment_start"
-          y_col: "nsd"
+        - x_col: segment_start
+          y_col: nsd
           plot_style:
             xperiodalignment: null
           color_column: null
-      tickformat: "%b-%Y"
+      tickformat: '%b-%Y'
     mapvalues:
       argnames: dataframe
       argvalues: ${{ workflow.split_subject_traj_groups.return }}
@@ -611,17 +628,17 @@ workflow:
     id: nsd_chart_widget
     task: create_plot_widget_single_view
     partial:
-      title: "Net Square Displacement"
+      title: Net Square Displacement
     map:
-      argnames: [view, data]
+      argnames:
+        - view
+        - data
       argvalues: ${{ workflow.nsd_chart_html_url.return }}
   - name: Merge NSD Widget Views
     id: grouped_nsd_chart_widget_merge
     task: merge_widget_views
     partial:
       widgets: ${{ workflow.nsd_chart_widget.return }}
-
-  # dashboard
   - name: Create Dashboard with Subject Tracking Widgets
     id: subject_tracking_dashboard
     task: gather_dashboard
