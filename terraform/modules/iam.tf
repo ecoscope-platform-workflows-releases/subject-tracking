@@ -1,5 +1,5 @@
 resource "google_service_account" "default" {
-  account_id = startswith(var.env, "dev-preview")? "wf-subject-trk-${var.env}" : "workflow-subject-trk-${var.env}"
+  account_id = startswith(var.env, "dev-preview")? "wf-subj-trk-${var.env}" : "workflow-subject-trk-${var.env}"
   project    = var.project_id
 }
 
