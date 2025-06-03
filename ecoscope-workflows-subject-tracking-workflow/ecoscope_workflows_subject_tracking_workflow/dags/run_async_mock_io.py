@@ -16,6 +16,8 @@ from ecoscope_workflows_core.testing import create_task_magicmock  # 🧪
 from ecoscope_workflows_core.graph import DependsOn, DependsOnSequence, Graph, Node
 
 from ecoscope_workflows_core.tasks.config import set_workflow_details
+from ecoscope_workflows_core.tasks.skip import any_is_empty_df
+from ecoscope_workflows_core.tasks.skip import any_dependency_skipped
 from ecoscope_workflows_core.tasks.io import set_er_connection
 from ecoscope_workflows_core.tasks.filter import set_time_range
 
@@ -42,6 +44,7 @@ from ecoscope_workflows_ext_ecoscope.tasks.results import create_polyline_layer
 from ecoscope_workflows_ext_ecoscope.tasks.results import draw_ecomap
 from ecoscope_workflows_core.tasks.io import persist_text
 from ecoscope_workflows_core.tasks.results import create_map_widget_single_view
+from ecoscope_workflows_core.tasks.skip import never
 from ecoscope_workflows_core.tasks.results import merge_widget_views
 from ecoscope_workflows_core.tasks.analysis import dataframe_column_mean
 from ecoscope_workflows_core.tasks.transformation import with_unit
@@ -151,6 +154,13 @@ def main(params: Params):
         "workflow_details": Node(
             async_task=set_workflow_details.validate()
             .handle_errors(task_instance_id="workflow_details")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial=(params_dict.get("workflow_details") or {}),
             method="call",
@@ -158,6 +168,13 @@ def main(params: Params):
         "er_client_name": Node(
             async_task=set_er_connection.validate()
             .handle_errors(task_instance_id="er_client_name")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial=(params_dict.get("er_client_name") or {}),
             method="call",
@@ -165,6 +182,13 @@ def main(params: Params):
         "time_range": Node(
             async_task=set_time_range.validate()
             .handle_errors(task_instance_id="time_range")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "time_format": "%d %b %Y %H:%M:%S %Z",
@@ -175,11 +199,18 @@ def main(params: Params):
         "subject_obs": Node(
             async_task=get_subjectgroup_observations.validate()
             .handle_errors(task_instance_id="subject_obs")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "client": DependsOn("er_client_name"),
                 "time_range": DependsOn("time_range"),
-                "raise_on_empty": True,
+                "raise_on_empty": False,
                 "include_details": False,
             }
             | (params_dict.get("subject_obs") or {}),
@@ -188,6 +219,13 @@ def main(params: Params):
         "groupers": Node(
             async_task=set_groupers.validate()
             .handle_errors(task_instance_id="groupers")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial=(params_dict.get("groupers") or {}),
             method="call",
@@ -195,6 +233,13 @@ def main(params: Params):
         "subject_reloc": Node(
             async_task=process_relocations.validate()
             .handle_errors(task_instance_id="subject_reloc")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "observations": DependsOn("subject_obs"),
@@ -219,6 +264,13 @@ def main(params: Params):
         "day_night_labels": Node(
             async_task=classify_is_night.validate()
             .handle_errors(task_instance_id="day_night_labels")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "relocations": DependsOn("subject_reloc"),
@@ -229,6 +281,13 @@ def main(params: Params):
         "subject_traj": Node(
             async_task=relocations_to_trajectory.validate()
             .handle_errors(task_instance_id="subject_traj")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "relocations": DependsOn("day_night_labels"),
@@ -239,6 +298,13 @@ def main(params: Params):
         "traj_add_temporal_index": Node(
             async_task=add_temporal_index.validate()
             .handle_errors(task_instance_id="traj_add_temporal_index")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "df": DependsOn("subject_traj"),
@@ -253,6 +319,13 @@ def main(params: Params):
         "rename_grouper_columns": Node(
             async_task=map_columns.validate()
             .handle_errors(task_instance_id="rename_grouper_columns")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "df": DependsOn("traj_add_temporal_index"),
@@ -270,6 +343,13 @@ def main(params: Params):
         "map_subject_sex": Node(
             async_task=map_values.validate()
             .handle_errors(task_instance_id="map_subject_sex")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "df": DependsOn("rename_grouper_columns"),
@@ -284,6 +364,13 @@ def main(params: Params):
         "classify_traj_speed": Node(
             async_task=apply_classification.validate()
             .handle_errors(task_instance_id="classify_traj_speed")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "df": DependsOn("map_subject_sex"),
@@ -298,6 +385,13 @@ def main(params: Params):
         "split_subject_traj_groups": Node(
             async_task=split_groups.validate()
             .handle_errors(task_instance_id="split_subject_traj_groups")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "df": DependsOn("classify_traj_speed"),
@@ -309,6 +403,13 @@ def main(params: Params):
         "base_map_defs": Node(
             async_task=set_base_maps.validate()
             .handle_errors(task_instance_id="base_map_defs")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial=(params_dict.get("base_map_defs") or {}),
             method="call",
@@ -316,6 +417,13 @@ def main(params: Params):
         "sort_traj_speed": Node(
             async_task=sort_values.validate()
             .handle_errors(task_instance_id="sort_traj_speed")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "column_name": "speed_bins",
@@ -332,6 +440,13 @@ def main(params: Params):
         "colormap_traj_speed": Node(
             async_task=apply_color_map.validate()
             .handle_errors(task_instance_id="colormap_traj_speed")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "input_column_name": "speed_bins",
@@ -355,6 +470,13 @@ def main(params: Params):
         "speed_bin_legend_with_unit": Node(
             async_task=map_values_with_unit.validate()
             .handle_errors(task_instance_id="speed_bin_legend_with_unit")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "input_column_name": "speed_bins",
@@ -373,6 +495,13 @@ def main(params: Params):
         "speed_val_with_unit": Node(
             async_task=map_values_with_unit.validate()
             .handle_errors(task_instance_id="speed_val_with_unit")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "input_column_name": "speed_kmhr",
@@ -391,6 +520,13 @@ def main(params: Params):
         "rename_speed_display_columns": Node(
             async_task=map_columns.validate()
             .handle_errors(task_instance_id="rename_speed_display_columns")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "drop_columns": [],
@@ -414,6 +550,13 @@ def main(params: Params):
         "traj_map_layers": Node(
             async_task=create_polyline_layer.validate()
             .handle_errors(task_instance_id="traj_map_layers")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "layer_style": {"color_column": "speed_bins_colormap"},
@@ -440,6 +583,13 @@ def main(params: Params):
         "traj_ecomap": Node(
             async_task=draw_ecomap.validate()
             .handle_errors(task_instance_id="traj_ecomap")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "tile_layers": DependsOn("base_map_defs"),
@@ -459,6 +609,13 @@ def main(params: Params):
         "ecomap_html_urls": Node(
             async_task=persist_text.validate()
             .handle_errors(task_instance_id="ecomap_html_urls")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
@@ -473,6 +630,12 @@ def main(params: Params):
         "traj_map_widgets_single_views": Node(
             async_task=create_map_widget_single_view.validate()
             .handle_errors(task_instance_id="traj_map_widgets_single_views")
+            .skipif(
+                conditions=[
+                    never,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "title": "Subject Group Trajectory Map",
@@ -487,6 +650,13 @@ def main(params: Params):
         "traj_grouped_map_widget": Node(
             async_task=merge_widget_views.validate()
             .handle_errors(task_instance_id="traj_grouped_map_widget")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "widgets": DependsOn("traj_map_widgets_single_views"),
@@ -497,6 +667,13 @@ def main(params: Params):
         "sort_traj_night_day": Node(
             async_task=sort_values.validate()
             .handle_errors(task_instance_id="sort_traj_night_day")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "column_name": "extra__is_night",
@@ -513,6 +690,13 @@ def main(params: Params):
         "colormap_traj_night": Node(
             async_task=apply_color_map.validate()
             .handle_errors(task_instance_id="colormap_traj_night")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "colormap": ["#292965", "#e7a553"],
@@ -529,6 +713,13 @@ def main(params: Params):
         "rename_nightday_display_columns": Node(
             async_task=map_columns.validate()
             .handle_errors(task_instance_id="rename_nightday_display_columns")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "drop_columns": [],
@@ -549,6 +740,13 @@ def main(params: Params):
         "traj_map_night_layers": Node(
             async_task=create_polyline_layer.validate()
             .handle_errors(task_instance_id="traj_map_night_layers")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "layer_style": {"color_column": "is_night_colors"},
@@ -568,6 +766,13 @@ def main(params: Params):
         "traj_nightday_ecomap": Node(
             async_task=draw_ecomap.validate()
             .handle_errors(task_instance_id="traj_nightday_ecomap")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "tile_layers": DependsOn("base_map_defs"),
@@ -587,6 +792,13 @@ def main(params: Params):
         "ecomap_nightday_html_urls": Node(
             async_task=persist_text.validate()
             .handle_errors(task_instance_id="ecomap_nightday_html_urls")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
@@ -601,6 +813,12 @@ def main(params: Params):
         "traj_map_nightday_widgets_sv": Node(
             async_task=create_map_widget_single_view.validate()
             .handle_errors(task_instance_id="traj_map_nightday_widgets_sv")
+            .skipif(
+                conditions=[
+                    never,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "title": "Subject Group Night/Day Map",
@@ -615,6 +833,13 @@ def main(params: Params):
         "traj_nightday_grouped_map_widget": Node(
             async_task=merge_widget_views.validate()
             .handle_errors(task_instance_id="traj_nightday_grouped_map_widget")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "widgets": DependsOn("traj_map_nightday_widgets_sv"),
@@ -625,6 +850,13 @@ def main(params: Params):
         "mean_speed": Node(
             async_task=dataframe_column_mean.validate()
             .handle_errors(task_instance_id="mean_speed")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "column_name": "speed_kmhr",
@@ -639,6 +871,13 @@ def main(params: Params):
         "average_speed_converted": Node(
             async_task=with_unit.validate()
             .handle_errors(task_instance_id="average_speed_converted")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "original_unit": "km/h",
@@ -654,6 +893,12 @@ def main(params: Params):
         "mean_speed_sv_widgets": Node(
             async_task=create_single_value_widget_single_view.validate()
             .handle_errors(task_instance_id="mean_speed_sv_widgets")
+            .skipif(
+                conditions=[
+                    never,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "title": "Mean Speed",
@@ -669,6 +914,13 @@ def main(params: Params):
         "mean_speed_grouped_sv_widget": Node(
             async_task=merge_widget_views.validate()
             .handle_errors(task_instance_id="mean_speed_grouped_sv_widget")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "widgets": DependsOn("mean_speed_sv_widgets"),
@@ -679,6 +931,13 @@ def main(params: Params):
         "max_speed": Node(
             async_task=dataframe_column_max.validate()
             .handle_errors(task_instance_id="max_speed")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "column_name": "speed_kmhr",
@@ -693,6 +952,13 @@ def main(params: Params):
         "max_speed_converted": Node(
             async_task=with_unit.validate()
             .handle_errors(task_instance_id="max_speed_converted")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "original_unit": "km/h",
@@ -708,6 +974,12 @@ def main(params: Params):
         "max_speed_sv_widgets": Node(
             async_task=create_single_value_widget_single_view.validate()
             .handle_errors(task_instance_id="max_speed_sv_widgets")
+            .skipif(
+                conditions=[
+                    never,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "title": "Max Speed",
@@ -723,6 +995,13 @@ def main(params: Params):
         "max_speed_grouped_sv_widget": Node(
             async_task=merge_widget_views.validate()
             .handle_errors(task_instance_id="max_speed_grouped_sv_widget")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "widgets": DependsOn("max_speed_sv_widgets"),
@@ -733,6 +1012,13 @@ def main(params: Params):
         "num_location": Node(
             async_task=dataframe_count.validate()
             .handle_errors(task_instance_id="num_location")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial=(params_dict.get("num_location") or {}),
             method="mapvalues",
@@ -744,6 +1030,12 @@ def main(params: Params):
         "num_location_sv_widgets": Node(
             async_task=create_single_value_widget_single_view.validate()
             .handle_errors(task_instance_id="num_location_sv_widgets")
+            .skipif(
+                conditions=[
+                    never,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "title": "Number of Locations",
@@ -759,6 +1051,13 @@ def main(params: Params):
         "num_location_grouped_sv_widget": Node(
             async_task=merge_widget_views.validate()
             .handle_errors(task_instance_id="num_location_grouped_sv_widget")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "widgets": DependsOn("num_location_sv_widgets"),
@@ -769,6 +1068,13 @@ def main(params: Params):
         "nightday_ratio": Node(
             async_task=get_night_day_ratio.validate()
             .handle_errors(task_instance_id="nightday_ratio")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial=(params_dict.get("nightday_ratio") or {}),
             method="mapvalues",
@@ -780,6 +1086,12 @@ def main(params: Params):
         "nightday_ratio_sv_widgets": Node(
             async_task=create_single_value_widget_single_view.validate()
             .handle_errors(task_instance_id="nightday_ratio_sv_widgets")
+            .skipif(
+                conditions=[
+                    never,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "title": "Night/Day Ratio",
@@ -795,6 +1107,13 @@ def main(params: Params):
         "nightday_ratio_grouped_sv_widget": Node(
             async_task=merge_widget_views.validate()
             .handle_errors(task_instance_id="nightday_ratio_grouped_sv_widget")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "widgets": DependsOn("nightday_ratio_sv_widgets"),
@@ -805,6 +1124,13 @@ def main(params: Params):
         "total_distance": Node(
             async_task=dataframe_column_sum.validate()
             .handle_errors(task_instance_id="total_distance")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "column_name": "dist_meters",
@@ -819,6 +1145,13 @@ def main(params: Params):
         "total_dist_converted": Node(
             async_task=with_unit.validate()
             .handle_errors(task_instance_id="total_dist_converted")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "original_unit": "m",
@@ -834,6 +1167,12 @@ def main(params: Params):
         "total_distance_sv_widgets": Node(
             async_task=create_single_value_widget_single_view.validate()
             .handle_errors(task_instance_id="total_distance_sv_widgets")
+            .skipif(
+                conditions=[
+                    never,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "title": "Total Distance",
@@ -849,6 +1188,13 @@ def main(params: Params):
         "total_dist_grouped_sv_widget": Node(
             async_task=merge_widget_views.validate()
             .handle_errors(task_instance_id="total_dist_grouped_sv_widget")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "widgets": DependsOn("total_distance_sv_widgets"),
@@ -859,6 +1205,13 @@ def main(params: Params):
         "total_time": Node(
             async_task=dataframe_column_sum.validate()
             .handle_errors(task_instance_id="total_time")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "column_name": "timespan_seconds",
@@ -873,6 +1226,13 @@ def main(params: Params):
         "total_time_converted": Node(
             async_task=with_unit.validate()
             .handle_errors(task_instance_id="total_time_converted")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "original_unit": "s",
@@ -888,6 +1248,12 @@ def main(params: Params):
         "total_time_sv_widgets": Node(
             async_task=create_single_value_widget_single_view.validate()
             .handle_errors(task_instance_id="total_time_sv_widgets")
+            .skipif(
+                conditions=[
+                    never,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "title": "Total Time",
@@ -903,6 +1269,13 @@ def main(params: Params):
         "total_time_grouped_sv_widget": Node(
             async_task=merge_widget_views.validate()
             .handle_errors(task_instance_id="total_time_grouped_sv_widget")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "widgets": DependsOn("total_time_sv_widgets"),
@@ -913,6 +1286,13 @@ def main(params: Params):
         "td": Node(
             async_task=calculate_time_density.validate()
             .handle_errors(task_instance_id="td")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "crs": "ESRI:53042",
@@ -930,6 +1310,13 @@ def main(params: Params):
         "td_colormap": Node(
             async_task=apply_color_map.validate()
             .handle_errors(task_instance_id="td_colormap")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "input_column_name": "percentile",
@@ -946,6 +1333,13 @@ def main(params: Params):
         "td_map_layer": Node(
             async_task=create_polygon_layer.validate()
             .handle_errors(task_instance_id="td_map_layer")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "layer_style": {
@@ -969,6 +1363,13 @@ def main(params: Params):
         "td_ecomap": Node(
             async_task=draw_ecomap.validate()
             .handle_errors(task_instance_id="td_ecomap")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "tile_layers": DependsOn("base_map_defs"),
@@ -988,6 +1389,13 @@ def main(params: Params):
         "td_ecomap_html_url": Node(
             async_task=persist_text.validate()
             .handle_errors(task_instance_id="td_ecomap_html_url")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
@@ -1002,6 +1410,12 @@ def main(params: Params):
         "td_map_widget": Node(
             async_task=create_map_widget_single_view.validate()
             .handle_errors(task_instance_id="td_map_widget")
+            .skipif(
+                conditions=[
+                    never,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "title": "Home Range Map",
@@ -1016,6 +1430,13 @@ def main(params: Params):
         "td_grouped_map_widget": Node(
             async_task=merge_widget_views.validate()
             .handle_errors(task_instance_id="td_grouped_map_widget")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "widgets": DependsOn("td_map_widget"),
@@ -1026,6 +1447,13 @@ def main(params: Params):
         "nsd_chart": Node(
             async_task=draw_ecoplot.validate()
             .handle_errors(task_instance_id="nsd_chart")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "group_by": "subject_name",
@@ -1049,6 +1477,13 @@ def main(params: Params):
         "nsd_chart_html_url": Node(
             async_task=persist_text.validate()
             .handle_errors(task_instance_id="nsd_chart_html_url")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
@@ -1063,6 +1498,12 @@ def main(params: Params):
         "nsd_chart_widget": Node(
             async_task=create_plot_widget_single_view.validate()
             .handle_errors(task_instance_id="nsd_chart_widget")
+            .skipif(
+                conditions=[
+                    never,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "title": "Net Square Displacement",
@@ -1077,6 +1518,13 @@ def main(params: Params):
         "grouped_nsd_chart_widget_merge": Node(
             async_task=merge_widget_views.validate()
             .handle_errors(task_instance_id="grouped_nsd_chart_widget_merge")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "widgets": DependsOn("nsd_chart_widget"),
@@ -1087,6 +1535,13 @@ def main(params: Params):
         "subject_tracking_dashboard": Node(
             async_task=gather_dashboard.validate()
             .handle_errors(task_instance_id="subject_tracking_dashboard")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
             .set_executor("lithops"),
             partial={
                 "details": DependsOn("workflow_details"),

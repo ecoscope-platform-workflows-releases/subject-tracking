@@ -12,6 +12,8 @@
 
 import os
 from ecoscope_workflows_core.tasks.config import set_workflow_details
+from ecoscope_workflows_core.tasks.skip import any_is_empty_df
+from ecoscope_workflows_core.tasks.skip import any_dependency_skipped
 from ecoscope_workflows_core.tasks.io import set_er_connection
 from ecoscope_workflows_core.tasks.filter import set_time_range
 from ecoscope_workflows_ext_ecoscope.tasks.io import get_subjectgroup_observations
@@ -34,6 +36,7 @@ from ecoscope_workflows_ext_ecoscope.tasks.results import create_polyline_layer
 from ecoscope_workflows_ext_ecoscope.tasks.results import draw_ecomap
 from ecoscope_workflows_core.tasks.io import persist_text
 from ecoscope_workflows_core.tasks.results import create_map_widget_single_view
+from ecoscope_workflows_core.tasks.skip import never
 from ecoscope_workflows_core.tasks.results import merge_widget_views
 from ecoscope_workflows_core.tasks.analysis import dataframe_column_mean
 from ecoscope_workflows_core.tasks.transformation import with_unit
@@ -66,6 +69,13 @@ workflow_details_params = dict(
 
 workflow_details = (
     set_workflow_details.handle_errors(task_instance_id="workflow_details")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(**workflow_details_params)
     .call()
 )
@@ -87,6 +97,13 @@ er_client_name_params = dict(
 
 er_client_name = (
     set_er_connection.handle_errors(task_instance_id="er_client_name")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(**er_client_name_params)
     .call()
 )
@@ -109,6 +126,13 @@ time_range_params = dict(
 
 time_range = (
     set_time_range.handle_errors(task_instance_id="time_range")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(time_format="%d %b %Y %H:%M:%S %Z", **time_range_params)
     .call()
 )
@@ -131,10 +155,17 @@ subject_obs_params = dict(
 
 subject_obs = (
     get_subjectgroup_observations.handle_errors(task_instance_id="subject_obs")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         client=er_client_name,
         time_range=time_range,
-        raise_on_empty=True,
+        raise_on_empty=False,
         include_details=False,
         **subject_obs_params,
     )
@@ -158,6 +189,13 @@ groupers_params = dict(
 
 groupers = (
     set_groupers.handle_errors(task_instance_id="groupers")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(**groupers_params)
     .call()
 )
@@ -177,6 +215,13 @@ subject_reloc_params = dict()
 
 subject_reloc = (
     process_relocations.handle_errors(task_instance_id="subject_reloc")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         observations=subject_obs,
         relocs_columns=[
@@ -213,6 +258,13 @@ day_night_labels_params = dict()
 
 day_night_labels = (
     classify_is_night.handle_errors(task_instance_id="day_night_labels")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(relocations=subject_reloc, **day_night_labels_params)
     .call()
 )
@@ -234,6 +286,13 @@ subject_traj_params = dict(
 
 subject_traj = (
     relocations_to_trajectory.handle_errors(task_instance_id="subject_traj")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(relocations=day_night_labels, **subject_traj_params)
     .call()
 )
@@ -253,6 +312,13 @@ traj_add_temporal_index_params = dict()
 
 traj_add_temporal_index = (
     add_temporal_index.handle_errors(task_instance_id="traj_add_temporal_index")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         df=subject_traj,
         time_col="segment_start",
@@ -279,6 +345,13 @@ rename_grouper_columns_params = dict()
 
 rename_grouper_columns = (
     map_columns.handle_errors(task_instance_id="rename_grouper_columns")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         df=traj_add_temporal_index,
         drop_columns=[],
@@ -308,6 +381,13 @@ map_subject_sex_params = dict()
 
 map_subject_sex = (
     map_values.handle_errors(task_instance_id="map_subject_sex")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         df=rename_grouper_columns,
         column_name="subject_sex",
@@ -334,6 +414,13 @@ classify_traj_speed_params = dict()
 
 classify_traj_speed = (
     apply_classification.handle_errors(task_instance_id="classify_traj_speed")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         df=map_subject_sex,
         input_column_name="speed_kmhr",
@@ -360,6 +447,13 @@ split_subject_traj_groups_params = dict()
 
 split_subject_traj_groups = (
     split_groups.handle_errors(task_instance_id="split_subject_traj_groups")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         df=classify_traj_speed, groupers=groupers, **split_subject_traj_groups_params
     )
@@ -383,6 +477,13 @@ base_map_defs_params = dict(
 
 base_map_defs = (
     set_base_maps.handle_errors(task_instance_id="base_map_defs")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(**base_map_defs_params)
     .call()
 )
@@ -402,6 +503,13 @@ sort_traj_speed_params = dict()
 
 sort_traj_speed = (
     sort_values.handle_errors(task_instance_id="sort_traj_speed")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         column_name="speed_bins",
         ascending=True,
@@ -426,6 +534,13 @@ colormap_traj_speed_params = dict()
 
 colormap_traj_speed = (
     apply_color_map.handle_errors(task_instance_id="colormap_traj_speed")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         input_column_name="speed_bins",
         output_column_name="speed_bins_colormap",
@@ -450,6 +565,13 @@ speed_bin_legend_with_unit_params = dict()
 
 speed_bin_legend_with_unit = (
     map_values_with_unit.handle_errors(task_instance_id="speed_bin_legend_with_unit")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         input_column_name="speed_bins",
         output_column_name="speed_bins_formatted",
@@ -476,6 +598,13 @@ speed_val_with_unit_params = dict()
 
 speed_val_with_unit = (
     map_values_with_unit.handle_errors(task_instance_id="speed_val_with_unit")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         input_column_name="speed_kmhr",
         output_column_name="speed_kmhr",
@@ -502,6 +631,13 @@ rename_speed_display_columns_params = dict()
 
 rename_speed_display_columns = (
     map_columns.handle_errors(task_instance_id="rename_speed_display_columns")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         drop_columns=[],
         retain_columns=[],
@@ -535,6 +671,13 @@ traj_map_layers_params = dict(
 
 traj_map_layers = (
     create_polyline_layer.handle_errors(task_instance_id="traj_map_layers")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         layer_style={"color_column": "speed_bins_colormap"},
         legend={
@@ -571,6 +714,13 @@ traj_ecomap_params = dict(
 
 traj_ecomap = (
     draw_ecomap.handle_errors(task_instance_id="traj_ecomap")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         tile_layers=base_map_defs,
         north_arrow_style={"placement": "top-left"},
@@ -600,6 +750,13 @@ ecomap_html_urls_params = dict(
 
 ecomap_html_urls = (
     persist_text.handle_errors(task_instance_id="ecomap_html_urls")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"], **ecomap_html_urls_params
     )
@@ -623,6 +780,12 @@ traj_map_widgets_single_views = (
     create_map_widget_single_view.handle_errors(
         task_instance_id="traj_map_widgets_single_views"
     )
+    .skipif(
+        conditions=[
+            never,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         title="Subject Group Trajectory Map", **traj_map_widgets_single_views_params
     )
@@ -644,6 +807,13 @@ traj_grouped_map_widget_params = dict()
 
 traj_grouped_map_widget = (
     merge_widget_views.handle_errors(task_instance_id="traj_grouped_map_widget")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(widgets=traj_map_widgets_single_views, **traj_grouped_map_widget_params)
     .call()
 )
@@ -663,6 +833,13 @@ sort_traj_night_day_params = dict()
 
 sort_traj_night_day = (
     sort_values.handle_errors(task_instance_id="sort_traj_night_day")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         column_name="extra__is_night",
         ascending=False,
@@ -687,6 +864,13 @@ colormap_traj_night_params = dict()
 
 colormap_traj_night = (
     apply_color_map.handle_errors(task_instance_id="colormap_traj_night")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         colormap=["#292965", "#e7a553"],
         input_column_name="extra__is_night",
@@ -711,6 +895,13 @@ rename_nightday_display_columns_params = dict()
 
 rename_nightday_display_columns = (
     map_columns.handle_errors(task_instance_id="rename_nightday_display_columns")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         drop_columns=[],
         retain_columns=[],
@@ -741,6 +932,13 @@ traj_map_night_layers_params = dict(
 
 traj_map_night_layers = (
     create_polyline_layer.handle_errors(task_instance_id="traj_map_night_layers")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         layer_style={"color_column": "is_night_colors"},
         legend={"labels": ["Night", "Day"], "colors": ["#292965", "#e7a553"]},
@@ -767,6 +965,13 @@ traj_nightday_ecomap_params = dict(
 
 traj_nightday_ecomap = (
     draw_ecomap.handle_errors(task_instance_id="traj_nightday_ecomap")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         tile_layers=base_map_defs,
         north_arrow_style={"placement": "top-left"},
@@ -796,6 +1001,13 @@ ecomap_nightday_html_urls_params = dict(
 
 ecomap_nightday_html_urls = (
     persist_text.handle_errors(task_instance_id="ecomap_nightday_html_urls")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
         **ecomap_nightday_html_urls_params,
@@ -820,6 +1032,12 @@ traj_map_nightday_widgets_sv = (
     create_map_widget_single_view.handle_errors(
         task_instance_id="traj_map_nightday_widgets_sv"
     )
+    .skipif(
+        conditions=[
+            never,
+        ],
+        unpack_depth=1,
+    )
     .partial(title="Subject Group Night/Day Map", **traj_map_nightday_widgets_sv_params)
     .map(argnames=["view", "data"], argvalues=ecomap_nightday_html_urls)
 )
@@ -840,6 +1058,13 @@ traj_nightday_grouped_map_widget_params = dict()
 traj_nightday_grouped_map_widget = (
     merge_widget_views.handle_errors(
         task_instance_id="traj_nightday_grouped_map_widget"
+    )
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
     )
     .partial(
         widgets=traj_map_nightday_widgets_sv, **traj_nightday_grouped_map_widget_params
@@ -862,6 +1087,13 @@ mean_speed_params = dict()
 
 mean_speed = (
     dataframe_column_mean.handle_errors(task_instance_id="mean_speed")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(column_name="speed_kmhr", **mean_speed_params)
     .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
 )
@@ -881,6 +1113,13 @@ average_speed_converted_params = dict()
 
 average_speed_converted = (
     with_unit.handle_errors(task_instance_id="average_speed_converted")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(original_unit="km/h", new_unit="km/h", **average_speed_converted_params)
     .mapvalues(argnames=["value"], argvalues=mean_speed)
 )
@@ -902,6 +1141,12 @@ mean_speed_sv_widgets = (
     create_single_value_widget_single_view.handle_errors(
         task_instance_id="mean_speed_sv_widgets"
     )
+    .skipif(
+        conditions=[
+            never,
+        ],
+        unpack_depth=1,
+    )
     .partial(title="Mean Speed", decimal_places=1, **mean_speed_sv_widgets_params)
     .map(argnames=["view", "data"], argvalues=average_speed_converted)
 )
@@ -921,6 +1166,13 @@ mean_speed_grouped_sv_widget_params = dict()
 
 mean_speed_grouped_sv_widget = (
     merge_widget_views.handle_errors(task_instance_id="mean_speed_grouped_sv_widget")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(widgets=mean_speed_sv_widgets, **mean_speed_grouped_sv_widget_params)
     .call()
 )
@@ -940,6 +1192,13 @@ max_speed_params = dict()
 
 max_speed = (
     dataframe_column_max.handle_errors(task_instance_id="max_speed")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(column_name="speed_kmhr", **max_speed_params)
     .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
 )
@@ -959,6 +1218,13 @@ max_speed_converted_params = dict()
 
 max_speed_converted = (
     with_unit.handle_errors(task_instance_id="max_speed_converted")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(original_unit="km/h", new_unit="km/h", **max_speed_converted_params)
     .mapvalues(argnames=["value"], argvalues=max_speed)
 )
@@ -980,6 +1246,12 @@ max_speed_sv_widgets = (
     create_single_value_widget_single_view.handle_errors(
         task_instance_id="max_speed_sv_widgets"
     )
+    .skipif(
+        conditions=[
+            never,
+        ],
+        unpack_depth=1,
+    )
     .partial(title="Max Speed", decimal_places=1, **max_speed_sv_widgets_params)
     .map(argnames=["view", "data"], argvalues=max_speed_converted)
 )
@@ -999,6 +1271,13 @@ max_speed_grouped_sv_widget_params = dict()
 
 max_speed_grouped_sv_widget = (
     merge_widget_views.handle_errors(task_instance_id="max_speed_grouped_sv_widget")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(widgets=max_speed_sv_widgets, **max_speed_grouped_sv_widget_params)
     .call()
 )
@@ -1018,6 +1297,13 @@ num_location_params = dict()
 
 num_location = (
     dataframe_count.handle_errors(task_instance_id="num_location")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(**num_location_params)
     .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
 )
@@ -1038,6 +1324,12 @@ num_location_sv_widgets_params = dict()
 num_location_sv_widgets = (
     create_single_value_widget_single_view.handle_errors(
         task_instance_id="num_location_sv_widgets"
+    )
+    .skipif(
+        conditions=[
+            never,
+        ],
+        unpack_depth=1,
     )
     .partial(
         title="Number of Locations", decimal_places=1, **num_location_sv_widgets_params
@@ -1060,6 +1352,13 @@ num_location_grouped_sv_widget_params = dict()
 
 num_location_grouped_sv_widget = (
     merge_widget_views.handle_errors(task_instance_id="num_location_grouped_sv_widget")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(widgets=num_location_sv_widgets, **num_location_grouped_sv_widget_params)
     .call()
 )
@@ -1079,6 +1378,13 @@ nightday_ratio_params = dict()
 
 nightday_ratio = (
     get_night_day_ratio.handle_errors(task_instance_id="nightday_ratio")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(**nightday_ratio_params)
     .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
 )
@@ -1099,6 +1405,12 @@ nightday_ratio_sv_widgets_params = dict()
 nightday_ratio_sv_widgets = (
     create_single_value_widget_single_view.handle_errors(
         task_instance_id="nightday_ratio_sv_widgets"
+    )
+    .skipif(
+        conditions=[
+            never,
+        ],
+        unpack_depth=1,
     )
     .partial(
         title="Night/Day Ratio", decimal_places=1, **nightday_ratio_sv_widgets_params
@@ -1123,6 +1435,13 @@ nightday_ratio_grouped_sv_widget = (
     merge_widget_views.handle_errors(
         task_instance_id="nightday_ratio_grouped_sv_widget"
     )
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         widgets=nightday_ratio_sv_widgets, **nightday_ratio_grouped_sv_widget_params
     )
@@ -1144,6 +1463,13 @@ total_distance_params = dict()
 
 total_distance = (
     dataframe_column_sum.handle_errors(task_instance_id="total_distance")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(column_name="dist_meters", **total_distance_params)
     .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
 )
@@ -1163,6 +1489,13 @@ total_dist_converted_params = dict()
 
 total_dist_converted = (
     with_unit.handle_errors(task_instance_id="total_dist_converted")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(original_unit="m", new_unit="km", **total_dist_converted_params)
     .mapvalues(argnames=["value"], argvalues=total_distance)
 )
@@ -1183,6 +1516,12 @@ total_distance_sv_widgets_params = dict()
 total_distance_sv_widgets = (
     create_single_value_widget_single_view.handle_errors(
         task_instance_id="total_distance_sv_widgets"
+    )
+    .skipif(
+        conditions=[
+            never,
+        ],
+        unpack_depth=1,
     )
     .partial(
         title="Total Distance", decimal_places=1, **total_distance_sv_widgets_params
@@ -1205,6 +1544,13 @@ total_dist_grouped_sv_widget_params = dict()
 
 total_dist_grouped_sv_widget = (
     merge_widget_views.handle_errors(task_instance_id="total_dist_grouped_sv_widget")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(widgets=total_distance_sv_widgets, **total_dist_grouped_sv_widget_params)
     .call()
 )
@@ -1224,6 +1570,13 @@ total_time_params = dict()
 
 total_time = (
     dataframe_column_sum.handle_errors(task_instance_id="total_time")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(column_name="timespan_seconds", **total_time_params)
     .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
 )
@@ -1243,6 +1596,13 @@ total_time_converted_params = dict()
 
 total_time_converted = (
     with_unit.handle_errors(task_instance_id="total_time_converted")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(original_unit="s", new_unit="h", **total_time_converted_params)
     .mapvalues(argnames=["value"], argvalues=total_time)
 )
@@ -1264,6 +1624,12 @@ total_time_sv_widgets = (
     create_single_value_widget_single_view.handle_errors(
         task_instance_id="total_time_sv_widgets"
     )
+    .skipif(
+        conditions=[
+            never,
+        ],
+        unpack_depth=1,
+    )
     .partial(title="Total Time", decimal_places=1, **total_time_sv_widgets_params)
     .map(argnames=["view", "data"], argvalues=total_time_converted)
 )
@@ -1283,6 +1649,13 @@ total_time_grouped_sv_widget_params = dict()
 
 total_time_grouped_sv_widget = (
     merge_widget_views.handle_errors(task_instance_id="total_time_grouped_sv_widget")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(widgets=total_time_sv_widgets, **total_time_grouped_sv_widget_params)
     .call()
 )
@@ -1306,6 +1679,13 @@ td_params = dict(
 
 td = (
     calculate_time_density.handle_errors(task_instance_id="td")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         crs="ESRI:53042",
         percentiles=[50.0, 60.0, 70.0, 80.0, 90.0, 95.0, 99.999],
@@ -1331,6 +1711,13 @@ td_colormap_params = dict()
 
 td_colormap = (
     apply_color_map.handle_errors(task_instance_id="td_colormap")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         input_column_name="percentile",
         colormap="RdYlGn",
@@ -1357,6 +1744,13 @@ td_map_layer_params = dict(
 
 td_map_layer = (
     create_polygon_layer.handle_errors(task_instance_id="td_map_layer")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         layer_style={
             "fill_color_column": "percentile_colormap",
@@ -1387,6 +1781,13 @@ td_ecomap_params = dict(
 
 td_ecomap = (
     draw_ecomap.handle_errors(task_instance_id="td_ecomap")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         tile_layers=base_map_defs,
         north_arrow_style={"placement": "top-left"},
@@ -1416,6 +1817,13 @@ td_ecomap_html_url_params = dict(
 
 td_ecomap_html_url = (
     persist_text.handle_errors(task_instance_id="td_ecomap_html_url")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"], **td_ecomap_html_url_params
     )
@@ -1437,6 +1845,12 @@ td_map_widget_params = dict()
 
 td_map_widget = (
     create_map_widget_single_view.handle_errors(task_instance_id="td_map_widget")
+    .skipif(
+        conditions=[
+            never,
+        ],
+        unpack_depth=1,
+    )
     .partial(title="Home Range Map", **td_map_widget_params)
     .map(argnames=["view", "data"], argvalues=td_ecomap_html_url)
 )
@@ -1456,6 +1870,13 @@ td_grouped_map_widget_params = dict()
 
 td_grouped_map_widget = (
     merge_widget_views.handle_errors(task_instance_id="td_grouped_map_widget")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(widgets=td_map_widget, **td_grouped_map_widget_params)
     .call()
 )
@@ -1475,6 +1896,13 @@ nsd_chart_params = dict()
 
 nsd_chart = (
     draw_ecoplot.handle_errors(task_instance_id="nsd_chart")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         group_by="subject_name",
         ecoplot_configs=[
@@ -1508,6 +1936,13 @@ nsd_chart_html_url_params = dict(
 
 nsd_chart_html_url = (
     persist_text.handle_errors(task_instance_id="nsd_chart_html_url")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"], **nsd_chart_html_url_params
     )
@@ -1529,6 +1964,12 @@ nsd_chart_widget_params = dict()
 
 nsd_chart_widget = (
     create_plot_widget_single_view.handle_errors(task_instance_id="nsd_chart_widget")
+    .skipif(
+        conditions=[
+            never,
+        ],
+        unpack_depth=1,
+    )
     .partial(title="Net Square Displacement", **nsd_chart_widget_params)
     .map(argnames=["view", "data"], argvalues=nsd_chart_html_url)
 )
@@ -1548,6 +1989,13 @@ grouped_nsd_chart_widget_merge_params = dict()
 
 grouped_nsd_chart_widget_merge = (
     merge_widget_views.handle_errors(task_instance_id="grouped_nsd_chart_widget_merge")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(widgets=nsd_chart_widget, **grouped_nsd_chart_widget_merge_params)
     .call()
 )
@@ -1567,6 +2015,13 @@ subject_tracking_dashboard_params = dict()
 
 subject_tracking_dashboard = (
     gather_dashboard.handle_errors(task_instance_id="subject_tracking_dashboard")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
     .partial(
         details=workflow_details,
         widgets=[
