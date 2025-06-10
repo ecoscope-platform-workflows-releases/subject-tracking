@@ -15,7 +15,6 @@ all-grouper:
       until: "2017-03-31T23:59:59Z"
     subject_obs:
       subject_group_name: "Ecoscope"
-      include_inactive: false
     subject_traj:
       trajectory_segment_filter:
         min_length_meters: 0.001
@@ -54,7 +53,6 @@ month-grouper:
       until: "2017-03-31T23:59:59Z"
     subject_obs:
       subject_group_name: "Ecoscope"
-      include_inactive: false
     subject_traj:
       trajectory_segment_filter:
         min_length_meters: 0.001
@@ -95,7 +93,6 @@ value-grouper:
       until: "2017-03-31T23:59:59Z"
     subject_obs:
       subject_group_name: "Ecoscope"
-      include_inactive: false
     subject_traj:
       trajectory_segment_filter:
         min_length_meters: 0.001
@@ -137,7 +134,6 @@ task-instance-error:
       until: "2017-03-31T23:59:59Z"
     subject_obs:
       subject_group_name: "Ecoscope"
-      include_inactive: false
     subject_traj:
       trajectory_segment_filter:
         min_length_meters: 100000000000000000.0
