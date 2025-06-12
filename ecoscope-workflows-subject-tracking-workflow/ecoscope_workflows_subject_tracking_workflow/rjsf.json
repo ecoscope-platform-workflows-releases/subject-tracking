@@ -67,12 +67,6 @@
           "type": "string",
           "description": "Name of EarthRanger Subject",
           "ecoscope:subject_group_name": "properties.er_client_name.properties.data_source.properties.name"
-        },
-        "include_inactive": {
-          "default": true,
-          "title": "Include Inactive",
-          "type": "boolean",
-          "description": "Whether or not to include inactive subjects"
         }
       },
       "required": [
@@ -124,7 +118,7 @@
             "max_speed_kmhr": 500
           },
           "title": "Trajectory Segment Filter",
-          "description": "Trajectory Segments outside these bounds will be removed",
+          "description": "Filter track data by setting limits on track segment length, duration, and speed. Segments outside these bounds are removed, reducing noise and to focus on meaningful movement patterns.",
           "ecoscope:advanced": true
         }
       },
@@ -357,14 +351,16 @@
             },
             "max_speed_factor": {
               "default": 1.05,
-              "title": "Max Speed Factor",
+              "title": "Max Speed Factor (Kilometers per Hour)",
               "type": "number",
+              "description": "An estimate of the subject's maximum speed as a factor of the maximum measured speed value in the dataset.",
               "ecoscope:advanced": true
             },
             "expansion_factor": {
               "default": 1.3,
               "title": "Expansion Factor",
               "type": "number",
+              "description": "Controls how far time density values spread across the grid, affecting the smoothness of the output.",
               "ecoscope:advanced": true
             }
           },
@@ -454,44 +450,38 @@
       "properties": {
         "min_length_meters": {
           "default": 0.001,
-          "description": "Minimum Segment Length in Meters",
           "ecoscope:advanced": true,
-          "title": "Min Length Meters",
+          "title": "Minimum Segment Length (Meters)",
           "type": "number"
         },
         "max_length_meters": {
           "default": 100000,
-          "description": "Maximum Segment Length in Meters",
           "ecoscope:advanced": true,
-          "title": "Max Length Meters",
+          "title": "Maximum Segment Length (Meters)",
           "type": "number"
         },
         "min_time_secs": {
           "default": 1,
-          "description": "Minimum Segment Duration in Seconds",
           "ecoscope:advanced": true,
-          "title": "Min Time Secs",
+          "title": "Minimum Segment Duration (Seconds)",
           "type": "number"
         },
         "max_time_secs": {
           "default": 172800,
-          "description": "Maximum Segment Duration in Seconds",
           "ecoscope:advanced": true,
-          "title": "Max Time Secs",
+          "title": "Maximum Segment Duration (Seconds)",
           "type": "number"
         },
         "min_speed_kmhr": {
           "default": 0.0001,
-          "description": "Minimum Segment Speed in Kilometers per Hour",
           "ecoscope:advanced": true,
-          "title": "Min Speed Kmhr",
+          "title": "Minimum Segment Speed (Kilometers per Hour)",
           "type": "number"
         },
         "max_speed_kmhr": {
           "default": 500,
-          "description": "Maximum Segment Speed in Kilometers per Hour",
           "ecoscope:advanced": true,
-          "title": "Max Speed Kmhr",
+          "title": "Maximum Segment Speed (Kilometers per Hour)",
           "type": "number"
         }
       },
