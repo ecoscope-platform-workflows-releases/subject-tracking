@@ -33,6 +33,7 @@ from ecoscope_workflows_core.tasks.transformation import sort_values
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import apply_color_map
 from ecoscope_workflows_core.tasks.transformation import map_values_with_unit
 from ecoscope_workflows_ext_ecoscope.tasks.results import create_polyline_layer
+from ecoscope_workflows_ext_ecoscope.tasks.skip import all_geometry_are_none
 from ecoscope_workflows_ext_ecoscope.tasks.results import draw_ecomap
 from ecoscope_workflows_core.tasks.io import persist_text
 from ecoscope_workflows_core.tasks.results import create_map_widget_single_view
@@ -146,7 +147,6 @@ time_range = (
 
 subject_obs_params = dict(
     subject_group_name=...,
-    include_inactive=...,
 )
 
 # %%
@@ -675,6 +675,7 @@ traj_map_layers = (
         conditions=[
             any_is_empty_df,
             any_dependency_skipped,
+            all_geometry_are_none,
         ],
         unpack_depth=1,
     )
@@ -936,6 +937,7 @@ traj_map_night_layers = (
         conditions=[
             any_is_empty_df,
             any_dependency_skipped,
+            all_geometry_are_none,
         ],
         unpack_depth=1,
     )
@@ -1748,6 +1750,7 @@ td_map_layer = (
         conditions=[
             any_is_empty_df,
             any_dependency_skipped,
+            all_geometry_are_none,
         ],
         unpack_depth=1,
     )
