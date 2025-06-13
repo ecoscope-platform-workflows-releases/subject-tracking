@@ -1463,10 +1463,7 @@ def main(params: Params):
             partial={
                 "drop_columns": [],
                 "retain_columns": [],
-                "rename_columns": {
-                    "segment_start": "Time",
-                    "nsd": "Net-Square Displacement (square meters)",
-                },
+                "rename_columns": {"segment_start": "Time", "nsd": "NSD (m²)"},
             }
             | (params_dict.get("nsd_rename_display_columns") or {}),
             method="mapvalues",
@@ -1491,7 +1488,7 @@ def main(params: Params):
                 "ecoplot_configs": [
                     {
                         "x_col": "Time",
-                        "y_col": "Net-Square Displacement (square meters)",
+                        "y_col": "NSD (m²)",
                         "plot_style": {"xperiodalignment": None},
                         "color_column": None,
                     }

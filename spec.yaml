@@ -1,10 +1,10 @@
 id: subject_tracking
 requirements:
   - name: ecoscope-workflows-core
-    version: 0.3.5
+    version: 0.3.6
     channel: https://repo.prefix.dev/ecoscope-workflows/
   - name: ecoscope-workflows-ext-ecoscope
-    version: 0.3.5
+    version: 0.3.6
     channel: https://repo.prefix.dev/ecoscope-workflows/
 rjsf-overrides:
   properties:
@@ -656,7 +656,7 @@ workflow:
       retain_columns: []
       rename_columns:
         segment_start: Time
-        nsd: Net-Square Displacement (square meters)
+        nsd: NSD (m²)
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_subject_traj_groups.return }}
@@ -667,7 +667,7 @@ workflow:
       group_by: subject_name
       ecoplot_configs:
         - x_col: Time
-          y_col: Net-Square Displacement (square meters)
+          y_col: NSD (m²)
           plot_style:
             xperiodalignment: null
           color_column: null
