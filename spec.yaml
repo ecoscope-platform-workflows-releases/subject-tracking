@@ -1,10 +1,10 @@
 id: subject_tracking
 requirements:
   - name: ecoscope-workflows-core
-    version: 0.3.4
+    version: 0.3.5
     channel: https://repo.prefix.dev/ecoscope-workflows/
   - name: ecoscope-workflows-ext-ecoscope
-    version: 0.3.4
+    version: 0.3.5
     channel: https://repo.prefix.dev/ecoscope-workflows/
 rjsf-overrides:
   properties:
@@ -648,21 +648,33 @@ workflow:
         task: merge_widget_views
         partial:
           widgets: ${{ workflow.td_map_widget.return }}
+  - name: Rename axis label for NSD plot
+    id: nsd_rename_display_columns
+    task: map_columns
+    partial:
+      drop_columns: []
+      retain_columns: []
+      rename_columns:
+        segment_start: Time
+        nsd: Net-Square Displacement (square meters)
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_subject_traj_groups.return }}
   - name: Draw NSD Scatter Chart
     id: nsd_chart
     task: draw_ecoplot
     partial:
       group_by: subject_name
       ecoplot_configs:
-        - x_col: segment_start
-          y_col: nsd
+        - x_col: Time
+          y_col: Net-Square Displacement (square meters)
           plot_style:
             xperiodalignment: null
           color_column: null
       tickformat: '%b-%Y'
     mapvalues:
       argnames: dataframe
-      argvalues: ${{ workflow.split_subject_traj_groups.return }}
+      argvalues: ${{ workflow.nsd_rename_display_columns.return }}
   - name: Persist NSD Scatter Chart as Text
     id: nsd_chart_html_url
     task: persist_text

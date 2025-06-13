@@ -1886,6 +1886,40 @@ td_grouped_map_widget = (
 
 
 # %% [markdown]
+# ## Rename axis label for NSD plot
+
+# %%
+# parameters
+
+nsd_rename_display_columns_params = dict()
+
+# %%
+# call the task
+
+
+nsd_rename_display_columns = (
+    map_columns.handle_errors(task_instance_id="nsd_rename_display_columns")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
+    .partial(
+        drop_columns=[],
+        retain_columns=[],
+        rename_columns={
+            "segment_start": "Time",
+            "nsd": "Net-Square Displacement (square meters)",
+        },
+        **nsd_rename_display_columns_params,
+    )
+    .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
+)
+
+
+# %% [markdown]
 # ## Draw NSD Scatter Chart
 
 # %%
@@ -1910,8 +1944,8 @@ nsd_chart = (
         group_by="subject_name",
         ecoplot_configs=[
             {
-                "x_col": "segment_start",
-                "y_col": "nsd",
+                "x_col": "Time",
+                "y_col": "Net-Square Displacement (square meters)",
                 "plot_style": {"xperiodalignment": None},
                 "color_column": None,
             }
@@ -1919,7 +1953,7 @@ nsd_chart = (
         tickformat="%b-%Y",
         **nsd_chart_params,
     )
-    .mapvalues(argnames=["dataframe"], argvalues=split_subject_traj_groups)
+    .mapvalues(argnames=["dataframe"], argvalues=nsd_rename_display_columns)
 )
 
 

@@ -1183,6 +1183,28 @@ def main(params: Params):
         .call()
     )
 
+    nsd_rename_display_columns = (
+        map_columns.validate()
+        .handle_errors(task_instance_id="nsd_rename_display_columns")
+        .skipif(
+            conditions=[
+                any_is_empty_df,
+                any_dependency_skipped,
+            ],
+            unpack_depth=1,
+        )
+        .partial(
+            drop_columns=[],
+            retain_columns=[],
+            rename_columns={
+                "segment_start": "Time",
+                "nsd": "Net-Square Displacement (square meters)",
+            },
+            **(params_dict.get("nsd_rename_display_columns") or {}),
+        )
+        .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
+    )
+
     nsd_chart = (
         draw_ecoplot.validate()
         .handle_errors(task_instance_id="nsd_chart")
@@ -1197,8 +1219,8 @@ def main(params: Params):
             group_by="subject_name",
             ecoplot_configs=[
                 {
-                    "x_col": "segment_start",
-                    "y_col": "nsd",
+                    "x_col": "Time",
+                    "y_col": "Net-Square Displacement (square meters)",
                     "plot_style": {"xperiodalignment": None},
                     "color_column": None,
                 }
@@ -1206,7 +1228,7 @@ def main(params: Params):
             tickformat="%b-%Y",
             **(params_dict.get("nsd_chart") or {}),
         )
-        .mapvalues(argnames=["dataframe"], argvalues=split_subject_traj_groups)
+        .mapvalues(argnames=["dataframe"], argvalues=nsd_rename_display_columns)
     )
 
     nsd_chart_html_url = (

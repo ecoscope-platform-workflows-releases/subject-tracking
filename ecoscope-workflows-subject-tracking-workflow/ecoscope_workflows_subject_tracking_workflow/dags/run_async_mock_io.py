@@ -130,7 +130,8 @@ def main(params: Params):
         "td_ecomap_html_url": ["td_ecomap"],
         "td_map_widget": ["td_ecomap_html_url"],
         "td_grouped_map_widget": ["td_map_widget"],
-        "nsd_chart": ["split_subject_traj_groups"],
+        "nsd_rename_display_columns": ["split_subject_traj_groups"],
+        "nsd_chart": ["nsd_rename_display_columns"],
         "nsd_chart_html_url": ["nsd_chart"],
         "nsd_chart_widget": ["nsd_chart_html_url"],
         "grouped_nsd_chart_widget_merge": ["nsd_chart_widget"],
@@ -1448,6 +1449,32 @@ def main(params: Params):
             | (params_dict.get("td_grouped_map_widget") or {}),
             method="call",
         ),
+        "nsd_rename_display_columns": Node(
+            async_task=map_columns.validate()
+            .handle_errors(task_instance_id="nsd_rename_display_columns")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
+            .set_executor("lithops"),
+            partial={
+                "drop_columns": [],
+                "retain_columns": [],
+                "rename_columns": {
+                    "segment_start": "Time",
+                    "nsd": "Net-Square Displacement (square meters)",
+                },
+            }
+            | (params_dict.get("nsd_rename_display_columns") or {}),
+            method="mapvalues",
+            kwargs={
+                "argnames": ["df"],
+                "argvalues": DependsOn("split_subject_traj_groups"),
+            },
+        ),
         "nsd_chart": Node(
             async_task=draw_ecoplot.validate()
             .handle_errors(task_instance_id="nsd_chart")
@@ -1463,8 +1490,8 @@ def main(params: Params):
                 "group_by": "subject_name",
                 "ecoplot_configs": [
                     {
-                        "x_col": "segment_start",
-                        "y_col": "nsd",
+                        "x_col": "Time",
+                        "y_col": "Net-Square Displacement (square meters)",
                         "plot_style": {"xperiodalignment": None},
                         "color_column": None,
                     }
@@ -1475,7 +1502,7 @@ def main(params: Params):
             method="mapvalues",
             kwargs={
                 "argnames": ["dataframe"],
-                "argvalues": DependsOn("split_subject_traj_groups"),
+                "argvalues": DependsOn("nsd_rename_display_columns"),
             },
         ),
         "nsd_chart_html_url": Node(
