@@ -1909,10 +1909,7 @@ nsd_rename_display_columns = (
     .partial(
         drop_columns=[],
         retain_columns=[],
-        rename_columns={
-            "segment_start": "Time",
-            "nsd": "Net-Square Displacement (square meters)",
-        },
+        rename_columns={"segment_start": "Time", "nsd": "NSD (m²)"},
         **nsd_rename_display_columns_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
@@ -1945,7 +1942,7 @@ nsd_chart = (
         ecoplot_configs=[
             {
                 "x_col": "Time",
-                "y_col": "Net-Square Displacement (square meters)",
+                "y_col": "NSD (m²)",
                 "plot_style": {"xperiodalignment": None},
                 "color_column": None,
             }
