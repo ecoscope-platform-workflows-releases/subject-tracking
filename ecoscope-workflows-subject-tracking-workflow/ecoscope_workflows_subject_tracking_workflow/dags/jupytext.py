@@ -167,6 +167,7 @@ subject_obs = (
         time_range=time_range,
         raise_on_empty=False,
         include_details=False,
+        include_subjectsource_details=False,
         **subject_obs_params,
     )
     .call()
