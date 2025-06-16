@@ -197,6 +197,7 @@ def main(params: Params):
                 "time_range": DependsOn("time_range"),
                 "raise_on_empty": False,
                 "include_details": False,
+                "include_subjectsource_details": False,
             }
             | (params_dict.get("subject_obs") or {}),
             method="call",
