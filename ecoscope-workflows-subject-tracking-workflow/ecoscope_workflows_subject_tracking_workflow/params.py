@@ -324,9 +324,9 @@ class Td(BaseModel):
         title="Max Speed Factor (Kilometers per Hour)",
     )
     expansion_factor: Optional[float] = Field(
-        1.3,
+        1.05,
         description="Controls how far time density values spread across the grid, affecting the smoothness of the output.",
-        title="Expansion Factor",
+        title="Shape Buffer Expansion Factor",
     )
 
 
