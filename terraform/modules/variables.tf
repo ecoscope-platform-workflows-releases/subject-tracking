@@ -14,10 +14,16 @@ variable "location" {
   default     = "us-west1"
 }
 
-variable "application" {
+variable "application_name" {
   type = string
   description = "Name of the application"
   default = "workflow-subject-tracking"
+}
+
+variable "application_short_name" {
+  type = string
+  description = "Name of the application"
+  default = "sbj-trk"
 }
 
 variable "ingress" {
