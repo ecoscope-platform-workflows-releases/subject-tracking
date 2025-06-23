@@ -507,8 +507,26 @@
       "type": "object"
     }
   },
-  "additionalProperties": false,
   "uiSchema": {
+    "workflow_details": {
+      "ui:order": [
+        "name",
+        "description"
+      ]
+    },
+    "time_range": {
+      "ui:order": [
+        "since",
+        "until"
+      ]
+    },
+    "td": {
+      "ui:order": [
+        "auto_scale_or_custom_cell_size",
+        "max_speed_factor",
+        "expansion_factor"
+      ]
+    },
     "ui:order": [
       "workflow_details",
       "er_client_name",
@@ -519,5 +537,6 @@
       "base_map_defs",
       "td"
     ]
-  }
+  },
+  "additionalProperties": false
 }
