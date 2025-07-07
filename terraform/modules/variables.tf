@@ -20,6 +20,12 @@ variable "application_name" {
   default = "workflow-subject-tracking"
 }
 
+variable "application_name_alt" {
+  type = string
+  description = "Name of the application"
+  default = "workflow-subject-trk"
+}
+
 variable "application_short_name" {
   type = string
   description = "Name of the application"

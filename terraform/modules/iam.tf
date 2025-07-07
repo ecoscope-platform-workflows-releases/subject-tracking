@@ -1,5 +1,5 @@
 resource "google_service_account" "default" {
-  account_id = startswith(var.env, "dev-preview")? "wf-${var.application_short_name}-${var.env}" : "${var.application_name}-${var.env}"
+  account_id = startswith(var.env, "dev-preview")? "wf-${var.application_short_name}-${var.env}" : "${var.application_name_alt}-${var.env}"
   project    = var.project_id
 }
 
