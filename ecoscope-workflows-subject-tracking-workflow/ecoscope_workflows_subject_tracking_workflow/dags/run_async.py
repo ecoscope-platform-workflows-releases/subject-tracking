@@ -39,7 +39,9 @@ from ecoscope_workflows_core.tasks.analysis import dataframe_column_max
 from ecoscope_workflows_core.tasks.analysis import dataframe_count
 from ecoscope_workflows_ext_ecoscope.tasks.analysis import get_night_day_ratio
 from ecoscope_workflows_core.tasks.analysis import dataframe_column_sum
-from ecoscope_workflows_ext_ecoscope.tasks.analysis import calculate_time_density
+from ecoscope_workflows_ext_ecoscope.tasks.analysis import (
+    calculate_elliptical_time_density,
+)
 from ecoscope_workflows_ext_ecoscope.tasks.results import create_polygon_layer
 from ecoscope_workflows_ext_ecoscope.tasks.results import draw_ecoplot
 from ecoscope_workflows_core.tasks.results import create_plot_widget_single_view
@@ -1272,7 +1274,7 @@ def main(params: Params):
             method="call",
         ),
         "td": Node(
-            async_task=calculate_time_density.validate()
+            async_task=calculate_elliptical_time_density.validate()
             .handle_errors(task_instance_id="td")
             .skipif(
                 conditions=[
