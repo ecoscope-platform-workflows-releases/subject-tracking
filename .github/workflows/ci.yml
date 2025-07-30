@@ -1,54 +1,96 @@
-name: CI
+name: Tag
 
 on:
-  push:
-    branches: ["main"]
   pull_request:
-    branches: ["*"]
+    branches:
+      - 'main'
+      - 'patch-*'
 
 jobs:
-  test:
+  generate-tag:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        deployment: [
-          "local",
-          "docker",
-        ]
-        api: [
-          "app",
-          # "cli",
-        ]
-        execution-mode: [
-          # "async",
-          "sequential",
-        ]
-        exclude:
-          # at this point, the docker container we are building runs the app only (not the cli)
-          # if we want to build a version of the container that runs the cli at a later point,
-          # we can do that, but for now, we are only testing the app in the container
-          - deployment: "docker"
-            api: "cli"
-          - api: "cli"
-            execution-mode: "async"
-
+    outputs:
+      tag: ${{ steps.create_tag.outputs.result }}
     steps:
       - uses: actions/checkout@v4
-      - name: Install pixi
-        run: curl -fsSL https://pixi.sh/install.sh | bash && echo "$HOME/.pixi/bin" >> $GITHUB_PATH
-      # 'local' deployment test -------------------------------------------------------------------
-      - name: Test
-        if: matrix.deployment == 'local'
-        run: pixi run --manifest-path pixi.toml -e default pytest-${{ matrix.api }} ${{ matrix.execution-mode }}
-      # 'docker' deployment test ------------------------------------------------------------------
-      - name: Docker build + run
-        if: matrix.deployment == 'docker'
+        with:
+          fetch-depth: 0  # get existing tags
+      - name: List existing tags
         run: |
-          pixi run --manifest-path pixi.toml docker-build
-          pixi run --manifest-path pixi.toml docker-run
-          sleep 5
-          docker ps
-      - name: Invoke container with curl
-        if: matrix.deployment == 'docker'
-        run:  pixi run --manifest-path pixi.toml curl-invoke ${{ matrix.execution-mode }}
+          git tag -l
+      - name: Get workflow id from spec.yaml
+        id: get_workflow_id
+        uses: mikefarah/yq@v4
+        with:
+          cmd: yq -r '.id' spec.yaml
+      - name: Transform workflow id to workflow directory name
+        id: workflow_directory
+        run: |
+          export WORKFLOW_NAME=$(echo "${{ steps.get_workflow_id.outputs.result }}" | tr '[:upper:]' '[:lower:]' | sed 's/_/-/g')
+          echo "name=ecoscope-workflows-${WORKFLOW_NAME}-workflow" >> $GITHUB_OUTPUT
+      - name: Create tag from VERSION.yaml
+        id: create_tag
+        uses: mikefarah/yq@v4
+        with:
+          cmd: yq -r '"v" + (.MAJ | tostring) + "." + (.MIN | tostring) + "." + (.PATCH | tostring)' ${{ steps.workflow_directory.outputs.name }}/VERSION.yaml
+      - name: Validate tag doesn't already exist
+        run: |
+          if git tag -l | grep -q "${{ steps.create_tag.outputs.result }}"; then
+            echo "Tag ${{ steps.create_tag.outputs.result }} already exists. Exiting."
+            exit 1
+          else
+            echo "Tag ${{ steps.create_tag.outputs.result }} does not exist. Proceeding."
+          fi
+      - name: Validate tag contains all three semantic elements
+        run: |
+          if [[ "${{ steps.create_tag.outputs.result }}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Tag ${{ steps.create_tag.outputs.result }} is valid, because it adheres to vMAJ.MIN.PATCH format."
+          else
+            echo "Tag ${{ steps.create_tag.outputs.result }} is not valid. It must adhere to vMAJ.MIN.PATCH format."
+            exit 1
+          fi
+      - name: If this is a PR to a patch branch, ensure the patch version is not 0
+        if: startsWith(github.base_ref, 'patch-')
+        run: |
+          patch_version=$(echo "${{ steps.create_tag.outputs.result }}" | cut -d '.' -f 3)
+          if [ "$patch_version" -ne 0 ]; then
+            echo "Patch version is not 0. This is an acceptable PR to a patch branch."
+          else
+            echo "Patch version is 0. Please ensure that the patch version is incremented before merging this PR."
+            exit 1
+          fi
+
+  cut-release:
+    needs: generate-tag
+    # only actually cut a tag + release when PRs to main or patch branches are merged
+    if: github.event.action == 'closed' && github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+          fetch-depth: 0  # get existing tags
+      - name: List existing tags
+        run: |
+          git tag -l
+      - name: Tag
+        run: |
+          echo "Tagging version ${{ needs.generate-tag.outputs.tag }}"
+          echo "Tagging from:\n$(git log -1)"
+          git tag ${{ needs.generate-tag.outputs.tag }}
+          git tag -l
+      - name: Push tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git push origin --tags
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          gh release create
+          '${{ needs.generate-tag.outputs.tag }}'
+          --repo '${{ github.repository }}'
+          --generate-notes
