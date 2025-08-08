@@ -142,7 +142,7 @@ time_range = (
 
 
 # %% [markdown]
-# ## Get Subject Group Observations from EarthRanger
+# ##
 
 # %%
 # parameters
@@ -274,7 +274,7 @@ day_night_labels = (
 
 
 # %% [markdown]
-# ## Transform Relocations to Trajectories
+# ## Trajectory Segment Filter
 
 # %%
 # parameters
@@ -465,7 +465,7 @@ split_subject_traj_groups = (
 
 
 # %% [markdown]
-# ## Base Maps
+# ## Map Base Layers
 
 # %%
 # parameters
@@ -1674,6 +1674,7 @@ total_time_grouped_sv_widget = (
 
 td_params = dict(
     auto_scale_or_custom_cell_size=...,
+    crs=...,
     max_speed_factor=...,
     expansion_factor=...,
 )
@@ -1692,7 +1693,6 @@ td = (
         unpack_depth=1,
     )
     .partial(
-        crs="ESRI:53042",
         percentiles=[50.0, 60.0, 70.0, 80.0, 90.0, 95.0, 99.999],
         nodata_value="nan",
         band_count=1,

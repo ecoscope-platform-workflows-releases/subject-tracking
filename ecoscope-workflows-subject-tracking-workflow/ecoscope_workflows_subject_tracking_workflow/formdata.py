@@ -37,9 +37,11 @@ class SubjectObs(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
-    subject_group_name: str = Field(
-        ..., description="Name of EarthRanger Subject", title="Subject Group Name"
-    )
+    subject_group_name: str = Field(..., title="Subject Group Name")
+
+
+class SubjectGroup(BaseModel):
+    subject_obs: Optional[SubjectObs] = Field(None, title="")
 
 
 class Url(str, Enum):
@@ -204,7 +206,7 @@ class BaseMapDefs(BaseModel):
             },
         ],
         description="Select tile layers to use as base layers in map outputs. The first layer in the list will be the bottommost layer displayed.",
-        title="Set Map Base Layers",
+        title=" ",
     )
 
 
@@ -247,9 +249,7 @@ class AutoScaleOrCustom(str, Enum):
 
 class AutoScaleGridCellSize(BaseModel):
     auto_scale_or_custom: Literal["Auto-scale"] = Field(
-        "Auto-scale",
-        description="Define the resolution of the raster grid (in meters per pixel). Auto-scale for an optimized grid based on the data, or Customize to set a specific resolution.",
-        title=" ",
+        "Auto-scale", title="Grid Cell Size"
     )
 
 
@@ -259,12 +259,12 @@ class AutoScaleOrCustom1(str, Enum):
 
 class CustomGridCellSize(BaseModel):
     auto_scale_or_custom: Literal["Customize"] = Field(
-        "Customize",
-        description="Define the resolution of the raster grid (in meters per pixel). Auto-scale for an optimized grid based on the data, or Customize to set a specific resolution.",
-        title=" ",
+        "Customize", title="Grid Cell Size"
     )
     grid_cell_size: Optional[confloat(lt=10000.0, gt=0.0)] = Field(
-        5000, description="Custom Raster Pixel Size (Meters)", title="Grid Cell Size"
+        5000,
+        description="Define the resolution of the raster grid (in metres per pixel). A smaller grid cell size provides more details, while a larger size generalizes the data.",
+        title="Custom Grid Cell Size (Meters)",
     )
 
 
@@ -304,7 +304,7 @@ class SubjectTraj(BaseModel):
             }
         ),
         description="Filter track data by setting limits on track segment length, duration, and speed. Segments outside these bounds are removed, reducing noise and to focus on meaningful movement patterns.",
-        title="Trajectory Segment Filter",
+        title=" ",
     )
 
 
@@ -314,9 +314,11 @@ class Td(BaseModel):
     )
     auto_scale_or_custom_cell_size: Optional[
         Union[AutoScaleGridCellSize, CustomGridCellSize]
-    ] = Field(
-        {"auto_scale_or_custom": "Auto-scale"},
-        title="Auto Scale Or Custom Grid Cell Size",
+    ] = Field({"auto_scale_or_custom": "Auto-scale"}, title="Grid Cell Size")
+    crs: Optional[str] = Field(
+        "EPSG:3857",
+        description="The coordinate reference system in which to perform the density calculation, must be a valid CRS authority code, for example ESRI:53042",
+        title="Coordinate Reference System",
     )
     max_speed_factor: Optional[float] = Field(
         1.05,
@@ -347,14 +349,12 @@ class FormData(BaseModel):
     time_range: Optional[TimeRange] = Field(
         None, description="Choose the period of time to analyze.", title="Time Range"
     )
-    subject_obs: Optional[SubjectObs] = Field(
-        None, title="Get Subject Group Observations from EarthRanger"
+    Subject_Group: Optional[SubjectGroup] = Field(
+        None, alias="Subject Group", description="Choose a subject group to analyze"
     )
     groupers: Optional[Groupers] = Field(None, title="Group Data")
-    subject_traj: Optional[SubjectTraj] = Field(
-        None, title="Transform Relocations to Trajectories"
-    )
-    base_map_defs: Optional[BaseMapDefs] = Field(None, title="Base Maps")
+    subject_traj: Optional[SubjectTraj] = Field(None, title="Trajectory Segment Filter")
+    base_map_defs: Optional[BaseMapDefs] = Field(None, title="Map Base Layers")
     Time_Density_Map: Optional[TimeDensityMap] = Field(
         None,
         alias="Time Density Map",
