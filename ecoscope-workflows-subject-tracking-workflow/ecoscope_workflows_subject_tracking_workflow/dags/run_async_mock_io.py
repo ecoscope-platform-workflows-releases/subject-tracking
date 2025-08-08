@@ -1302,7 +1302,6 @@ def main(params: Params):
             )
             .set_executor("lithops"),
             partial={
-                "crs": "ESRI:53042",
                 "percentiles": [50.0, 60.0, 70.0, 80.0, 90.0, 95.0, 99.999],
                 "nodata_value": "nan",
                 "band_count": 1,

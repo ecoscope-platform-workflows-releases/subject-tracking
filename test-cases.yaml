@@ -34,6 +34,7 @@ all-grouper:
     td:
       auto_scale_or_custom_cell_size:
         auto_scale_or_custom: "Auto-scale"
+      crs: "EPSG:3857"
 
 month-grouper:
   name: Month Grouper
@@ -70,6 +71,7 @@ month-grouper:
     td:
       auto_scale_or_custom_cell_size:
         auto_scale_or_custom: "Auto-scale"
+      crs: "EPSG:3857"
       max_speed_factor: 1.05
       expansion_factor: 1.3
 
@@ -110,6 +112,7 @@ value-grouper:
     td:
       auto_scale_or_custom_cell_size:
         auto_scale_or_custom: "Auto-scale"
+      crs: "EPSG:3857"
       max_speed_factor: 1.05
       expansion_factor: 1.3
 
@@ -151,3 +154,4 @@ task-instance-error:
     td:
       auto_scale_or_custom_cell_size:
         auto_scale_or_custom: "Auto-scale"
+      crs: "EPSG:3857"

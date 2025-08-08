@@ -1,14 +1,14 @@
 id: subject_tracking
 requirements:
   - name: ecoscope-workflows-core
-    version: 0.6.0
+    version: 0.7.0
     channel: https://repo.prefix.dev/ecoscope-workflows/
   - name: ecoscope-workflows-ext-ecoscope
-    version: 0.6.0
+    version: 0.7.0
     channel: https://repo.prefix.dev/ecoscope-workflows/
 rjsf-overrides:
   properties:
-    subject_obs.properties.subject_group_name.ecoscope:subject_group_name: properties.er_client_name.properties.data_source.properties.name
+    Subject Group.properties.subject_obs.properties.subject_group_name.ecoscope:subject_group_name: properties.er_client_name.properties.data_source.properties.name
   $defs:
     ValueGrouper.oneOf:
       - const: subject_name
@@ -17,6 +17,21 @@ rjsf-overrides:
         title: Subject Subtype
       - const: subject_sex
         title: Subject Sex
+  uiSchema:
+    base_map_defs.base_maps.items.ui:options.label: false
+    Time Density Map.td.auto_scale_or_custom_cell_size:
+      anyOf:
+        - ui:help: Auto-scale for an optimized grid cell size based the workflow data or Customize to set a specific grid cell size.
+          ui:options:
+            label: false
+          auto_scale_or_custom:
+            ui:widget: hidden
+        - ui:options:
+            label: false
+          auto_scale_or_custom:
+            ui:widget: hidden
+      auto_scale_or_custom:
+        ui:widget: hidden
 task-instance-defaults:
   skipif:
     conditions:
@@ -34,15 +49,19 @@ workflow:
     task: set_time_range
     partial:
       time_format: '%d %b %Y %H:%M:%S %Z'
-  - name: Get Subject Group Observations from EarthRanger
-    id: subject_obs
-    task: get_subjectgroup_observations
-    partial:
-      client: ${{ workflow.er_client_name.return }}
-      time_range: ${{ workflow.time_range.return }}
-      raise_on_empty: false
-      include_details: false
-      include_subjectsource_details: false
+  - title: Subject Group
+    type: task-group
+    description: Choose a subject group to analyze
+    tasks:
+      - name: null
+        id: subject_obs
+        task: get_subjectgroup_observations
+        partial:
+          client: ${{ workflow.er_client_name.return }}
+          time_range: ${{ workflow.time_range.return }}
+          raise_on_empty: false
+          include_details: false
+          include_subjectsource_details: false
   - name: Group Data
     id: groupers
     task: set_groupers
@@ -71,7 +90,7 @@ workflow:
     task: classify_is_night
     partial:
       relocations: ${{ workflow.subject_reloc.return }}
-  - name: Transform Relocations to Trajectories
+  - name: Trajectory Segment Filter
     id: subject_traj
     task: relocations_to_trajectory
     partial:
@@ -126,7 +145,7 @@ workflow:
     partial:
       df: ${{ workflow.classify_traj_speed.return }}
       groupers: ${{ workflow.groupers.return }}
-  - name: Base Maps
+  - name: Map Base Layers
     id: base_map_defs
     task: set_base_maps
   - name: Sort Trajetories By Classification
@@ -563,7 +582,6 @@ workflow:
         id: td
         task: calculate_elliptical_time_density
         partial:
-          crs: ESRI:53042
           percentiles:
             - 50.000000
             - 60.000000

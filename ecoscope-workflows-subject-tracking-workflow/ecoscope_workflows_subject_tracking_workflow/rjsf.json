@@ -59,21 +59,27 @@
       "description": "Choose the period of time to analyze.",
       "title": "Time Range"
     },
-    "subject_obs": {
-      "additionalProperties": false,
-      "properties": {
-        "subject_group_name": {
-          "title": "Subject Group Name",
-          "type": "string",
-          "description": "Name of EarthRanger Subject",
-          "ecoscope:subject_group_name": "properties.er_client_name.properties.data_source.properties.name"
-        }
-      },
-      "required": [
-        "subject_group_name"
-      ],
+    "Subject Group": {
       "type": "object",
-      "title": "Get Subject Group Observations from EarthRanger"
+      "description": "Choose a subject group to analyze",
+      "ecoscope:task_group": true,
+      "properties": {
+        "subject_obs": {
+          "additionalProperties": false,
+          "properties": {
+            "subject_group_name": {
+              "title": "Subject Group Name",
+              "type": "string",
+              "ecoscope:subject_group_name": "properties.er_client_name.properties.data_source.properties.name"
+            }
+          },
+          "required": [
+            "subject_group_name"
+          ],
+          "type": "object",
+          "title": ""
+        }
+      }
     },
     "groupers": {
       "additionalProperties": false,
@@ -117,14 +123,14 @@
             "min_speed_kmhr": 0.01,
             "max_speed_kmhr": 500
           },
-          "title": "Trajectory Segment Filter",
+          "title": " ",
           "description": "Filter track data by setting limits on track segment length, duration, and speed. Segments outside these bounds are removed, reducing noise and to focus on meaningful movement patterns.",
           "ecoscope:advanced": true
         }
       },
       "required": [],
       "type": "object",
-      "title": "Transform Relocations to Trajectories"
+      "title": "Trajectory Segment Filter"
     },
     "base_map_defs": {
       "additionalProperties": false,
@@ -141,7 +147,7 @@
             }
           ],
           "items": {
-            "title": "Base Layer or Custom Layer",
+            "title": "Base Layer",
             "anyOf": [
               {
                 "properties": {
@@ -316,7 +322,7 @@
               }
             ]
           },
-          "title": "Set Map Base Layers",
+          "title": " ",
           "type": "array",
           "description": "Select tile layers to use as base layers in map outputs. The first layer in the list will be the bottommost layer displayed.",
           "ecoscope:advanced": true
@@ -324,7 +330,7 @@
       },
       "type": "object",
       "required": [],
-      "title": "Base Maps"
+      "title": "Map Base Layers"
     },
     "Time Density Map": {
       "type": "object",
@@ -346,7 +352,14 @@
               "default": {
                 "auto_scale_or_custom": "Auto-scale"
               },
-              "title": "Auto Scale Or Custom Grid Cell Size",
+              "title": "Grid Cell Size",
+              "ecoscope:advanced": true
+            },
+            "crs": {
+              "default": "EPSG:3857",
+              "title": "Coordinate Reference System",
+              "type": "string",
+              "description": "The coordinate reference system in which to perform the density calculation, must be a valid CRS authority code, for example ESRI:53042",
               "ecoscope:advanced": true
             },
             "max_speed_factor": {
@@ -491,12 +504,11 @@
         "auto_scale_or_custom": {
           "const": "Auto-scale",
           "default": "Auto-scale",
-          "description": "Define the resolution of the raster grid (in meters per pixel). Auto-scale for an optimized grid based on the data, or Customize to set a specific resolution.",
           "ecoscope:advanced": true,
           "enum": [
             "Auto-scale"
           ],
-          "title": " ",
+          "title": "Grid Cell Size",
           "type": "string"
         }
       },
@@ -508,22 +520,21 @@
         "auto_scale_or_custom": {
           "const": "Customize",
           "default": "Customize",
-          "description": "Define the resolution of the raster grid (in meters per pixel). Auto-scale for an optimized grid based on the data, or Customize to set a specific resolution.",
           "ecoscope:advanced": true,
           "enum": [
             "Customize"
           ],
-          "title": " ",
+          "title": "Grid Cell Size",
           "type": "string"
         },
         "grid_cell_size": {
           "default": 5000,
-          "description": "Custom Raster Pixel Size (Meters)",
+          "description": "Define the resolution of the raster grid (in metres per pixel). A smaller grid cell size provides more details, while a larger size generalizes the data.",
           "exclusiveMaximum": 10000,
           "exclusiveMinimum": 0,
           "gt": 0,
           "lt": 10000,
-          "title": "Grid Cell Size",
+          "title": "Custom Grid Cell Size (Meters)",
           "type": "number"
         }
       },
@@ -548,21 +559,55 @@
       "td": {
         "ui:order": [
           "auto_scale_or_custom_cell_size",
+          "crs",
           "max_speed_factor",
           "expansion_factor"
-        ]
+        ],
+        "auto_scale_or_custom_cell_size": {
+          "anyOf": [
+            {
+              "ui:help": "Auto-scale for an optimized grid cell size based the workflow data or Customize to set a specific grid cell size.",
+              "ui:options": {
+                "label": false
+              },
+              "auto_scale_or_custom": {
+                "ui:widget": "hidden"
+              }
+            },
+            {
+              "ui:options": {
+                "label": false
+              },
+              "auto_scale_or_custom": {
+                "ui:widget": "hidden"
+              }
+            }
+          ],
+          "auto_scale_or_custom": {
+            "ui:widget": "hidden"
+          }
+        }
       }
     },
     "ui:order": [
       "workflow_details",
       "er_client_name",
       "time_range",
-      "subject_obs",
+      "Subject Group",
       "groupers",
       "subject_traj",
       "base_map_defs",
       "Time Density Map"
-    ]
+    ],
+    "base_map_defs": {
+      "base_maps": {
+        "items": {
+          "ui:options": {
+            "label": false
+          }
+        }
+      }
+    }
   },
   "additionalProperties": false
 }
