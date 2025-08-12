@@ -139,11 +139,11 @@ task-instance-error:
       subject_group_name: "Ecoscope"
     subject_traj:
       trajectory_segment_filter:
-        min_length_meters: 100000000000000000.0
-        max_length_meters: 10000.0
-        max_time_secs: 21600.0
+        min_length_meters: 0.001
+        max_length_meters: 0.002
+        max_time_secs: 1.001
         min_time_secs: 1.0
-        max_speed_kmhr: 10.0
+        max_speed_kmhr: 0.02
         min_speed_kmhr: 0.01
     base_map_defs:
       base_maps:
