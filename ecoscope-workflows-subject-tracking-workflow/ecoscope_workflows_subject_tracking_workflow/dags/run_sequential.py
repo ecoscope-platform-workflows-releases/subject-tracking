@@ -22,7 +22,6 @@ from ecoscope_workflows_core.tasks.groupby import split_groups
 from ecoscope_workflows_ext_ecoscope.tasks.results import set_base_maps
 from ecoscope_workflows_core.tasks.transformation import sort_values
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import apply_color_map
-from ecoscope_workflows_core.tasks.transformation import map_values_with_unit
 from ecoscope_workflows_ext_ecoscope.tasks.results import create_polyline_layer
 from ecoscope_workflows_ext_ecoscope.tasks.skip import all_geometry_are_none
 from ecoscope_workflows_ext_ecoscope.tasks.results import draw_ecomap
@@ -40,6 +39,7 @@ from ecoscope_workflows_core.tasks.analysis import dataframe_column_sum
 from ecoscope_workflows_ext_ecoscope.tasks.analysis import (
     calculate_elliptical_time_density,
 )
+from ecoscope_workflows_core.tasks.transformation import convert_column_values_to_string
 from ecoscope_workflows_ext_ecoscope.tasks.results import create_polygon_layer
 from ecoscope_workflows_ext_ecoscope.tasks.results import draw_ecoplot
 from ecoscope_workflows_core.tasks.results import create_plot_widget_single_view
@@ -274,7 +274,11 @@ def main(params: Params):
             input_column_name="speed_kmhr",
             output_column_name="speed_bins",
             classification_options={"scheme": "equal_interval", "k": 6},
-            label_options={"label_ranges": False, "label_decimals": 1},
+            label_options={
+                "label_ranges": True,
+                "label_decimals": 1,
+                "label_suffix": " km/h",
+            },
             **(params_dict.get("classify_traj_speed") or {}),
         )
         .call()
@@ -350,48 +354,6 @@ def main(params: Params):
         .mapvalues(argnames=["df"], argvalues=sort_traj_speed)
     )
 
-    speed_bin_legend_with_unit = (
-        map_values_with_unit.validate()
-        .handle_errors(task_instance_id="speed_bin_legend_with_unit")
-        .skipif(
-            conditions=[
-                any_is_empty_df,
-                any_dependency_skipped,
-            ],
-            unpack_depth=1,
-        )
-        .partial(
-            input_column_name="speed_bins",
-            output_column_name="speed_bins_formatted",
-            original_unit="km/h",
-            new_unit="km/h",
-            decimal_places=1,
-            **(params_dict.get("speed_bin_legend_with_unit") or {}),
-        )
-        .mapvalues(argnames=["df"], argvalues=colormap_traj_speed)
-    )
-
-    speed_val_with_unit = (
-        map_values_with_unit.validate()
-        .handle_errors(task_instance_id="speed_val_with_unit")
-        .skipif(
-            conditions=[
-                any_is_empty_df,
-                any_dependency_skipped,
-            ],
-            unpack_depth=1,
-        )
-        .partial(
-            input_column_name="speed_kmhr",
-            output_column_name="speed_kmhr",
-            original_unit="km/h",
-            new_unit="km/h",
-            decimal_places=1,
-            **(params_dict.get("speed_val_with_unit") or {}),
-        )
-        .mapvalues(argnames=["df"], argvalues=speed_bin_legend_with_unit)
-    )
-
     rename_speed_display_columns = (
         map_columns.validate()
         .handle_errors(task_instance_id="rename_speed_display_columns")
@@ -415,7 +377,7 @@ def main(params: Params):
             },
             **(params_dict.get("rename_speed_display_columns") or {}),
         )
-        .mapvalues(argnames=["df"], argvalues=speed_val_with_unit)
+        .mapvalues(argnames=["df"], argvalues=colormap_traj_speed)
     )
 
     traj_map_layers = (
@@ -432,7 +394,7 @@ def main(params: Params):
         .partial(
             layer_style={"color_column": "speed_bins_colormap"},
             legend={
-                "label_column": "speed_bins_formatted",
+                "label_column": "speed_bins",
                 "color_column": "speed_bins_colormap",
             },
             tooltip_columns=[
@@ -461,7 +423,7 @@ def main(params: Params):
         .partial(
             tile_layers=base_map_defs,
             north_arrow_style={"placement": "top-left"},
-            legend_style={"placement": "bottom-right"},
+            legend_style={"title": "Speed", "placement": "bottom-right"},
             static=False,
             title=None,
             max_zoom=20,
@@ -614,7 +576,7 @@ def main(params: Params):
         .partial(
             tile_layers=base_map_defs,
             north_arrow_style={"placement": "top-left"},
-            legend_style={"placement": "bottom-right"},
+            legend_style={"title": "Day / Night Movement", "placement": "bottom-right"},
             static=False,
             title=None,
             max_zoom=20,
@@ -1046,12 +1008,29 @@ def main(params: Params):
             unpack_depth=1,
         )
         .partial(
-            percentiles=[50.0, 60.0, 70.0, 80.0, 90.0, 95.0, 99.999],
+            percentiles=[50.0, 60.0, 70.0, 80.0, 90.0, 99.999],
             nodata_value="nan",
             band_count=1,
             **(params_dict.get("td") or {}),
         )
         .mapvalues(argnames=["trajectory_gdf"], argvalues=split_subject_traj_groups)
+    )
+
+    percentile_col_to_string = (
+        convert_column_values_to_string.validate()
+        .handle_errors(task_instance_id="percentile_col_to_string")
+        .skipif(
+            conditions=[
+                any_is_empty_df,
+                any_dependency_skipped,
+            ],
+            unpack_depth=1,
+        )
+        .partial(
+            columns=["percentile"],
+            **(params_dict.get("percentile_col_to_string") or {}),
+        )
+        .mapvalues(argnames=["df"], argvalues=td)
     )
 
     td_colormap = (
@@ -1066,11 +1045,11 @@ def main(params: Params):
         )
         .partial(
             input_column_name="percentile",
-            colormap="RdYlGn",
+            colormap="RdYlGn_r",
             output_column_name="percentile_colormap",
             **(params_dict.get("td_colormap") or {}),
         )
-        .mapvalues(argnames=["df"], argvalues=td)
+        .mapvalues(argnames=["df"], argvalues=percentile_col_to_string)
     )
 
     td_map_layer = (
@@ -1092,7 +1071,9 @@ def main(params: Params):
             },
             legend={
                 "label_column": "percentile",
+                "label_suffix": " %",
                 "color_column": "percentile_colormap",
+                "sort": "ascending",
             },
             tooltip_columns=["percentile"],
             **(params_dict.get("td_map_layer") or {}),
@@ -1113,7 +1094,7 @@ def main(params: Params):
         .partial(
             tile_layers=base_map_defs,
             north_arrow_style={"placement": "top-left"},
-            legend_style={"placement": "bottom-right"},
+            legend_style={"title": "Time Spent", "placement": "bottom-right"},
             static=False,
             title=None,
             max_zoom=20,

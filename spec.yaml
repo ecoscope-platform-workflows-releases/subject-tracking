@@ -1,10 +1,10 @@
 id: subject_tracking
 requirements:
   - name: ecoscope-workflows-core
-    version: 0.7.2
+    version: 0.7.3
     channel: https://repo.prefix.dev/ecoscope-workflows/
   - name: ecoscope-workflows-ext-ecoscope
-    version: 0.7.2
+    version: 0.7.3
     channel: https://repo.prefix.dev/ecoscope-workflows/
 rjsf-overrides:
   properties:
@@ -137,8 +137,9 @@ workflow:
         scheme: equal_interval
         k: 6
       label_options:
-        label_ranges: false
+        label_ranges: true
         label_decimals: 1
+        label_suffix: ' km/h'
   - name: Split Subject Trajectories by Group
     id: split_subject_traj_groups
     task: split_groups
@@ -174,30 +175,6 @@ workflow:
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.sort_traj_speed.return }}
-  - name: Format Speedmap bins for legend
-    id: speed_bin_legend_with_unit
-    task: map_values_with_unit
-    partial:
-      input_column_name: speed_bins
-      output_column_name: speed_bins_formatted
-      original_unit: km/h
-      new_unit: km/h
-      decimal_places: 1
-    mapvalues:
-      argnames: df
-      argvalues: ${{ workflow.colormap_traj_speed.return }}
-  - name: Format speed values for display
-    id: speed_val_with_unit
-    task: map_values_with_unit
-    partial:
-      input_column_name: speed_kmhr
-      output_column_name: speed_kmhr
-      original_unit: km/h
-      new_unit: km/h
-      decimal_places: 1
-    mapvalues:
-      argnames: df
-      argvalues: ${{ workflow.speed_bin_legend_with_unit.return }}
   - name: Rename columns for map tooltip display
     id: rename_speed_display_columns
     task: map_columns
@@ -213,7 +190,7 @@ workflow:
         subject_sex: Subject Sex
     mapvalues:
       argnames: df
-      argvalues: ${{ workflow.speed_val_with_unit.return }}
+      argvalues: ${{ workflow.colormap_traj_speed.return }}
   - name: Create map layer for each trajectory group
     id: traj_map_layers
     task: create_polyline_layer
@@ -226,7 +203,7 @@ workflow:
       layer_style:
         color_column: speed_bins_colormap
       legend:
-        label_column: speed_bins_formatted
+        label_column: speed_bins
         color_column: speed_bins_colormap
       tooltip_columns:
         - Start
@@ -246,6 +223,7 @@ workflow:
       north_arrow_style:
         placement: top-left
       legend_style:
+        title: Speed
         placement: bottom-right
       static: false
       title: null
@@ -347,6 +325,7 @@ workflow:
       north_arrow_style:
         placement: top-left
       legend_style:
+        title: Day / Night Movement
         placement: bottom-right
       static: false
       title: null
@@ -588,23 +567,31 @@ workflow:
             - 70.000000
             - 80.000000
             - 90.000000
-            - 95.000000
             - 99.999000
           nodata_value: nan
           band_count: 1
         mapvalues:
           argnames: trajectory_gdf
           argvalues: ${{ workflow.split_subject_traj_groups.return }}
+      - name: Cast Percentile Column
+        id: percentile_col_to_string
+        task: convert_column_values_to_string
+        partial:
+          columns:
+            - percentile
+        mapvalues:
+          argnames: df
+          argvalues: ${{ workflow.td.return }}
       - name: Time Density Colormap
         id: td_colormap
         task: apply_color_map
         partial:
           input_column_name: percentile
-          colormap: RdYlGn
+          colormap: RdYlGn_r
           output_column_name: percentile_colormap
         mapvalues:
           argnames: df
-          argvalues: ${{ workflow.td.return }}
+          argvalues: ${{ workflow.percentile_col_to_string.return }}
       - name: Create map layer from Time Density
         id: td_map_layer
         task: create_polygon_layer
@@ -620,7 +607,9 @@ workflow:
             get_line_width: 0
           legend:
             label_column: percentile
+            label_suffix: ' %'
             color_column: percentile_colormap
+            sort: ascending
           tooltip_columns:
             - percentile
         mapvalues:
@@ -634,6 +623,7 @@ workflow:
           north_arrow_style:
             placement: top-left
           legend_style:
+            title: Time Spent
             placement: bottom-right
           static: false
           title: null
