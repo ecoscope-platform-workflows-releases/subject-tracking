@@ -1,10 +1,10 @@
 id: subject_tracking
 requirements:
   - name: ecoscope-workflows-core
-    version: 0.7.3
+    version: 0.7.4
     channel: https://repo.prefix.dev/ecoscope-workflows/
   - name: ecoscope-workflows-ext-ecoscope
-    version: 0.7.3
+    version: 0.7.4
     channel: https://repo.prefix.dev/ecoscope-workflows/
 rjsf-overrides:
   properties:
@@ -140,6 +140,26 @@ workflow:
         label_ranges: true
         label_decimals: 1
         label_suffix: ' km/h'
+  - name: Set Trajectory Map Title
+    id: set_traj_map_title
+    task: set_string_var
+    partial:
+      var: Subject Group Trajectory Map
+  - name: Set Time Density Map Title
+    id: set_td_map_title
+    task: set_string_var
+    partial:
+      var: Home Range Map
+  - name: Set Night/Day Map Title
+    id: set_night_day_map_title
+    task: set_string_var
+    partial:
+      var: Subject Group Night/Day Map
+  - name: Set NSD Chart Title
+    id: set_nsd_chart_title
+    task: set_string_var
+    partial:
+      var: Net Square Displacement
   - name: Split Subject Trajectories by Group
     id: split_subject_traj_groups
     task: split_groups
@@ -228,6 +248,7 @@ workflow:
       static: false
       title: null
       max_zoom: 20
+      widget_id: ${{ workflow.set_traj_map_title.return }}
     mapvalues:
       argnames: geo_layers
       argvalues: ${{ workflow.traj_map_layers.return }}
@@ -236,6 +257,7 @@ workflow:
     task: persist_text
     partial:
       root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: v2
     mapvalues:
       argnames: text
       argvalues: ${{ workflow.traj_ecomap.return }}
@@ -246,7 +268,7 @@ workflow:
       conditions:
         - never
     partial:
-      title: Subject Group Trajectory Map
+      title: ${{ workflow.set_traj_map_title.return }}
     map:
       argnames:
         - view
@@ -330,6 +352,7 @@ workflow:
       static: false
       title: null
       max_zoom: 20
+      widget_id: ${{ workflow.set_night_day_map_title.return }}
     mapvalues:
       argnames: geo_layers
       argvalues: ${{ workflow.traj_map_night_layers.return }}
@@ -338,6 +361,7 @@ workflow:
     task: persist_text
     partial:
       root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: v2
     mapvalues:
       argnames: text
       argvalues: ${{ workflow.traj_nightday_ecomap.return }}
@@ -348,7 +372,7 @@ workflow:
       conditions:
         - never
     partial:
-      title: Subject Group Night/Day Map
+      title: ${{ workflow.set_night_day_map_title.return }}
     map:
       argnames:
         - view
@@ -628,6 +652,7 @@ workflow:
           static: false
           title: null
           max_zoom: 20
+          widget_id: ${{ workflow.set_td_map_title.return }}
         mapvalues:
           argnames: geo_layers
           argvalues: ${{ workflow.td_map_layer.return }}
@@ -636,6 +661,7 @@ workflow:
         task: persist_text
         partial:
           root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+          filename_suffix: v2
         mapvalues:
           argnames: text
           argvalues: ${{ workflow.td_ecomap.return }}
@@ -646,7 +672,7 @@ workflow:
           conditions:
             - never
         partial:
-          title: Home Range Map
+          title: ${{ workflow.set_td_map_title.return }}
         map:
           argnames:
             - view
@@ -681,6 +707,7 @@ workflow:
             xperiodalignment: null
           color_column: null
       tickformat: '%b-%Y'
+      widget_id: ${{ workflow.set_nsd_chart_title.return }}
     mapvalues:
       argnames: dataframe
       argvalues: ${{ workflow.nsd_rename_display_columns.return }}
@@ -689,6 +716,7 @@ workflow:
     task: persist_text
     partial:
       root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: v2
     mapvalues:
       argnames: text
       argvalues: ${{ workflow.nsd_chart.return }}
@@ -699,7 +727,7 @@ workflow:
       conditions:
         - never
     partial:
-      title: Net Square Displacement
+      title: ${{ workflow.set_nsd_chart_title.return }}
     map:
       argnames:
         - view

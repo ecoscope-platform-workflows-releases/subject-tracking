@@ -27,6 +27,7 @@ from ecoscope_workflows_core.tasks.transformation import add_temporal_index
 from ecoscope_workflows_core.tasks.transformation import map_columns
 from ecoscope_workflows_core.tasks.transformation import map_values
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import apply_classification
+from ecoscope_workflows_core.tasks.config import set_string_var
 from ecoscope_workflows_core.tasks.groupby import split_groups
 from ecoscope_workflows_ext_ecoscope.tasks.results import set_base_maps
 from ecoscope_workflows_core.tasks.transformation import sort_values
@@ -441,6 +442,110 @@ classify_traj_speed = (
 
 
 # %% [markdown]
+# ## Set Trajectory Map Title
+
+# %%
+# parameters
+
+set_traj_map_title_params = dict()
+
+# %%
+# call the task
+
+
+set_traj_map_title = (
+    set_string_var.handle_errors(task_instance_id="set_traj_map_title")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
+    .partial(var="Subject Group Trajectory Map", **set_traj_map_title_params)
+    .call()
+)
+
+
+# %% [markdown]
+# ## Set Time Density Map Title
+
+# %%
+# parameters
+
+set_td_map_title_params = dict()
+
+# %%
+# call the task
+
+
+set_td_map_title = (
+    set_string_var.handle_errors(task_instance_id="set_td_map_title")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
+    .partial(var="Home Range Map", **set_td_map_title_params)
+    .call()
+)
+
+
+# %% [markdown]
+# ## Set Night/Day Map Title
+
+# %%
+# parameters
+
+set_night_day_map_title_params = dict()
+
+# %%
+# call the task
+
+
+set_night_day_map_title = (
+    set_string_var.handle_errors(task_instance_id="set_night_day_map_title")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
+    .partial(var="Subject Group Night/Day Map", **set_night_day_map_title_params)
+    .call()
+)
+
+
+# %% [markdown]
+# ## Set NSD Chart Title
+
+# %%
+# parameters
+
+set_nsd_chart_title_params = dict()
+
+# %%
+# call the task
+
+
+set_nsd_chart_title = (
+    set_string_var.handle_errors(task_instance_id="set_nsd_chart_title")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
+    .partial(var="Net Square Displacement", **set_nsd_chart_title_params)
+    .call()
+)
+
+
+# %% [markdown]
 # ## Split Subject Trajectories by Group
 
 # %%
@@ -667,6 +772,7 @@ traj_ecomap = (
         static=False,
         title=None,
         max_zoom=20,
+        widget_id=set_traj_map_title,
         **traj_ecomap_params,
     )
     .mapvalues(argnames=["geo_layers"], argvalues=traj_map_layers)
@@ -697,7 +803,9 @@ ecomap_html_urls = (
         unpack_depth=1,
     )
     .partial(
-        root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"], **ecomap_html_urls_params
+        root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
+        filename_suffix="v2",
+        **ecomap_html_urls_params,
     )
     .mapvalues(argnames=["text"], argvalues=traj_ecomap)
 )
@@ -725,9 +833,7 @@ traj_map_widgets_single_views = (
         ],
         unpack_depth=1,
     )
-    .partial(
-        title="Subject Group Trajectory Map", **traj_map_widgets_single_views_params
-    )
+    .partial(title=set_traj_map_title, **traj_map_widgets_single_views_params)
     .map(argnames=["view", "data"], argvalues=ecomap_html_urls)
 )
 
@@ -919,6 +1025,7 @@ traj_nightday_ecomap = (
         static=False,
         title=None,
         max_zoom=20,
+        widget_id=set_night_day_map_title,
         **traj_nightday_ecomap_params,
     )
     .mapvalues(argnames=["geo_layers"], argvalues=traj_map_night_layers)
@@ -950,6 +1057,7 @@ ecomap_nightday_html_urls = (
     )
     .partial(
         root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
+        filename_suffix="v2",
         **ecomap_nightday_html_urls_params,
     )
     .mapvalues(argnames=["text"], argvalues=traj_nightday_ecomap)
@@ -978,7 +1086,7 @@ traj_map_nightday_widgets_sv = (
         ],
         unpack_depth=1,
     )
-    .partial(title="Subject Group Night/Day Map", **traj_map_nightday_widgets_sv_params)
+    .partial(title=set_night_day_map_title, **traj_map_nightday_widgets_sv_params)
     .map(argnames=["view", "data"], argvalues=ecomap_nightday_html_urls)
 )
 
@@ -1769,6 +1877,7 @@ td_ecomap = (
         static=False,
         title=None,
         max_zoom=20,
+        widget_id=set_td_map_title,
         **td_ecomap_params,
     )
     .mapvalues(argnames=["geo_layers"], argvalues=td_map_layer)
@@ -1799,7 +1908,9 @@ td_ecomap_html_url = (
         unpack_depth=1,
     )
     .partial(
-        root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"], **td_ecomap_html_url_params
+        root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
+        filename_suffix="v2",
+        **td_ecomap_html_url_params,
     )
     .mapvalues(argnames=["text"], argvalues=td_ecomap)
 )
@@ -1825,7 +1936,7 @@ td_map_widget = (
         ],
         unpack_depth=1,
     )
-    .partial(title="Home Range Map", **td_map_widget_params)
+    .partial(title=set_td_map_title, **td_map_widget_params)
     .map(argnames=["view", "data"], argvalues=td_ecomap_html_url)
 )
 
@@ -1919,6 +2030,7 @@ nsd_chart = (
             }
         ],
         tickformat="%b-%Y",
+        widget_id=set_nsd_chart_title,
         **nsd_chart_params,
     )
     .mapvalues(argnames=["dataframe"], argvalues=nsd_rename_display_columns)
@@ -1949,7 +2061,9 @@ nsd_chart_html_url = (
         unpack_depth=1,
     )
     .partial(
-        root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"], **nsd_chart_html_url_params
+        root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
+        filename_suffix="v2",
+        **nsd_chart_html_url_params,
     )
     .mapvalues(argnames=["text"], argvalues=nsd_chart)
 )
@@ -1975,7 +2089,7 @@ nsd_chart_widget = (
         ],
         unpack_depth=1,
     )
-    .partial(title="Net Square Displacement", **nsd_chart_widget_params)
+    .partial(title=set_nsd_chart_title, **nsd_chart_widget_params)
     .map(argnames=["view", "data"], argvalues=nsd_chart_html_url)
 )
 
