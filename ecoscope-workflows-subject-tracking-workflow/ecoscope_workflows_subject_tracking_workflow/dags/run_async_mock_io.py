@@ -35,6 +35,7 @@ from ecoscope_workflows_core.tasks.transformation import add_temporal_index
 from ecoscope_workflows_core.tasks.transformation import map_columns
 from ecoscope_workflows_core.tasks.transformation import map_values
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import apply_classification
+from ecoscope_workflows_core.tasks.config import set_string_var
 from ecoscope_workflows_core.tasks.groupby import split_groups
 from ecoscope_workflows_ext_ecoscope.tasks.results import set_base_maps
 from ecoscope_workflows_core.tasks.transformation import sort_values
@@ -83,23 +84,34 @@ def main(params: Params):
         "rename_grouper_columns": ["traj_add_temporal_index"],
         "map_subject_sex": ["rename_grouper_columns"],
         "classify_traj_speed": ["map_subject_sex"],
+        "set_traj_map_title": [],
+        "set_td_map_title": [],
+        "set_night_day_map_title": [],
+        "set_nsd_chart_title": [],
         "split_subject_traj_groups": ["classify_traj_speed", "groupers"],
         "base_map_defs": [],
         "sort_traj_speed": ["split_subject_traj_groups"],
         "colormap_traj_speed": ["sort_traj_speed"],
         "rename_speed_display_columns": ["colormap_traj_speed"],
         "traj_map_layers": ["rename_speed_display_columns"],
-        "traj_ecomap": ["base_map_defs", "traj_map_layers"],
+        "traj_ecomap": ["base_map_defs", "set_traj_map_title", "traj_map_layers"],
         "ecomap_html_urls": ["traj_ecomap"],
-        "traj_map_widgets_single_views": ["ecomap_html_urls"],
+        "traj_map_widgets_single_views": ["set_traj_map_title", "ecomap_html_urls"],
         "traj_grouped_map_widget": ["traj_map_widgets_single_views"],
         "sort_traj_night_day": ["split_subject_traj_groups"],
         "colormap_traj_night": ["sort_traj_night_day"],
         "rename_nightday_display_columns": ["colormap_traj_night"],
         "traj_map_night_layers": ["rename_nightday_display_columns"],
-        "traj_nightday_ecomap": ["base_map_defs", "traj_map_night_layers"],
+        "traj_nightday_ecomap": [
+            "base_map_defs",
+            "set_night_day_map_title",
+            "traj_map_night_layers",
+        ],
         "ecomap_nightday_html_urls": ["traj_nightday_ecomap"],
-        "traj_map_nightday_widgets_sv": ["ecomap_nightday_html_urls"],
+        "traj_map_nightday_widgets_sv": [
+            "set_night_day_map_title",
+            "ecomap_nightday_html_urls",
+        ],
         "traj_nightday_grouped_map_widget": ["traj_map_nightday_widgets_sv"],
         "mean_speed": ["split_subject_traj_groups"],
         "average_speed_converted": ["mean_speed"],
@@ -127,14 +139,14 @@ def main(params: Params):
         "percentile_col_to_string": ["td"],
         "td_colormap": ["percentile_col_to_string"],
         "td_map_layer": ["td_colormap"],
-        "td_ecomap": ["base_map_defs", "td_map_layer"],
+        "td_ecomap": ["base_map_defs", "set_td_map_title", "td_map_layer"],
         "td_ecomap_html_url": ["td_ecomap"],
-        "td_map_widget": ["td_ecomap_html_url"],
+        "td_map_widget": ["set_td_map_title", "td_ecomap_html_url"],
         "td_grouped_map_widget": ["td_map_widget"],
         "nsd_rename_display_columns": ["split_subject_traj_groups"],
-        "nsd_chart": ["nsd_rename_display_columns"],
+        "nsd_chart": ["set_nsd_chart_title", "nsd_rename_display_columns"],
         "nsd_chart_html_url": ["nsd_chart"],
-        "nsd_chart_widget": ["nsd_chart_html_url"],
+        "nsd_chart_widget": ["set_nsd_chart_title", "nsd_chart_html_url"],
         "grouped_nsd_chart_widget_merge": ["nsd_chart_widget"],
         "subject_tracking_dashboard": [
             "workflow_details",
@@ -390,6 +402,74 @@ def main(params: Params):
             | (params_dict.get("classify_traj_speed") or {}),
             method="call",
         ),
+        "set_traj_map_title": Node(
+            async_task=set_string_var.validate()
+            .handle_errors(task_instance_id="set_traj_map_title")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
+            .set_executor("lithops"),
+            partial={
+                "var": "Subject Group Trajectory Map",
+            }
+            | (params_dict.get("set_traj_map_title") or {}),
+            method="call",
+        ),
+        "set_td_map_title": Node(
+            async_task=set_string_var.validate()
+            .handle_errors(task_instance_id="set_td_map_title")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
+            .set_executor("lithops"),
+            partial={
+                "var": "Home Range Map",
+            }
+            | (params_dict.get("set_td_map_title") or {}),
+            method="call",
+        ),
+        "set_night_day_map_title": Node(
+            async_task=set_string_var.validate()
+            .handle_errors(task_instance_id="set_night_day_map_title")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
+            .set_executor("lithops"),
+            partial={
+                "var": "Subject Group Night/Day Map",
+            }
+            | (params_dict.get("set_night_day_map_title") or {}),
+            method="call",
+        ),
+        "set_nsd_chart_title": Node(
+            async_task=set_string_var.validate()
+            .handle_errors(task_instance_id="set_nsd_chart_title")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
+            .set_executor("lithops"),
+            partial={
+                "var": "Net Square Displacement",
+            }
+            | (params_dict.get("set_nsd_chart_title") or {}),
+            method="call",
+        ),
         "split_subject_traj_groups": Node(
             async_task=split_groups.validate()
             .handle_errors(task_instance_id="split_subject_traj_groups")
@@ -557,6 +637,7 @@ def main(params: Params):
                 "static": False,
                 "title": None,
                 "max_zoom": 20,
+                "widget_id": DependsOn("set_traj_map_title"),
             }
             | (params_dict.get("traj_ecomap") or {}),
             method="mapvalues",
@@ -578,6 +659,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
+                "filename_suffix": "v2",
             }
             | (params_dict.get("ecomap_html_urls") or {}),
             method="mapvalues",
@@ -597,7 +679,7 @@ def main(params: Params):
             )
             .set_executor("lithops"),
             partial={
-                "title": "Subject Group Trajectory Map",
+                "title": DependsOn("set_traj_map_title"),
             }
             | (params_dict.get("traj_map_widgets_single_views") or {}),
             method="map",
@@ -744,6 +826,7 @@ def main(params: Params):
                 "static": False,
                 "title": None,
                 "max_zoom": 20,
+                "widget_id": DependsOn("set_night_day_map_title"),
             }
             | (params_dict.get("traj_nightday_ecomap") or {}),
             method="mapvalues",
@@ -765,6 +848,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
+                "filename_suffix": "v2",
             }
             | (params_dict.get("ecomap_nightday_html_urls") or {}),
             method="mapvalues",
@@ -784,7 +868,7 @@ def main(params: Params):
             )
             .set_executor("lithops"),
             partial={
-                "title": "Subject Group Night/Day Map",
+                "title": DependsOn("set_night_day_map_title"),
             }
             | (params_dict.get("traj_map_nightday_widgets_sv") or {}),
             method="map",
@@ -1364,6 +1448,7 @@ def main(params: Params):
                 "static": False,
                 "title": None,
                 "max_zoom": 20,
+                "widget_id": DependsOn("set_td_map_title"),
             }
             | (params_dict.get("td_ecomap") or {}),
             method="mapvalues",
@@ -1385,6 +1470,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
+                "filename_suffix": "v2",
             }
             | (params_dict.get("td_ecomap_html_url") or {}),
             method="mapvalues",
@@ -1404,7 +1490,7 @@ def main(params: Params):
             )
             .set_executor("lithops"),
             partial={
-                "title": "Home Range Map",
+                "title": DependsOn("set_td_map_title"),
             }
             | (params_dict.get("td_map_widget") or {}),
             method="map",
@@ -1475,6 +1561,7 @@ def main(params: Params):
                     }
                 ],
                 "tickformat": "%b-%Y",
+                "widget_id": DependsOn("set_nsd_chart_title"),
             }
             | (params_dict.get("nsd_chart") or {}),
             method="mapvalues",
@@ -1496,6 +1583,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
+                "filename_suffix": "v2",
             }
             | (params_dict.get("nsd_chart_html_url") or {}),
             method="mapvalues",
@@ -1515,7 +1603,7 @@ def main(params: Params):
             )
             .set_executor("lithops"),
             partial={
-                "title": "Net Square Displacement",
+                "title": DependsOn("set_nsd_chart_title"),
             }
             | (params_dict.get("nsd_chart_widget") or {}),
             method="map",
