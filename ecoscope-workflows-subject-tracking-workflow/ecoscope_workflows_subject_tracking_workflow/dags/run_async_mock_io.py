@@ -514,7 +514,7 @@ def main(params: Params):
             )
             .set_executor("lithops"),
             partial={
-                "column_name": "speed_bins",
+                "column_name": "speed_kmhr",
                 "ascending": True,
                 "na_position": "last",
             }
