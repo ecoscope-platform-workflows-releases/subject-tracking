@@ -1,10 +1,10 @@
 id: subject_tracking
 requirements:
   - name: ecoscope-workflows-core
-    version: 0.7.7
+    version: 0.7.9
     channel: https://repo.prefix.dev/ecoscope-workflows/
   - name: ecoscope-workflows-ext-ecoscope
-    version: 0.7.7
+    version: 0.7.9
     channel: https://repo.prefix.dev/ecoscope-workflows/
 rjsf-overrides:
   properties:
@@ -173,7 +173,7 @@ workflow:
     id: sort_traj_speed
     task: sort_values
     partial:
-      column_name: speed_bins
+      column_name: speed_kmhr
       ascending: true
       na_position: last
     mapvalues:
