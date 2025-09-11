@@ -623,7 +623,7 @@ sort_traj_speed = (
         unpack_depth=1,
     )
     .partial(
-        column_name="speed_bins",
+        column_name="speed_kmhr",
         ascending=True,
         na_position="last",
         **sort_traj_speed_params,
