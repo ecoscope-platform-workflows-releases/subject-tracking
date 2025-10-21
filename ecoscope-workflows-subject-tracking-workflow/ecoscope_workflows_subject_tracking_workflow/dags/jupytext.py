@@ -778,7 +778,11 @@ traj_ecomap = (
     .partial(
         tile_layers=base_map_defs,
         north_arrow_style={"placement": "top-left"},
-        legend_style={"title": "Speed", "placement": "bottom-right"},
+        legend_style={
+            "title": "Speed",
+            "format_title": False,
+            "placement": "bottom-right",
+        },
         static=False,
         title=None,
         max_zoom=20,
@@ -1031,7 +1035,11 @@ traj_nightday_ecomap = (
     .partial(
         tile_layers=base_map_defs,
         north_arrow_style={"placement": "top-left"},
-        legend_style={"title": "Day / Night Movement", "placement": "bottom-right"},
+        legend_style={
+            "title": "Day / Night Movement",
+            "format_title": False,
+            "placement": "bottom-right",
+        },
         static=False,
         title=None,
         max_zoom=20,
@@ -1883,7 +1891,11 @@ td_ecomap = (
     .partial(
         tile_layers=base_map_defs,
         north_arrow_style={"placement": "top-left"},
-        legend_style={"title": "Time Spent", "placement": "bottom-right"},
+        legend_style={
+            "title": "Time Spent",
+            "format_title": False,
+            "placement": "bottom-right",
+        },
         static=False,
         title=None,
         max_zoom=20,
