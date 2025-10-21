@@ -1,10 +1,10 @@
 id: subject_tracking
 requirements:
   - name: ecoscope-workflows-core
-    version: 0.11.0
+    version: 0.13.0
     channel: https://repo.prefix.dev/ecoscope-workflows/
   - name: ecoscope-workflows-ext-ecoscope
-    version: 0.11.0
+    version: 0.13.0
     channel: https://repo.prefix.dev/ecoscope-workflows/
 rjsf-overrides:
   properties:
@@ -244,6 +244,7 @@ workflow:
         placement: top-left
       legend_style:
         title: Speed
+        format_title: false
         placement: bottom-right
       static: false
       title: null
@@ -348,6 +349,7 @@ workflow:
         placement: top-left
       legend_style:
         title: Day / Night Movement
+        format_title: false
         placement: bottom-right
       static: false
       title: null
@@ -648,6 +650,7 @@ workflow:
             placement: top-left
           legend_style:
             title: Time Spent
+            format_title: false
             placement: bottom-right
           static: false
           title: null
