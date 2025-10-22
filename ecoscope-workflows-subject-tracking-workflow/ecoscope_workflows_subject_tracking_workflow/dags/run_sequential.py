@@ -67,7 +67,9 @@ def main(params: Params):
 
     workflow_details = (
         set_workflow_details.validate()
-        .handle_errors(task_instance_id="workflow_details")
+        .set_task_instance_id("workflow_details")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -81,7 +83,9 @@ def main(params: Params):
 
     er_client_name = (
         set_er_connection.validate()
-        .handle_errors(task_instance_id="er_client_name")
+        .set_task_instance_id("er_client_name")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -95,7 +99,9 @@ def main(params: Params):
 
     time_range = (
         set_time_range.validate()
-        .handle_errors(task_instance_id="time_range")
+        .set_task_instance_id("time_range")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -111,7 +117,9 @@ def main(params: Params):
 
     get_timezone = (
         get_timezone_from_time_range.validate()
-        .handle_errors(task_instance_id="get_timezone")
+        .set_task_instance_id("get_timezone")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -125,7 +133,9 @@ def main(params: Params):
 
     subject_obs = (
         get_subjectgroup_observations.validate()
-        .handle_errors(task_instance_id="subject_obs")
+        .set_task_instance_id("subject_obs")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -146,7 +156,9 @@ def main(params: Params):
 
     convert_to_user_timezone = (
         convert_values_to_timezone.validate()
-        .handle_errors(task_instance_id="convert_to_user_timezone")
+        .set_task_instance_id("convert_to_user_timezone")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -165,7 +177,9 @@ def main(params: Params):
 
     groupers = (
         set_groupers.validate()
-        .handle_errors(task_instance_id="groupers")
+        .set_task_instance_id("groupers")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -179,7 +193,9 @@ def main(params: Params):
 
     subject_reloc = (
         process_relocations.validate()
-        .handle_errors(task_instance_id="subject_reloc")
+        .set_task_instance_id("subject_reloc")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -210,7 +226,9 @@ def main(params: Params):
 
     day_night_labels = (
         classify_is_night.validate()
-        .handle_errors(task_instance_id="day_night_labels")
+        .set_task_instance_id("day_night_labels")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -226,7 +244,9 @@ def main(params: Params):
 
     subject_traj = (
         relocations_to_trajectory.validate()
-        .handle_errors(task_instance_id="subject_traj")
+        .set_task_instance_id("subject_traj")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -242,7 +262,9 @@ def main(params: Params):
 
     traj_add_temporal_index = (
         add_temporal_index.validate()
-        .handle_errors(task_instance_id="traj_add_temporal_index")
+        .set_task_instance_id("traj_add_temporal_index")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -263,7 +285,9 @@ def main(params: Params):
 
     rename_grouper_columns = (
         map_columns.validate()
-        .handle_errors(task_instance_id="rename_grouper_columns")
+        .set_task_instance_id("rename_grouper_columns")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -287,7 +311,9 @@ def main(params: Params):
 
     map_subject_sex = (
         map_values.validate()
-        .handle_errors(task_instance_id="map_subject_sex")
+        .set_task_instance_id("map_subject_sex")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -308,7 +334,9 @@ def main(params: Params):
 
     classify_traj_speed = (
         apply_classification.validate()
-        .handle_errors(task_instance_id="classify_traj_speed")
+        .set_task_instance_id("classify_traj_speed")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -333,7 +361,9 @@ def main(params: Params):
 
     set_traj_map_title = (
         set_string_var.validate()
-        .handle_errors(task_instance_id="set_traj_map_title")
+        .set_task_instance_id("set_traj_map_title")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -350,7 +380,9 @@ def main(params: Params):
 
     set_td_map_title = (
         set_string_var.validate()
-        .handle_errors(task_instance_id="set_td_map_title")
+        .set_task_instance_id("set_td_map_title")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -364,7 +396,9 @@ def main(params: Params):
 
     set_night_day_map_title = (
         set_string_var.validate()
-        .handle_errors(task_instance_id="set_night_day_map_title")
+        .set_task_instance_id("set_night_day_map_title")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -381,7 +415,9 @@ def main(params: Params):
 
     set_nsd_chart_title = (
         set_string_var.validate()
-        .handle_errors(task_instance_id="set_nsd_chart_title")
+        .set_task_instance_id("set_nsd_chart_title")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -398,7 +434,9 @@ def main(params: Params):
 
     split_subject_traj_groups = (
         split_groups.validate()
-        .handle_errors(task_instance_id="split_subject_traj_groups")
+        .set_task_instance_id("split_subject_traj_groups")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -416,7 +454,9 @@ def main(params: Params):
 
     base_map_defs = (
         set_base_maps.validate()
-        .handle_errors(task_instance_id="base_map_defs")
+        .set_task_instance_id("base_map_defs")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -430,7 +470,9 @@ def main(params: Params):
 
     sort_traj_speed = (
         sort_values.validate()
-        .handle_errors(task_instance_id="sort_traj_speed")
+        .set_task_instance_id("sort_traj_speed")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -449,7 +491,9 @@ def main(params: Params):
 
     colormap_traj_speed = (
         apply_color_map.validate()
-        .handle_errors(task_instance_id="colormap_traj_speed")
+        .set_task_instance_id("colormap_traj_speed")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -468,7 +512,9 @@ def main(params: Params):
 
     rename_speed_display_columns = (
         map_columns.validate()
-        .handle_errors(task_instance_id="rename_speed_display_columns")
+        .set_task_instance_id("rename_speed_display_columns")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -494,7 +540,9 @@ def main(params: Params):
 
     traj_map_layers = (
         create_polyline_layer.validate()
-        .handle_errors(task_instance_id="traj_map_layers")
+        .set_task_instance_id("traj_map_layers")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -524,7 +572,9 @@ def main(params: Params):
 
     traj_ecomap = (
         draw_ecomap.validate()
-        .handle_errors(task_instance_id="traj_ecomap")
+        .set_task_instance_id("traj_ecomap")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -551,7 +601,9 @@ def main(params: Params):
 
     ecomap_html_urls = (
         persist_text.validate()
-        .handle_errors(task_instance_id="ecomap_html_urls")
+        .set_task_instance_id("ecomap_html_urls")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -569,7 +621,9 @@ def main(params: Params):
 
     traj_map_widgets_single_views = (
         create_map_widget_single_view.validate()
-        .handle_errors(task_instance_id="traj_map_widgets_single_views")
+        .set_task_instance_id("traj_map_widgets_single_views")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 never,
@@ -585,7 +639,9 @@ def main(params: Params):
 
     traj_grouped_map_widget = (
         merge_widget_views.validate()
-        .handle_errors(task_instance_id="traj_grouped_map_widget")
+        .set_task_instance_id("traj_grouped_map_widget")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -602,7 +658,9 @@ def main(params: Params):
 
     sort_traj_night_day = (
         sort_values.validate()
-        .handle_errors(task_instance_id="sort_traj_night_day")
+        .set_task_instance_id("sort_traj_night_day")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -621,7 +679,9 @@ def main(params: Params):
 
     colormap_traj_night = (
         apply_color_map.validate()
-        .handle_errors(task_instance_id="colormap_traj_night")
+        .set_task_instance_id("colormap_traj_night")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -640,7 +700,9 @@ def main(params: Params):
 
     rename_nightday_display_columns = (
         map_columns.validate()
-        .handle_errors(task_instance_id="rename_nightday_display_columns")
+        .set_task_instance_id("rename_nightday_display_columns")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -663,7 +725,9 @@ def main(params: Params):
 
     traj_map_night_layers = (
         create_polyline_layer.validate()
-        .handle_errors(task_instance_id="traj_map_night_layers")
+        .set_task_instance_id("traj_map_night_layers")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -683,7 +747,9 @@ def main(params: Params):
 
     traj_nightday_ecomap = (
         draw_ecomap.validate()
-        .handle_errors(task_instance_id="traj_nightday_ecomap")
+        .set_task_instance_id("traj_nightday_ecomap")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -710,7 +776,9 @@ def main(params: Params):
 
     ecomap_nightday_html_urls = (
         persist_text.validate()
-        .handle_errors(task_instance_id="ecomap_nightday_html_urls")
+        .set_task_instance_id("ecomap_nightday_html_urls")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -728,7 +796,9 @@ def main(params: Params):
 
     traj_map_nightday_widgets_sv = (
         create_map_widget_single_view.validate()
-        .handle_errors(task_instance_id="traj_map_nightday_widgets_sv")
+        .set_task_instance_id("traj_map_nightday_widgets_sv")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 never,
@@ -744,7 +814,9 @@ def main(params: Params):
 
     traj_nightday_grouped_map_widget = (
         merge_widget_views.validate()
-        .handle_errors(task_instance_id="traj_nightday_grouped_map_widget")
+        .set_task_instance_id("traj_nightday_grouped_map_widget")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -761,7 +833,9 @@ def main(params: Params):
 
     mean_speed = (
         dataframe_column_mean.validate()
-        .handle_errors(task_instance_id="mean_speed")
+        .set_task_instance_id("mean_speed")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -775,7 +849,9 @@ def main(params: Params):
 
     average_speed_converted = (
         with_unit.validate()
-        .handle_errors(task_instance_id="average_speed_converted")
+        .set_task_instance_id("average_speed_converted")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -793,7 +869,9 @@ def main(params: Params):
 
     mean_speed_sv_widgets = (
         create_single_value_widget_single_view.validate()
-        .handle_errors(task_instance_id="mean_speed_sv_widgets")
+        .set_task_instance_id("mean_speed_sv_widgets")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 never,
@@ -810,7 +888,9 @@ def main(params: Params):
 
     mean_speed_grouped_sv_widget = (
         merge_widget_views.validate()
-        .handle_errors(task_instance_id="mean_speed_grouped_sv_widget")
+        .set_task_instance_id("mean_speed_grouped_sv_widget")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -827,7 +907,9 @@ def main(params: Params):
 
     max_speed = (
         dataframe_column_max.validate()
-        .handle_errors(task_instance_id="max_speed")
+        .set_task_instance_id("max_speed")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -841,7 +923,9 @@ def main(params: Params):
 
     max_speed_converted = (
         with_unit.validate()
-        .handle_errors(task_instance_id="max_speed_converted")
+        .set_task_instance_id("max_speed_converted")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -859,7 +943,9 @@ def main(params: Params):
 
     max_speed_sv_widgets = (
         create_single_value_widget_single_view.validate()
-        .handle_errors(task_instance_id="max_speed_sv_widgets")
+        .set_task_instance_id("max_speed_sv_widgets")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 never,
@@ -876,7 +962,9 @@ def main(params: Params):
 
     max_speed_grouped_sv_widget = (
         merge_widget_views.validate()
-        .handle_errors(task_instance_id="max_speed_grouped_sv_widget")
+        .set_task_instance_id("max_speed_grouped_sv_widget")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -893,7 +981,9 @@ def main(params: Params):
 
     num_location = (
         dataframe_count.validate()
-        .handle_errors(task_instance_id="num_location")
+        .set_task_instance_id("num_location")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -907,7 +997,9 @@ def main(params: Params):
 
     num_location_sv_widgets = (
         create_single_value_widget_single_view.validate()
-        .handle_errors(task_instance_id="num_location_sv_widgets")
+        .set_task_instance_id("num_location_sv_widgets")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 never,
@@ -924,7 +1016,9 @@ def main(params: Params):
 
     num_location_grouped_sv_widget = (
         merge_widget_views.validate()
-        .handle_errors(task_instance_id="num_location_grouped_sv_widget")
+        .set_task_instance_id("num_location_grouped_sv_widget")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -941,7 +1035,9 @@ def main(params: Params):
 
     nightday_ratio = (
         get_night_day_ratio.validate()
-        .handle_errors(task_instance_id="nightday_ratio")
+        .set_task_instance_id("nightday_ratio")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -955,7 +1051,9 @@ def main(params: Params):
 
     nightday_ratio_sv_widgets = (
         create_single_value_widget_single_view.validate()
-        .handle_errors(task_instance_id="nightday_ratio_sv_widgets")
+        .set_task_instance_id("nightday_ratio_sv_widgets")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 never,
@@ -972,7 +1070,9 @@ def main(params: Params):
 
     nightday_ratio_grouped_sv_widget = (
         merge_widget_views.validate()
-        .handle_errors(task_instance_id="nightday_ratio_grouped_sv_widget")
+        .set_task_instance_id("nightday_ratio_grouped_sv_widget")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -989,7 +1089,9 @@ def main(params: Params):
 
     total_distance = (
         dataframe_column_sum.validate()
-        .handle_errors(task_instance_id="total_distance")
+        .set_task_instance_id("total_distance")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -1003,7 +1105,9 @@ def main(params: Params):
 
     total_dist_converted = (
         with_unit.validate()
-        .handle_errors(task_instance_id="total_dist_converted")
+        .set_task_instance_id("total_dist_converted")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -1021,7 +1125,9 @@ def main(params: Params):
 
     total_distance_sv_widgets = (
         create_single_value_widget_single_view.validate()
-        .handle_errors(task_instance_id="total_distance_sv_widgets")
+        .set_task_instance_id("total_distance_sv_widgets")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 never,
@@ -1038,7 +1144,9 @@ def main(params: Params):
 
     total_dist_grouped_sv_widget = (
         merge_widget_views.validate()
-        .handle_errors(task_instance_id="total_dist_grouped_sv_widget")
+        .set_task_instance_id("total_dist_grouped_sv_widget")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -1055,7 +1163,9 @@ def main(params: Params):
 
     total_time = (
         dataframe_column_sum.validate()
-        .handle_errors(task_instance_id="total_time")
+        .set_task_instance_id("total_time")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -1071,7 +1181,9 @@ def main(params: Params):
 
     total_time_converted = (
         with_unit.validate()
-        .handle_errors(task_instance_id="total_time_converted")
+        .set_task_instance_id("total_time_converted")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -1089,7 +1201,9 @@ def main(params: Params):
 
     total_time_sv_widgets = (
         create_single_value_widget_single_view.validate()
-        .handle_errors(task_instance_id="total_time_sv_widgets")
+        .set_task_instance_id("total_time_sv_widgets")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 never,
@@ -1106,7 +1220,9 @@ def main(params: Params):
 
     total_time_grouped_sv_widget = (
         merge_widget_views.validate()
-        .handle_errors(task_instance_id="total_time_grouped_sv_widget")
+        .set_task_instance_id("total_time_grouped_sv_widget")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -1123,7 +1239,9 @@ def main(params: Params):
 
     td = (
         calculate_elliptical_time_density.validate()
-        .handle_errors(task_instance_id="td")
+        .set_task_instance_id("td")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -1142,7 +1260,9 @@ def main(params: Params):
 
     percentile_col_to_string = (
         convert_column_values_to_string.validate()
-        .handle_errors(task_instance_id="percentile_col_to_string")
+        .set_task_instance_id("percentile_col_to_string")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -1159,7 +1279,9 @@ def main(params: Params):
 
     td_colormap = (
         apply_color_map.validate()
-        .handle_errors(task_instance_id="td_colormap")
+        .set_task_instance_id("td_colormap")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -1178,7 +1300,9 @@ def main(params: Params):
 
     td_map_layer = (
         create_polygon_layer.validate()
-        .handle_errors(task_instance_id="td_map_layer")
+        .set_task_instance_id("td_map_layer")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -1207,7 +1331,9 @@ def main(params: Params):
 
     td_ecomap = (
         draw_ecomap.validate()
-        .handle_errors(task_instance_id="td_ecomap")
+        .set_task_instance_id("td_ecomap")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -1234,7 +1360,9 @@ def main(params: Params):
 
     td_ecomap_html_url = (
         persist_text.validate()
-        .handle_errors(task_instance_id="td_ecomap_html_url")
+        .set_task_instance_id("td_ecomap_html_url")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -1252,7 +1380,9 @@ def main(params: Params):
 
     td_map_widget = (
         create_map_widget_single_view.validate()
-        .handle_errors(task_instance_id="td_map_widget")
+        .set_task_instance_id("td_map_widget")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 never,
@@ -1265,7 +1395,9 @@ def main(params: Params):
 
     td_grouped_map_widget = (
         merge_widget_views.validate()
-        .handle_errors(task_instance_id="td_grouped_map_widget")
+        .set_task_instance_id("td_grouped_map_widget")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -1281,7 +1413,9 @@ def main(params: Params):
 
     nsd_rename_display_columns = (
         map_columns.validate()
-        .handle_errors(task_instance_id="nsd_rename_display_columns")
+        .set_task_instance_id("nsd_rename_display_columns")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -1300,7 +1434,9 @@ def main(params: Params):
 
     nsd_chart = (
         draw_ecoplot.validate()
-        .handle_errors(task_instance_id="nsd_chart")
+        .set_task_instance_id("nsd_chart")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -1327,7 +1463,9 @@ def main(params: Params):
 
     nsd_chart_html_url = (
         persist_text.validate()
-        .handle_errors(task_instance_id="nsd_chart_html_url")
+        .set_task_instance_id("nsd_chart_html_url")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -1345,7 +1483,9 @@ def main(params: Params):
 
     nsd_chart_widget = (
         create_plot_widget_single_view.validate()
-        .handle_errors(task_instance_id="nsd_chart_widget")
+        .set_task_instance_id("nsd_chart_widget")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 never,
@@ -1360,7 +1500,9 @@ def main(params: Params):
 
     grouped_nsd_chart_widget_merge = (
         merge_widget_views.validate()
-        .handle_errors(task_instance_id="grouped_nsd_chart_widget_merge")
+        .set_task_instance_id("grouped_nsd_chart_widget_merge")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
@@ -1377,7 +1519,9 @@ def main(params: Params):
 
     subject_tracking_dashboard = (
         gather_dashboard.validate()
-        .handle_errors(task_instance_id="subject_tracking_dashboard")
+        .set_task_instance_id("subject_tracking_dashboard")
+        .handle_errors()
+        .with_tracing()
         .skipif(
             conditions=[
                 any_is_empty_df,
