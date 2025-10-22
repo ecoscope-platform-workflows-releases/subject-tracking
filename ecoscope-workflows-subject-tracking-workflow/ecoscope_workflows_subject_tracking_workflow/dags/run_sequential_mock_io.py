@@ -12,7 +12,10 @@ import os
 import warnings  # 🧪
 
 from ecoscope_workflows_core.tasks.config import set_workflow_details
-from ecoscope_workflows_core.tasks.filter import set_time_range
+from ecoscope_workflows_core.tasks.filter import (
+    get_timezone_from_time_range,
+    set_time_range,
+)
 from ecoscope_workflows_core.tasks.io import set_er_connection
 from ecoscope_workflows_core.tasks.skip import any_dependency_skipped, any_is_empty_df
 from ecoscope_workflows_core.testing import create_task_magicmock  # 🧪
@@ -45,6 +48,7 @@ from ecoscope_workflows_core.tasks.skip import (
 from ecoscope_workflows_core.tasks.transformation import (
     add_temporal_index,
     convert_column_values_to_string,
+    convert_values_to_timezone,
     map_columns,
     map_values,
     sort_values,
@@ -119,8 +123,22 @@ def main(params: Params):
             unpack_depth=1,
         )
         .partial(
-            time_format="%d %b %Y %H:%M:%S %Z", **(params_dict.get("time_range") or {})
+            time_format="%d %b %Y %H:%M:%S", **(params_dict.get("time_range") or {})
         )
+        .call()
+    )
+
+    get_timezone = (
+        get_timezone_from_time_range.validate()
+        .handle_errors(task_instance_id="get_timezone")
+        .skipif(
+            conditions=[
+                any_is_empty_df,
+                any_dependency_skipped,
+            ],
+            unpack_depth=1,
+        )
+        .partial(time_range=time_range, **(params_dict.get("get_timezone") or {}))
         .call()
     )
 
@@ -141,6 +159,25 @@ def main(params: Params):
             include_details=False,
             include_subjectsource_details=False,
             **(params_dict.get("subject_obs") or {}),
+        )
+        .call()
+    )
+
+    convert_to_user_timezone = (
+        convert_values_to_timezone.validate()
+        .handle_errors(task_instance_id="convert_to_user_timezone")
+        .skipif(
+            conditions=[
+                any_is_empty_df,
+                any_dependency_skipped,
+            ],
+            unpack_depth=1,
+        )
+        .partial(
+            df=subject_obs,
+            timezone=get_timezone,
+            columns=["fixtime"],
+            **(params_dict.get("convert_to_user_timezone") or {}),
         )
         .call()
     )
@@ -170,7 +207,7 @@ def main(params: Params):
             unpack_depth=1,
         )
         .partial(
-            observations=subject_obs,
+            observations=convert_to_user_timezone,
             relocs_columns=[
                 "groupby_col",
                 "fixtime",

@@ -19,7 +19,10 @@ from ecoscope_workflows_core.tasks.analysis import (
     dataframe_count,
 )
 from ecoscope_workflows_core.tasks.config import set_string_var, set_workflow_details
-from ecoscope_workflows_core.tasks.filter import set_time_range
+from ecoscope_workflows_core.tasks.filter import (
+    get_timezone_from_time_range,
+    set_time_range,
+)
 from ecoscope_workflows_core.tasks.groupby import set_groupers, split_groups
 from ecoscope_workflows_core.tasks.io import persist_text, set_er_connection
 from ecoscope_workflows_core.tasks.results import (
@@ -37,6 +40,7 @@ from ecoscope_workflows_core.tasks.skip import (
 from ecoscope_workflows_core.tasks.transformation import (
     add_temporal_index,
     convert_column_values_to_string,
+    convert_values_to_timezone,
     map_columns,
     map_values,
     sort_values,
@@ -132,6 +136,7 @@ er_client_name = (
 time_range_params = dict(
     since=...,
     until=...,
+    timezone=...,
 )
 
 # %%
@@ -147,7 +152,33 @@ time_range = (
         ],
         unpack_depth=1,
     )
-    .partial(time_format="%d %b %Y %H:%M:%S %Z", **time_range_params)
+    .partial(time_format="%d %b %Y %H:%M:%S", **time_range_params)
+    .call()
+)
+
+
+# %% [markdown]
+# ## Extract Timezone Selection
+
+# %%
+# parameters
+
+get_timezone_params = dict()
+
+# %%
+# call the task
+
+
+get_timezone = (
+    get_timezone_from_time_range.handle_errors(task_instance_id="get_timezone")
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
+    .partial(time_range=time_range, **get_timezone_params)
     .call()
 )
 
@@ -182,6 +213,39 @@ subject_obs = (
         include_details=False,
         include_subjectsource_details=False,
         **subject_obs_params,
+    )
+    .call()
+)
+
+
+# %% [markdown]
+# ## Convert to timezone
+
+# %%
+# parameters
+
+convert_to_user_timezone_params = dict()
+
+# %%
+# call the task
+
+
+convert_to_user_timezone = (
+    convert_values_to_timezone.handle_errors(
+        task_instance_id="convert_to_user_timezone"
+    )
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
+    .partial(
+        df=subject_obs,
+        timezone=get_timezone,
+        columns=["fixtime"],
+        **convert_to_user_timezone_params,
     )
     .call()
 )
@@ -237,7 +301,7 @@ subject_reloc = (
         unpack_depth=1,
     )
     .partial(
-        observations=subject_obs,
+        observations=convert_to_user_timezone,
         relocs_columns=[
             "groupby_col",
             "fixtime",
