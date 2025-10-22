@@ -11,8 +11,13 @@ all-grouper:
     groupers:
       groupers: []
     time_range:
-      since: "2017-01-01T00:00:00Z"
-      until: "2017-03-31T23:59:59Z"
+      since: "2015-01-01T00:00:00"
+      until: "2015-12-31T23:59:59"
+      timezone:
+        label: "Africa/Nairobi (UTC+03:00)"
+        tzCode: "Africa/Nairobi"
+        name: "(UTC+03:00) Nairobi"
+        utc: "+03:00"
     subject_obs:
       subject_group_name: "Ecoscope"
     subject_traj:
@@ -50,8 +55,13 @@ month-grouper:
       groupers:
         - "%B"
     time_range:
-      since: "2017-01-01T00:00:00Z"
-      until: "2017-03-31T23:59:59Z"
+      since: "2017-01-01T00:00:00"
+      until: "2017-03-31T23:59:59"
+      timezone:
+        label: "UTC (UTC+00:00)"
+        tzCode: "UTC"
+        name: "(UTC+00:00) UTC"
+        utc: "+00:00"
     subject_obs:
       subject_group_name: "Ecoscope"
     subject_traj:
@@ -91,8 +101,13 @@ value-grouper:
         - "subject_subtype"
         - "subject_sex"
     time_range:
-      since: "2017-01-01T00:00:00Z"
-      until: "2017-03-31T23:59:59Z"
+      since: "2017-01-01T00:00:00"
+      until: "2017-03-31T23:59:59"
+      timezone:
+        label: "UTC (UTC+00:00)"
+        tzCode: "UTC"
+        name: "(UTC+00:00) UTC"
+        utc: "+00:00"
     subject_obs:
       subject_group_name: "Ecoscope"
     subject_traj:
@@ -133,8 +148,13 @@ task-instance-error:
     groupers:
       groupers: []
     time_range:
-      since: "2017-01-01T00:00:00Z"
-      until: "2017-03-31T23:59:59Z"
+      since: "2017-01-01T00:00:00"
+      until: "2017-03-31T23:59:59"
+      timezone:
+        label: "UTC (UTC+00:00)"
+        tzCode: "UTC"
+        name: "(UTC+00:00) UTC"
+        utc: "+00:00"
     subject_obs:
       subject_group_name: "Ecoscope"
     subject_traj:
