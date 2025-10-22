@@ -1,10 +1,10 @@
 id: subject_tracking
 requirements:
   - name: ecoscope-workflows-core
-    version: 0.13.0
+    version: 0.14.0
     channel: https://repo.prefix.dev/ecoscope-workflows/
   - name: ecoscope-workflows-ext-ecoscope
-    version: 0.13.0
+    version: 0.14.0
     channel: https://repo.prefix.dev/ecoscope-workflows/
 rjsf-overrides:
   properties:
@@ -48,7 +48,12 @@ workflow:
     id: time_range
     task: set_time_range
     partial:
-      time_format: '%d %b %Y %H:%M:%S %Z'
+      time_format: '%d %b %Y %H:%M:%S'
+  - name: Extract Timezone Selection
+    id: get_timezone
+    task: get_timezone_from_time_range
+    partial:
+      time_range: ${{ workflow.time_range.return }}
   - title: Subject Group
     type: task-group
     description: Choose a subject group to analyze
@@ -62,6 +67,14 @@ workflow:
           raise_on_empty: false
           include_details: false
           include_subjectsource_details: false
+  - name: Convert to timezone
+    id: convert_to_user_timezone
+    task: convert_values_to_timezone
+    partial:
+      df: ${{ workflow.subject_obs.return }}
+      timezone: ${{ workflow.get_timezone.return }}
+      columns:
+        - fixtime
   - name: Group Data
     id: groupers
     task: set_groupers
@@ -69,7 +82,7 @@ workflow:
     id: subject_reloc
     task: process_relocations
     partial:
-      observations: ${{ workflow.subject_obs.return }}
+      observations: ${{ workflow.convert_to_user_timezone.return }}
       relocs_columns:
         - groupby_col
         - fixtime

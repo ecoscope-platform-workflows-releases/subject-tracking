@@ -10,7 +10,10 @@ from ecoscope_workflows_core.tasks.analysis import (
     dataframe_count,
 )
 from ecoscope_workflows_core.tasks.config import set_string_var, set_workflow_details
-from ecoscope_workflows_core.tasks.filter import set_time_range
+from ecoscope_workflows_core.tasks.filter import (
+    get_timezone_from_time_range,
+    set_time_range,
+)
 from ecoscope_workflows_core.tasks.groupby import set_groupers, split_groups
 from ecoscope_workflows_core.tasks.io import persist_text, set_er_connection
 from ecoscope_workflows_core.tasks.results import (
@@ -28,6 +31,7 @@ from ecoscope_workflows_core.tasks.skip import (
 from ecoscope_workflows_core.tasks.transformation import (
     add_temporal_index,
     convert_column_values_to_string,
+    convert_values_to_timezone,
     map_columns,
     map_values,
     sort_values,
@@ -66,9 +70,11 @@ def main(params: Params):
         "workflow_details": [],
         "er_client_name": [],
         "time_range": [],
+        "get_timezone": ["time_range"],
         "subject_obs": ["er_client_name", "time_range"],
+        "convert_to_user_timezone": ["subject_obs", "get_timezone"],
         "groupers": [],
-        "subject_reloc": ["subject_obs"],
+        "subject_reloc": ["convert_to_user_timezone"],
         "day_night_labels": ["subject_reloc"],
         "subject_traj": ["day_night_labels"],
         "traj_add_temporal_index": ["subject_traj", "groupers"],
@@ -197,9 +203,26 @@ def main(params: Params):
             )
             .set_executor("lithops"),
             partial={
-                "time_format": "%d %b %Y %H:%M:%S %Z",
+                "time_format": "%d %b %Y %H:%M:%S",
             }
             | (params_dict.get("time_range") or {}),
+            method="call",
+        ),
+        "get_timezone": Node(
+            async_task=get_timezone_from_time_range.validate()
+            .handle_errors(task_instance_id="get_timezone")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
+            .set_executor("lithops"),
+            partial={
+                "time_range": DependsOn("time_range"),
+            }
+            | (params_dict.get("get_timezone") or {}),
             method="call",
         ),
         "subject_obs": Node(
@@ -221,6 +244,25 @@ def main(params: Params):
                 "include_subjectsource_details": False,
             }
             | (params_dict.get("subject_obs") or {}),
+            method="call",
+        ),
+        "convert_to_user_timezone": Node(
+            async_task=convert_values_to_timezone.validate()
+            .handle_errors(task_instance_id="convert_to_user_timezone")
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
+            .set_executor("lithops"),
+            partial={
+                "df": DependsOn("subject_obs"),
+                "timezone": DependsOn("get_timezone"),
+                "columns": ["fixtime"],
+            }
+            | (params_dict.get("convert_to_user_timezone") or {}),
             method="call",
         ),
         "groupers": Node(
@@ -249,7 +291,7 @@ def main(params: Params):
             )
             .set_executor("lithops"),
             partial={
-                "observations": DependsOn("subject_obs"),
+                "observations": DependsOn("convert_to_user_timezone"),
                 "relocs_columns": [
                     "groupby_col",
                     "fixtime",
