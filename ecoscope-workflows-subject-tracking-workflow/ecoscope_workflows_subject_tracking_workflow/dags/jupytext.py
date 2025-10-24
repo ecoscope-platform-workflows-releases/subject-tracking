@@ -86,7 +86,9 @@ workflow_details_params = dict(
 
 
 workflow_details = (
-    set_workflow_details.handle_errors(task_instance_id="workflow_details")
+    set_workflow_details.set_task_instance_id("workflow_details")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -114,7 +116,9 @@ er_client_name_params = dict(
 
 
 er_client_name = (
-    set_er_connection.handle_errors(task_instance_id="er_client_name")
+    set_er_connection.set_task_instance_id("er_client_name")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -144,7 +148,9 @@ time_range_params = dict(
 
 
 time_range = (
-    set_time_range.handle_errors(task_instance_id="time_range")
+    set_time_range.set_task_instance_id("time_range")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -170,7 +176,9 @@ get_timezone_params = dict()
 
 
 get_timezone = (
-    get_timezone_from_time_range.handle_errors(task_instance_id="get_timezone")
+    get_timezone_from_time_range.set_task_instance_id("get_timezone")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -198,7 +206,9 @@ subject_obs_params = dict(
 
 
 subject_obs = (
-    get_subjectgroup_observations.handle_errors(task_instance_id="subject_obs")
+    get_subjectgroup_observations.set_task_instance_id("subject_obs")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -231,9 +241,9 @@ convert_to_user_timezone_params = dict()
 
 
 convert_to_user_timezone = (
-    convert_values_to_timezone.handle_errors(
-        task_instance_id="convert_to_user_timezone"
-    )
+    convert_values_to_timezone.set_task_instance_id("convert_to_user_timezone")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -266,7 +276,9 @@ groupers_params = dict(
 
 
 groupers = (
-    set_groupers.handle_errors(task_instance_id="groupers")
+    set_groupers.set_task_instance_id("groupers")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -292,7 +304,9 @@ subject_reloc_params = dict()
 
 
 subject_reloc = (
-    process_relocations.handle_errors(task_instance_id="subject_reloc")
+    process_relocations.set_task_instance_id("subject_reloc")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -335,7 +349,9 @@ day_night_labels_params = dict()
 
 
 day_night_labels = (
-    classify_is_night.handle_errors(task_instance_id="day_night_labels")
+    classify_is_night.set_task_instance_id("day_night_labels")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -363,7 +379,9 @@ subject_traj_params = dict(
 
 
 subject_traj = (
-    relocations_to_trajectory.handle_errors(task_instance_id="subject_traj")
+    relocations_to_trajectory.set_task_instance_id("subject_traj")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -389,7 +407,9 @@ traj_add_temporal_index_params = dict()
 
 
 traj_add_temporal_index = (
-    add_temporal_index.handle_errors(task_instance_id="traj_add_temporal_index")
+    add_temporal_index.set_task_instance_id("traj_add_temporal_index")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -422,7 +442,9 @@ rename_grouper_columns_params = dict()
 
 
 rename_grouper_columns = (
-    map_columns.handle_errors(task_instance_id="rename_grouper_columns")
+    map_columns.set_task_instance_id("rename_grouper_columns")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -458,7 +480,9 @@ map_subject_sex_params = dict()
 
 
 map_subject_sex = (
-    map_values.handle_errors(task_instance_id="map_subject_sex")
+    map_values.set_task_instance_id("map_subject_sex")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -491,7 +515,9 @@ classify_traj_speed_params = dict()
 
 
 classify_traj_speed = (
-    apply_classification.handle_errors(task_instance_id="classify_traj_speed")
+    apply_classification.set_task_instance_id("classify_traj_speed")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -528,7 +554,9 @@ set_traj_map_title_params = dict()
 
 
 set_traj_map_title = (
-    set_string_var.handle_errors(task_instance_id="set_traj_map_title")
+    set_string_var.set_task_instance_id("set_traj_map_title")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -554,7 +582,9 @@ set_td_map_title_params = dict()
 
 
 set_td_map_title = (
-    set_string_var.handle_errors(task_instance_id="set_td_map_title")
+    set_string_var.set_task_instance_id("set_td_map_title")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -580,7 +610,9 @@ set_night_day_map_title_params = dict()
 
 
 set_night_day_map_title = (
-    set_string_var.handle_errors(task_instance_id="set_night_day_map_title")
+    set_string_var.set_task_instance_id("set_night_day_map_title")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -606,7 +638,9 @@ set_nsd_chart_title_params = dict()
 
 
 set_nsd_chart_title = (
-    set_string_var.handle_errors(task_instance_id="set_nsd_chart_title")
+    set_string_var.set_task_instance_id("set_nsd_chart_title")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -632,7 +666,9 @@ split_subject_traj_groups_params = dict()
 
 
 split_subject_traj_groups = (
-    split_groups.handle_errors(task_instance_id="split_subject_traj_groups")
+    split_groups.set_task_instance_id("split_subject_traj_groups")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -662,7 +698,9 @@ base_map_defs_params = dict(
 
 
 base_map_defs = (
-    set_base_maps.handle_errors(task_instance_id="base_map_defs")
+    set_base_maps.set_task_instance_id("base_map_defs")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -688,7 +726,9 @@ sort_traj_speed_params = dict()
 
 
 sort_traj_speed = (
-    sort_values.handle_errors(task_instance_id="sort_traj_speed")
+    sort_values.set_task_instance_id("sort_traj_speed")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -719,7 +759,9 @@ colormap_traj_speed_params = dict()
 
 
 colormap_traj_speed = (
-    apply_color_map.handle_errors(task_instance_id="colormap_traj_speed")
+    apply_color_map.set_task_instance_id("colormap_traj_speed")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -750,7 +792,9 @@ rename_speed_display_columns_params = dict()
 
 
 rename_speed_display_columns = (
-    map_columns.handle_errors(task_instance_id="rename_speed_display_columns")
+    map_columns.set_task_instance_id("rename_speed_display_columns")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -790,7 +834,9 @@ traj_map_layers_params = dict(
 
 
 traj_map_layers = (
-    create_polyline_layer.handle_errors(task_instance_id="traj_map_layers")
+    create_polyline_layer.set_task_instance_id("traj_map_layers")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -831,7 +877,9 @@ traj_ecomap_params = dict(
 
 
 traj_ecomap = (
-    draw_ecomap.handle_errors(task_instance_id="traj_ecomap")
+    draw_ecomap.set_task_instance_id("traj_ecomap")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -872,7 +920,9 @@ ecomap_html_urls_params = dict(
 
 
 ecomap_html_urls = (
-    persist_text.handle_errors(task_instance_id="ecomap_html_urls")
+    persist_text.set_task_instance_id("ecomap_html_urls")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -902,9 +952,9 @@ traj_map_widgets_single_views_params = dict()
 
 
 traj_map_widgets_single_views = (
-    create_map_widget_single_view.handle_errors(
-        task_instance_id="traj_map_widgets_single_views"
-    )
+    create_map_widget_single_view.set_task_instance_id("traj_map_widgets_single_views")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             never,
@@ -929,7 +979,9 @@ traj_grouped_map_widget_params = dict()
 
 
 traj_grouped_map_widget = (
-    merge_widget_views.handle_errors(task_instance_id="traj_grouped_map_widget")
+    merge_widget_views.set_task_instance_id("traj_grouped_map_widget")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -955,7 +1007,9 @@ sort_traj_night_day_params = dict()
 
 
 sort_traj_night_day = (
-    sort_values.handle_errors(task_instance_id="sort_traj_night_day")
+    sort_values.set_task_instance_id("sort_traj_night_day")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -986,7 +1040,9 @@ colormap_traj_night_params = dict()
 
 
 colormap_traj_night = (
-    apply_color_map.handle_errors(task_instance_id="colormap_traj_night")
+    apply_color_map.set_task_instance_id("colormap_traj_night")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -1017,7 +1073,9 @@ rename_nightday_display_columns_params = dict()
 
 
 rename_nightday_display_columns = (
-    map_columns.handle_errors(task_instance_id="rename_nightday_display_columns")
+    map_columns.set_task_instance_id("rename_nightday_display_columns")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -1054,7 +1112,9 @@ traj_map_night_layers_params = dict(
 
 
 traj_map_night_layers = (
-    create_polyline_layer.handle_errors(task_instance_id="traj_map_night_layers")
+    create_polyline_layer.set_task_instance_id("traj_map_night_layers")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -1088,7 +1148,9 @@ traj_nightday_ecomap_params = dict(
 
 
 traj_nightday_ecomap = (
-    draw_ecomap.handle_errors(task_instance_id="traj_nightday_ecomap")
+    draw_ecomap.set_task_instance_id("traj_nightday_ecomap")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -1129,7 +1191,9 @@ ecomap_nightday_html_urls_params = dict(
 
 
 ecomap_nightday_html_urls = (
-    persist_text.handle_errors(task_instance_id="ecomap_nightday_html_urls")
+    persist_text.set_task_instance_id("ecomap_nightday_html_urls")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -1159,9 +1223,9 @@ traj_map_nightday_widgets_sv_params = dict()
 
 
 traj_map_nightday_widgets_sv = (
-    create_map_widget_single_view.handle_errors(
-        task_instance_id="traj_map_nightday_widgets_sv"
-    )
+    create_map_widget_single_view.set_task_instance_id("traj_map_nightday_widgets_sv")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             never,
@@ -1186,9 +1250,9 @@ traj_nightday_grouped_map_widget_params = dict()
 
 
 traj_nightday_grouped_map_widget = (
-    merge_widget_views.handle_errors(
-        task_instance_id="traj_nightday_grouped_map_widget"
-    )
+    merge_widget_views.set_task_instance_id("traj_nightday_grouped_map_widget")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -1216,7 +1280,9 @@ mean_speed_params = dict()
 
 
 mean_speed = (
-    dataframe_column_mean.handle_errors(task_instance_id="mean_speed")
+    dataframe_column_mean.set_task_instance_id("mean_speed")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -1242,7 +1308,9 @@ average_speed_converted_params = dict()
 
 
 average_speed_converted = (
-    with_unit.handle_errors(task_instance_id="average_speed_converted")
+    with_unit.set_task_instance_id("average_speed_converted")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -1268,9 +1336,9 @@ mean_speed_sv_widgets_params = dict()
 
 
 mean_speed_sv_widgets = (
-    create_single_value_widget_single_view.handle_errors(
-        task_instance_id="mean_speed_sv_widgets"
-    )
+    create_single_value_widget_single_view.set_task_instance_id("mean_speed_sv_widgets")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             never,
@@ -1295,7 +1363,9 @@ mean_speed_grouped_sv_widget_params = dict()
 
 
 mean_speed_grouped_sv_widget = (
-    merge_widget_views.handle_errors(task_instance_id="mean_speed_grouped_sv_widget")
+    merge_widget_views.set_task_instance_id("mean_speed_grouped_sv_widget")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -1321,7 +1391,9 @@ max_speed_params = dict()
 
 
 max_speed = (
-    dataframe_column_max.handle_errors(task_instance_id="max_speed")
+    dataframe_column_max.set_task_instance_id("max_speed")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -1347,7 +1419,9 @@ max_speed_converted_params = dict()
 
 
 max_speed_converted = (
-    with_unit.handle_errors(task_instance_id="max_speed_converted")
+    with_unit.set_task_instance_id("max_speed_converted")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -1373,9 +1447,9 @@ max_speed_sv_widgets_params = dict()
 
 
 max_speed_sv_widgets = (
-    create_single_value_widget_single_view.handle_errors(
-        task_instance_id="max_speed_sv_widgets"
-    )
+    create_single_value_widget_single_view.set_task_instance_id("max_speed_sv_widgets")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             never,
@@ -1400,7 +1474,9 @@ max_speed_grouped_sv_widget_params = dict()
 
 
 max_speed_grouped_sv_widget = (
-    merge_widget_views.handle_errors(task_instance_id="max_speed_grouped_sv_widget")
+    merge_widget_views.set_task_instance_id("max_speed_grouped_sv_widget")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -1426,7 +1502,9 @@ num_location_params = dict()
 
 
 num_location = (
-    dataframe_count.handle_errors(task_instance_id="num_location")
+    dataframe_count.set_task_instance_id("num_location")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -1452,9 +1530,11 @@ num_location_sv_widgets_params = dict()
 
 
 num_location_sv_widgets = (
-    create_single_value_widget_single_view.handle_errors(
-        task_instance_id="num_location_sv_widgets"
+    create_single_value_widget_single_view.set_task_instance_id(
+        "num_location_sv_widgets"
     )
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             never,
@@ -1481,7 +1561,9 @@ num_location_grouped_sv_widget_params = dict()
 
 
 num_location_grouped_sv_widget = (
-    merge_widget_views.handle_errors(task_instance_id="num_location_grouped_sv_widget")
+    merge_widget_views.set_task_instance_id("num_location_grouped_sv_widget")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -1507,7 +1589,9 @@ nightday_ratio_params = dict()
 
 
 nightday_ratio = (
-    get_night_day_ratio.handle_errors(task_instance_id="nightday_ratio")
+    get_night_day_ratio.set_task_instance_id("nightday_ratio")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -1533,9 +1617,11 @@ nightday_ratio_sv_widgets_params = dict()
 
 
 nightday_ratio_sv_widgets = (
-    create_single_value_widget_single_view.handle_errors(
-        task_instance_id="nightday_ratio_sv_widgets"
+    create_single_value_widget_single_view.set_task_instance_id(
+        "nightday_ratio_sv_widgets"
     )
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             never,
@@ -1562,9 +1648,9 @@ nightday_ratio_grouped_sv_widget_params = dict()
 
 
 nightday_ratio_grouped_sv_widget = (
-    merge_widget_views.handle_errors(
-        task_instance_id="nightday_ratio_grouped_sv_widget"
-    )
+    merge_widget_views.set_task_instance_id("nightday_ratio_grouped_sv_widget")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -1592,7 +1678,9 @@ total_distance_params = dict()
 
 
 total_distance = (
-    dataframe_column_sum.handle_errors(task_instance_id="total_distance")
+    dataframe_column_sum.set_task_instance_id("total_distance")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -1618,7 +1706,9 @@ total_dist_converted_params = dict()
 
 
 total_dist_converted = (
-    with_unit.handle_errors(task_instance_id="total_dist_converted")
+    with_unit.set_task_instance_id("total_dist_converted")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -1644,9 +1734,11 @@ total_distance_sv_widgets_params = dict()
 
 
 total_distance_sv_widgets = (
-    create_single_value_widget_single_view.handle_errors(
-        task_instance_id="total_distance_sv_widgets"
+    create_single_value_widget_single_view.set_task_instance_id(
+        "total_distance_sv_widgets"
     )
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             never,
@@ -1673,7 +1765,9 @@ total_dist_grouped_sv_widget_params = dict()
 
 
 total_dist_grouped_sv_widget = (
-    merge_widget_views.handle_errors(task_instance_id="total_dist_grouped_sv_widget")
+    merge_widget_views.set_task_instance_id("total_dist_grouped_sv_widget")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -1699,7 +1793,9 @@ total_time_params = dict()
 
 
 total_time = (
-    dataframe_column_sum.handle_errors(task_instance_id="total_time")
+    dataframe_column_sum.set_task_instance_id("total_time")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -1725,7 +1821,9 @@ total_time_converted_params = dict()
 
 
 total_time_converted = (
-    with_unit.handle_errors(task_instance_id="total_time_converted")
+    with_unit.set_task_instance_id("total_time_converted")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -1751,9 +1849,9 @@ total_time_sv_widgets_params = dict()
 
 
 total_time_sv_widgets = (
-    create_single_value_widget_single_view.handle_errors(
-        task_instance_id="total_time_sv_widgets"
-    )
+    create_single_value_widget_single_view.set_task_instance_id("total_time_sv_widgets")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             never,
@@ -1778,7 +1876,9 @@ total_time_grouped_sv_widget_params = dict()
 
 
 total_time_grouped_sv_widget = (
-    merge_widget_views.handle_errors(task_instance_id="total_time_grouped_sv_widget")
+    merge_widget_views.set_task_instance_id("total_time_grouped_sv_widget")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -1809,7 +1909,9 @@ td_params = dict(
 
 
 td = (
-    calculate_elliptical_time_density.handle_errors(task_instance_id="td")
+    calculate_elliptical_time_density.set_task_instance_id("td")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -1840,9 +1942,9 @@ percentile_col_to_string_params = dict()
 
 
 percentile_col_to_string = (
-    convert_column_values_to_string.handle_errors(
-        task_instance_id="percentile_col_to_string"
-    )
+    convert_column_values_to_string.set_task_instance_id("percentile_col_to_string")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -1868,7 +1970,9 @@ td_colormap_params = dict()
 
 
 td_colormap = (
-    apply_color_map.handle_errors(task_instance_id="td_colormap")
+    apply_color_map.set_task_instance_id("td_colormap")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -1901,7 +2005,9 @@ td_map_layer_params = dict(
 
 
 td_map_layer = (
-    create_polygon_layer.handle_errors(task_instance_id="td_map_layer")
+    create_polygon_layer.set_task_instance_id("td_map_layer")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -1944,7 +2050,9 @@ td_ecomap_params = dict(
 
 
 td_ecomap = (
-    draw_ecomap.handle_errors(task_instance_id="td_ecomap")
+    draw_ecomap.set_task_instance_id("td_ecomap")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -1985,7 +2093,9 @@ td_ecomap_html_url_params = dict(
 
 
 td_ecomap_html_url = (
-    persist_text.handle_errors(task_instance_id="td_ecomap_html_url")
+    persist_text.set_task_instance_id("td_ecomap_html_url")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -2015,7 +2125,9 @@ td_map_widget_params = dict()
 
 
 td_map_widget = (
-    create_map_widget_single_view.handle_errors(task_instance_id="td_map_widget")
+    create_map_widget_single_view.set_task_instance_id("td_map_widget")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             never,
@@ -2040,7 +2152,9 @@ td_grouped_map_widget_params = dict()
 
 
 td_grouped_map_widget = (
-    merge_widget_views.handle_errors(task_instance_id="td_grouped_map_widget")
+    merge_widget_views.set_task_instance_id("td_grouped_map_widget")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -2066,7 +2180,9 @@ nsd_rename_display_columns_params = dict()
 
 
 nsd_rename_display_columns = (
-    map_columns.handle_errors(task_instance_id="nsd_rename_display_columns")
+    map_columns.set_task_instance_id("nsd_rename_display_columns")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -2097,7 +2213,9 @@ nsd_chart_params = dict()
 
 
 nsd_chart = (
-    draw_ecoplot.handle_errors(task_instance_id="nsd_chart")
+    draw_ecoplot.set_task_instance_id("nsd_chart")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -2138,7 +2256,9 @@ nsd_chart_html_url_params = dict(
 
 
 nsd_chart_html_url = (
-    persist_text.handle_errors(task_instance_id="nsd_chart_html_url")
+    persist_text.set_task_instance_id("nsd_chart_html_url")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -2168,7 +2288,9 @@ nsd_chart_widget_params = dict()
 
 
 nsd_chart_widget = (
-    create_plot_widget_single_view.handle_errors(task_instance_id="nsd_chart_widget")
+    create_plot_widget_single_view.set_task_instance_id("nsd_chart_widget")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             never,
@@ -2193,7 +2315,9 @@ grouped_nsd_chart_widget_merge_params = dict()
 
 
 grouped_nsd_chart_widget_merge = (
-    merge_widget_views.handle_errors(task_instance_id="grouped_nsd_chart_widget_merge")
+    merge_widget_views.set_task_instance_id("grouped_nsd_chart_widget_merge")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
@@ -2219,7 +2343,9 @@ subject_tracking_dashboard_params = dict()
 
 
 subject_tracking_dashboard = (
-    gather_dashboard.handle_errors(task_instance_id="subject_tracking_dashboard")
+    gather_dashboard.set_task_instance_id("subject_tracking_dashboard")
+    .handle_errors()
+    .with_tracing()
     .skipif(
         conditions=[
             any_is_empty_df,
