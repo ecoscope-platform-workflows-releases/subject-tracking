@@ -885,7 +885,7 @@ def main(params: Params):
                 "retain_columns": [],
                 "rename_columns": {
                     "subject_name": "Subject Name",
-                    "subject_subtype": "Subject Sex",
+                    "subject_sex": "Subject Sex",
                     "extra__is_night": "Nighttime",
                 },
             }

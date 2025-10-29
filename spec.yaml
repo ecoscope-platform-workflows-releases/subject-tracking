@@ -1,10 +1,10 @@
 id: subject_tracking
 requirements:
   - name: ecoscope-workflows-core
-    version: 0.15.0
+    version: 0.16.0
     channel: https://repo.prefix.dev/ecoscope-workflows/
   - name: ecoscope-workflows-ext-ecoscope
-    version: 0.15.0
+    version: 0.16.0
     channel: https://repo.prefix.dev/ecoscope-workflows/
 rjsf-overrides:
   properties:
@@ -323,7 +323,7 @@ workflow:
       retain_columns: []
       rename_columns:
         subject_name: Subject Name
-        subject_subtype: Subject Sex
+        subject_sex: Subject Sex
         extra__is_night: Nighttime
     mapvalues:
       argnames: df
