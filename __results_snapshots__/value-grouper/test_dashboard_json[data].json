@@ -35,8 +35,12 @@
             "type": "string"
           },
           "subject_subtype": {
-            "default": "ranger",
+            "default": "helicopter",
             "oneOf": [
+              {
+                "const": "helicopter",
+                "title": "helicopter"
+              },
               {
                 "const": "ranger",
                 "title": "ranger"
@@ -68,7 +72,8 @@
       "description": "A dashboard for visualizing subject trajectories and home range.",
       "time_range": "From 01 Jan 2017 00:00:00 to 31 Mar 2017 23:59:59",
       "time_zone": "UTC (UTC+00:00)",
-      "title": "Subject Tracking Dashboard"
+      "title": "Subject Tracking Dashboard",
+      "⚠️ Warning": "This workflow was run with mixed subtypes"
     },
     "views": {
       "{\"subject_name\": \"eco_1\", \"subject_sex\": \"male\", \"subject_subtype\": \"ranger\"}": [
@@ -143,7 +148,7 @@
           "widget_type": "graph"
         }
       ],
-      "{\"subject_name\": \"eco_2\", \"subject_sex\": \"female\", \"subject_subtype\": \"ranger\"}": [
+      "{\"subject_name\": \"eco_2\", \"subject_sex\": \"female\", \"subject_subtype\": \"helicopter\"}": [
         {
           "data": "str",
           "id": 0,
