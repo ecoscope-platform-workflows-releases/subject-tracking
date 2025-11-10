@@ -79,6 +79,7 @@
             "subject_group_name": {
               "title": "Subject Group Name",
               "type": "string",
+              "description": "\u26a0\ufe0f The use of a group with mixed subtypes could lead to unexpected results",
               "ecoscope:subject_group_name": "properties.er_client_name.properties.data_source.properties.name"
             }
           },

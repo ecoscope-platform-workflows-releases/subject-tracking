@@ -1,10 +1,10 @@
 id: subject_tracking
 requirements:
   - name: ecoscope-workflows-core
-    version: 0.16.0
+    version: 0.17.0
     channel: https://repo.prefix.dev/ecoscope-workflows/
   - name: ecoscope-workflows-ext-ecoscope
-    version: 0.16.0
+    version: 0.17.0
     channel: https://repo.prefix.dev/ecoscope-workflows/
 rjsf-overrides:
   properties:
@@ -67,6 +67,14 @@ workflow:
           raise_on_empty: false
           include_details: false
           include_subjectsource_details: false
+  - name: Warn if mixed subtype
+    id: warn_if_mixed_subtype
+    task: mixed_subtype_warning
+    skipif:
+      conditions:
+        - never
+    partial:
+      subject_obs: ${{ workflow.subject_obs.return }}
   - name: Convert to timezone
     id: convert_to_user_timezone
     task: convert_values_to_timezone
@@ -772,3 +780,4 @@ workflow:
         - ${{ workflow.grouped_nsd_chart_widget_merge.return }}
       groupers: ${{ workflow.groupers.return }}
       time_range: ${{ workflow.time_range.return}}
+      warning: ${{ workflow.warn_if_mixed_subtype.return}}

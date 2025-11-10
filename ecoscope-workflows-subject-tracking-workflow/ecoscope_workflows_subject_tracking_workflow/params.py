@@ -22,7 +22,11 @@ class SubjectObs(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
-    subject_group_name: str = Field(..., title="Subject Group Name")
+    subject_group_name: str = Field(
+        ...,
+        description="⚠️ The use of a group with mixed subtypes could lead to unexpected results",
+        title="Subject Group Name",
+    )
 
 
 class Url(str, Enum):
