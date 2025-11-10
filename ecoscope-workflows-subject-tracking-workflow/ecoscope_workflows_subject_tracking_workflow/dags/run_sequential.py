@@ -58,6 +58,7 @@ from ecoscope_workflows_ext_ecoscope.tasks.transformation import (
     apply_color_map,
     classify_is_night,
 )
+from ecoscope_workflows_ext_ecoscope.tasks.warning import mixed_subtype_warning
 
 from ..params import Params
 
@@ -150,6 +151,23 @@ def main(params: Params):
             include_details=False,
             include_subjectsource_details=False,
             **(params_dict.get("subject_obs") or {}),
+        )
+        .call()
+    )
+
+    warn_if_mixed_subtype = (
+        mixed_subtype_warning.validate()
+        .set_task_instance_id("warn_if_mixed_subtype")
+        .handle_errors()
+        .with_tracing()
+        .skipif(
+            conditions=[
+                never,
+            ],
+            unpack_depth=1,
+        )
+        .partial(
+            subject_obs=subject_obs, **(params_dict.get("warn_if_mixed_subtype") or {})
         )
         .call()
     )
@@ -1545,6 +1563,7 @@ def main(params: Params):
             ],
             groupers=groupers,
             time_range=time_range,
+            warning=warn_if_mixed_subtype,
             **(params_dict.get("subject_tracking_dashboard") or {}),
         )
         .call()

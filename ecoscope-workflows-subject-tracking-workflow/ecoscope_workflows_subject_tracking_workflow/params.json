@@ -73,7 +73,8 @@
       "properties": {
         "subject_group_name": {
           "title": "Subject Group Name",
-          "type": "string"
+          "type": "string",
+          "description": "\u26a0\ufe0f The use of a group with mixed subtypes could lead to unexpected results"
         }
       },
       "required": [

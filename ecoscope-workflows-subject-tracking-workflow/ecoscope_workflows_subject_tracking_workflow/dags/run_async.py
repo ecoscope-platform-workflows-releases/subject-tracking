@@ -59,6 +59,7 @@ from ecoscope_workflows_ext_ecoscope.tasks.transformation import (
     apply_color_map,
     classify_is_night,
 )
+from ecoscope_workflows_ext_ecoscope.tasks.warning import mixed_subtype_warning
 
 from ..params import Params
 
@@ -72,6 +73,7 @@ def main(params: Params):
         "time_range": [],
         "get_timezone": ["time_range"],
         "subject_obs": ["er_client_name", "time_range"],
+        "warn_if_mixed_subtype": ["subject_obs"],
         "convert_to_user_timezone": ["subject_obs", "get_timezone"],
         "groupers": [],
         "subject_reloc": ["convert_to_user_timezone"],
@@ -159,6 +161,7 @@ def main(params: Params):
             "grouped_nsd_chart_widget_merge",
             "groupers",
             "time_range",
+            "warn_if_mixed_subtype",
         ],
     }
 
@@ -254,6 +257,24 @@ def main(params: Params):
                 "include_subjectsource_details": False,
             }
             | (params_dict.get("subject_obs") or {}),
+            method="call",
+        ),
+        "warn_if_mixed_subtype": Node(
+            async_task=mixed_subtype_warning.validate()
+            .set_task_instance_id("warn_if_mixed_subtype")
+            .handle_errors()
+            .with_tracing()
+            .skipif(
+                conditions=[
+                    never,
+                ],
+                unpack_depth=1,
+            )
+            .set_executor("lithops"),
+            partial={
+                "subject_obs": DependsOn("subject_obs"),
+            }
+            | (params_dict.get("warn_if_mixed_subtype") or {}),
             method="call",
         ),
         "convert_to_user_timezone": Node(
@@ -1844,6 +1865,7 @@ def main(params: Params):
                 ),
                 "groupers": DependsOn("groupers"),
                 "time_range": DependsOn("time_range"),
+                "warning": DependsOn("warn_if_mixed_subtype"),
             }
             | (params_dict.get("subject_tracking_dashboard") or {}),
             method="call",
