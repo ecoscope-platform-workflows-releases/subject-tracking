@@ -11,13 +11,18 @@ import json
 import os
 import warnings  # 🧪
 
-from ecoscope_workflows_core.tasks.config import set_workflow_details
-from ecoscope_workflows_core.tasks.filter import (
-    get_timezone_from_time_range,
-    set_time_range,
+from ecoscope_workflows_core.tasks.config import (
+    set_workflow_details as set_workflow_details,
 )
-from ecoscope_workflows_core.tasks.io import set_er_connection
-from ecoscope_workflows_core.tasks.skip import any_dependency_skipped, any_is_empty_df
+from ecoscope_workflows_core.tasks.filter import (
+    get_timezone_from_time_range as get_timezone_from_time_range,
+)
+from ecoscope_workflows_core.tasks.filter import set_time_range as set_time_range
+from ecoscope_workflows_core.tasks.io import set_er_connection as set_er_connection
+from ecoscope_workflows_core.tasks.skip import (
+    any_dependency_skipped as any_dependency_skipped,
+)
+from ecoscope_workflows_core.tasks.skip import any_is_empty_df as any_is_empty_df
 from ecoscope_workflows_core.testing import create_task_magicmock  # 🧪
 
 get_subjectgroup_observations = create_task_magicmock(  # 🧪
@@ -25,57 +30,86 @@ get_subjectgroup_observations = create_task_magicmock(  # 🧪
     func_name="get_subjectgroup_observations",  # 🧪
 )  # 🧪
 from ecoscope_workflows_core.tasks.analysis import (
-    dataframe_column_max,
-    dataframe_column_mean,
-    dataframe_column_sum,
-    dataframe_count,
+    dataframe_column_max as dataframe_column_max,
 )
-from ecoscope_workflows_core.tasks.config import set_string_var
-from ecoscope_workflows_core.tasks.groupby import set_groupers, split_groups
-from ecoscope_workflows_core.tasks.io import persist_text
+from ecoscope_workflows_core.tasks.analysis import (
+    dataframe_column_mean as dataframe_column_mean,
+)
+from ecoscope_workflows_core.tasks.analysis import (
+    dataframe_column_sum as dataframe_column_sum,
+)
+from ecoscope_workflows_core.tasks.analysis import dataframe_count as dataframe_count
+from ecoscope_workflows_core.tasks.config import set_string_var as set_string_var
+from ecoscope_workflows_core.tasks.groupby import set_groupers as set_groupers
+from ecoscope_workflows_core.tasks.groupby import split_groups as split_groups
+from ecoscope_workflows_core.tasks.io import persist_text as persist_text
 from ecoscope_workflows_core.tasks.results import (
-    create_map_widget_single_view,
-    create_plot_widget_single_view,
-    create_single_value_widget_single_view,
-    gather_dashboard,
-    merge_widget_views,
+    create_map_widget_single_view as create_map_widget_single_view,
+)
+from ecoscope_workflows_core.tasks.results import (
+    create_plot_widget_single_view as create_plot_widget_single_view,
+)
+from ecoscope_workflows_core.tasks.results import (
+    create_single_value_widget_single_view as create_single_value_widget_single_view,
+)
+from ecoscope_workflows_core.tasks.results import gather_dashboard as gather_dashboard
+from ecoscope_workflows_core.tasks.results import (
+    merge_widget_views as merge_widget_views,
 )
 from ecoscope_workflows_core.tasks.skip import (
-    any_dependency_skipped,
-    any_is_empty_df,
-    never,
+    any_dependency_skipped as any_dependency_skipped,
+)
+from ecoscope_workflows_core.tasks.skip import any_is_empty_df as any_is_empty_df
+from ecoscope_workflows_core.tasks.skip import never as never
+from ecoscope_workflows_core.tasks.transformation import (
+    add_temporal_index as add_temporal_index,
 )
 from ecoscope_workflows_core.tasks.transformation import (
-    add_temporal_index,
-    convert_column_values_to_string,
-    convert_values_to_timezone,
-    map_columns,
-    map_values,
-    sort_values,
-    with_unit,
+    convert_column_values_to_string as convert_column_values_to_string,
+)
+from ecoscope_workflows_core.tasks.transformation import (
+    convert_values_to_timezone as convert_values_to_timezone,
+)
+from ecoscope_workflows_core.tasks.transformation import map_columns as map_columns
+from ecoscope_workflows_core.tasks.transformation import map_values as map_values
+from ecoscope_workflows_core.tasks.transformation import sort_values as sort_values
+from ecoscope_workflows_core.tasks.transformation import with_unit as with_unit
+from ecoscope_workflows_ext_ecoscope.tasks.analysis import (
+    calculate_elliptical_time_density as calculate_elliptical_time_density,
 )
 from ecoscope_workflows_ext_ecoscope.tasks.analysis import (
-    calculate_elliptical_time_density,
-    get_night_day_ratio,
+    get_night_day_ratio as get_night_day_ratio,
 )
 from ecoscope_workflows_ext_ecoscope.tasks.preprocessing import (
-    process_relocations,
-    relocations_to_trajectory,
+    process_relocations as process_relocations,
+)
+from ecoscope_workflows_ext_ecoscope.tasks.preprocessing import (
+    relocations_to_trajectory as relocations_to_trajectory,
 )
 from ecoscope_workflows_ext_ecoscope.tasks.results import (
-    create_polygon_layer,
-    create_polyline_layer,
-    draw_ecomap,
-    draw_ecoplot,
-    set_base_maps,
+    create_polygon_layer as create_polygon_layer,
 )
-from ecoscope_workflows_ext_ecoscope.tasks.skip import all_geometry_are_none
+from ecoscope_workflows_ext_ecoscope.tasks.results import (
+    create_polyline_layer as create_polyline_layer,
+)
+from ecoscope_workflows_ext_ecoscope.tasks.results import draw_ecomap as draw_ecomap
+from ecoscope_workflows_ext_ecoscope.tasks.results import draw_ecoplot as draw_ecoplot
+from ecoscope_workflows_ext_ecoscope.tasks.results import set_base_maps as set_base_maps
+from ecoscope_workflows_ext_ecoscope.tasks.skip import (
+    all_geometry_are_none as all_geometry_are_none,
+)
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import (
-    apply_classification,
-    apply_color_map,
-    classify_is_night,
+    apply_classification as apply_classification,
 )
-from ecoscope_workflows_ext_ecoscope.tasks.warning import mixed_subtype_warning
+from ecoscope_workflows_ext_ecoscope.tasks.transformation import (
+    apply_color_map as apply_color_map,
+)
+from ecoscope_workflows_ext_ecoscope.tasks.transformation import (
+    classify_is_night as classify_is_night,
+)
+from ecoscope_workflows_ext_ecoscope.tasks.warning import (
+    mixed_subtype_warning as mixed_subtype_warning,
+)
 
 from ..params import Params
 
