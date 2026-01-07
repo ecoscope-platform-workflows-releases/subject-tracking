@@ -11,7 +11,7 @@ import json
 import os
 import warnings  # 🧪
 
-from ecoscope_workflows_core.graph import DependsOn, DependsOnSequence, Graph, Node
+from ecoscope_workflows_core.graph import DependsOn, Graph, Node
 from ecoscope_workflows_core.tasks.config import (
     set_workflow_details as set_workflow_details,
 )
@@ -57,10 +57,6 @@ from ecoscope_workflows_core.tasks.results import gather_dashboard as gather_das
 from ecoscope_workflows_core.tasks.results import (
     merge_widget_views as merge_widget_views,
 )
-from ecoscope_workflows_core.tasks.skip import (
-    any_dependency_skipped as any_dependency_skipped,
-)
-from ecoscope_workflows_core.tasks.skip import any_is_empty_df as any_is_empty_df
 from ecoscope_workflows_core.tasks.skip import never as never
 from ecoscope_workflows_core.tasks.transformation import (
     add_temporal_index as add_temporal_index,
@@ -346,7 +342,9 @@ def main(params: Params):
             partial={
                 "df": DependsOn("subject_obs"),
                 "timezone": DependsOn("get_timezone"),
-                "columns": ["fixtime"],
+                "columns": [
+                    "fixtime",
+                ],
             }
             | (params_dict.get("convert_to_user_timezone") or {}),
             method="call",
@@ -392,9 +390,18 @@ def main(params: Params):
                     "extra__subject__sex",
                 ],
                 "filter_point_coords": [
-                    {"x": 180.0, "y": 90.0},
-                    {"x": 0.0, "y": 0.0},
-                    {"x": 1.0, "y": 1.0},
+                    {
+                        "x": 180.0,
+                        "y": 90.0,
+                    },
+                    {
+                        "x": 0.0,
+                        "y": 0.0,
+                    },
+                    {
+                        "x": 1.0,
+                        "y": 1.0,
+                    },
                 ],
             }
             | (params_dict.get("subject_reloc") or {}),
@@ -476,8 +483,6 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "df": DependsOn("traj_add_temporal_index"),
-                "drop_columns": [],
-                "retain_columns": [],
                 "rename_columns": {
                     "extra__name": "subject_name",
                     "extra__subject_subtype": "subject_subtype",
@@ -503,7 +508,10 @@ def main(params: Params):
             partial={
                 "df": DependsOn("rename_grouper_columns"),
                 "column_name": "subject_sex",
-                "value_map": {"male": "male", "female": "female"},
+                "value_map": {
+                    "male": "male",
+                    "female": "female",
+                },
                 "missing_values": "replace",
                 "replacement": "unknown",
             }
@@ -527,7 +535,10 @@ def main(params: Params):
                 "df": DependsOn("map_subject_sex"),
                 "input_column_name": "speed_kmhr",
                 "output_column_name": "speed_bins",
-                "classification_options": {"scheme": "equal_interval", "k": 6},
+                "classification_options": {
+                    "scheme": "equal_interval",
+                    "k": 6,
+                },
                 "label_options": {
                     "label_ranges": True,
                     "label_decimals": 1,
@@ -720,8 +731,6 @@ def main(params: Params):
             )
             .set_executor("lithops"),
             partial={
-                "drop_columns": [],
-                "retain_columns": [],
                 "rename_columns": {
                     "segment_start": "Start",
                     "timespan_seconds": "Duration (s)",
@@ -753,7 +762,9 @@ def main(params: Params):
             )
             .set_executor("lithops"),
             partial={
-                "layer_style": {"color_column": "speed_bins_colormap"},
+                "layer_style": {
+                    "color_column": "speed_bins_colormap",
+                },
                 "legend": {
                     "label_column": "speed_bins",
                     "color_column": "speed_bins_colormap",
@@ -789,7 +800,9 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "tile_layers": DependsOn("base_map_defs"),
-                "north_arrow_style": {"placement": "top-left"},
+                "north_arrow_style": {
+                    "placement": "top-left",
+                },
                 "legend_style": {
                     "title": "Speed",
                     "format_title": False,
@@ -911,7 +924,10 @@ def main(params: Params):
             )
             .set_executor("lithops"),
             partial={
-                "colormap": ["#292965", "#e7a553"],
+                "colormap": [
+                    "#292965",
+                    "#e7a553",
+                ],
                 "input_column_name": "extra__is_night",
                 "output_column_name": "is_night_colors",
             }
@@ -936,8 +952,6 @@ def main(params: Params):
             )
             .set_executor("lithops"),
             partial={
-                "drop_columns": [],
-                "retain_columns": [],
                 "rename_columns": {
                     "subject_name": "Subject Name",
                     "subject_sex": "Subject Sex",
@@ -966,12 +980,24 @@ def main(params: Params):
             )
             .set_executor("lithops"),
             partial={
-                "layer_style": {"color_column": "is_night_colors"},
-                "legend": {
-                    "labels": ["Night", "Day"],
-                    "colors": ["#292965", "#e7a553"],
+                "layer_style": {
+                    "color_column": "is_night_colors",
                 },
-                "tooltip_columns": ["Subject Name", "Subject Sex", "Nighttime"],
+                "legend": {
+                    "labels": [
+                        "Night",
+                        "Day",
+                    ],
+                    "colors": [
+                        "#292965",
+                        "#e7a553",
+                    ],
+                },
+                "tooltip_columns": [
+                    "Subject Name",
+                    "Subject Sex",
+                    "Nighttime",
+                ],
             }
             | (params_dict.get("traj_map_night_layers") or {}),
             method="mapvalues",
@@ -995,7 +1021,9 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "tile_layers": DependsOn("base_map_defs"),
-                "north_arrow_style": {"placement": "top-left"},
+                "north_arrow_style": {
+                    "placement": "top-left",
+                },
                 "legend_style": {
                     "title": "Day / Night Movement",
                     "format_title": False,
@@ -1572,7 +1600,14 @@ def main(params: Params):
             )
             .set_executor("lithops"),
             partial={
-                "percentiles": [50.0, 60.0, 70.0, 80.0, 90.0, 99.999],
+                "percentiles": [
+                    50.0,
+                    60.0,
+                    70.0,
+                    80.0,
+                    90.0,
+                    99.999,
+                ],
                 "nodata_value": "nan",
                 "band_count": 1,
             }
@@ -1597,7 +1632,9 @@ def main(params: Params):
             )
             .set_executor("lithops"),
             partial={
-                "columns": ["percentile"],
+                "columns": [
+                    "percentile",
+                ],
             }
             | (params_dict.get("percentile_col_to_string") or {}),
             method="mapvalues",
@@ -1657,7 +1694,9 @@ def main(params: Params):
                     "color_column": "percentile_colormap",
                     "sort": "ascending",
                 },
-                "tooltip_columns": ["percentile"],
+                "tooltip_columns": [
+                    "percentile",
+                ],
             }
             | (params_dict.get("td_map_layer") or {}),
             method="mapvalues",
@@ -1681,7 +1720,9 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "tile_layers": DependsOn("base_map_defs"),
-                "north_arrow_style": {"placement": "top-left"},
+                "north_arrow_style": {
+                    "placement": "top-left",
+                },
                 "legend_style": {
                     "title": "Time Spent",
                     "format_title": False,
@@ -1778,9 +1819,10 @@ def main(params: Params):
             )
             .set_executor("lithops"),
             partial={
-                "drop_columns": [],
-                "retain_columns": [],
-                "rename_columns": {"segment_start": "Time", "nsd": "NSD (m²)"},
+                "rename_columns": {
+                    "segment_start": "Time",
+                    "nsd": "NSD (m²)",
+                },
             }
             | (params_dict.get("nsd_rename_display_columns") or {}),
             method="mapvalues",
@@ -1808,9 +1850,11 @@ def main(params: Params):
                     {
                         "x_col": "Time",
                         "y_col": "NSD (m²)",
-                        "plot_style": {"xperiodalignment": None},
+                        "plot_style": {
+                            "xperiodalignment": None,
+                        },
                         "color_column": None,
-                    }
+                    },
                 ],
                 "tickformat": "%b-%Y",
                 "widget_id": DependsOn("set_nsd_chart_title"),
@@ -1902,20 +1946,18 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "details": DependsOn("workflow_details"),
-                "widgets": DependsOnSequence(
-                    [
-                        DependsOn("traj_grouped_map_widget"),
-                        DependsOn("mean_speed_grouped_sv_widget"),
-                        DependsOn("max_speed_grouped_sv_widget"),
-                        DependsOn("num_location_grouped_sv_widget"),
-                        DependsOn("nightday_ratio_grouped_sv_widget"),
-                        DependsOn("total_dist_grouped_sv_widget"),
-                        DependsOn("total_time_grouped_sv_widget"),
-                        DependsOn("td_grouped_map_widget"),
-                        DependsOn("traj_nightday_grouped_map_widget"),
-                        DependsOn("grouped_nsd_chart_widget_merge"),
-                    ],
-                ),
+                "widgets": [
+                    DependsOn("traj_grouped_map_widget"),
+                    DependsOn("mean_speed_grouped_sv_widget"),
+                    DependsOn("max_speed_grouped_sv_widget"),
+                    DependsOn("num_location_grouped_sv_widget"),
+                    DependsOn("nightday_ratio_grouped_sv_widget"),
+                    DependsOn("total_dist_grouped_sv_widget"),
+                    DependsOn("total_time_grouped_sv_widget"),
+                    DependsOn("td_grouped_map_widget"),
+                    DependsOn("traj_nightday_grouped_map_widget"),
+                    DependsOn("grouped_nsd_chart_widget_merge"),
+                ],
                 "groupers": DependsOn("groupers"),
                 "time_range": DependsOn("time_range"),
                 "warning": DependsOn("warn_if_mixed_subtype"),
