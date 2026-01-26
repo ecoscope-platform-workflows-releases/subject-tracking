@@ -36,7 +36,9 @@ all-grouper:
           opacity: 0.5
           max_zoom: 17
           min_zoom: null
-    td:
+    set_etd_args:
+      opacity: 0.7
+      percentiles: ["50", "60", "70", "80", "90", "99.999"]
       auto_scale_or_custom_cell_size:
         auto_scale_or_custom: "Auto-scale"
       crs: "EPSG:3857"
@@ -78,7 +80,9 @@ month-grouper:
           opacity: 1.0
         - url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
           opacity: 0.5
-    td:
+    set_etd_args:
+      opacity: 0.7
+      percentiles: ["50", "60", "70", "80", "90", "99.999"]
       auto_scale_or_custom_cell_size:
         auto_scale_or_custom: "Auto-scale"
       crs: "EPSG:3857"
@@ -124,7 +128,9 @@ value-grouper:
           opacity: 1.0
         - url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
           opacity: 0.5
-    td:
+    set_etd_args:
+      opacity: 0.7
+      percentiles: ["50", "60", "70", "80", "90", "99.999"]
       auto_scale_or_custom_cell_size:
         auto_scale_or_custom: "Auto-scale"
       crs: "EPSG:3857"
@@ -171,7 +177,9 @@ task-instance-error:
           opacity: 1.0
         - url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
           opacity: 0.5
-    td:
+    set_etd_args:
+      opacity: 0.7
+      percentiles: ["50", "60", "70", "80", "90", "99.999"]
       auto_scale_or_custom_cell_size:
         auto_scale_or_custom: "Auto-scale"
       crs: "EPSG:3857"

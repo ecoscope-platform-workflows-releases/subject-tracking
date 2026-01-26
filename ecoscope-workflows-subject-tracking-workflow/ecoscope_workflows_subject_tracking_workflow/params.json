@@ -165,6 +165,7 @@
                   "opacity": {
                     "default": 1,
                     "description": "Set layer transparency from 1 (fully visible) to 0 (hidden).",
+                    "ecoscope:advanced": true,
                     "maximum": 1.0,
                     "minimum": 0.0,
                     "title": "Layer Opacity",
@@ -188,6 +189,7 @@
                   "opacity": {
                     "default": 1,
                     "description": "Set layer transparency from 1 (fully visible) to 0 (hidden).",
+                    "ecoscope:advanced": true,
                     "maximum": 1.0,
                     "minimum": 0.0,
                     "title": "Layer Opacity",
@@ -211,6 +213,7 @@
                   "opacity": {
                     "default": 1,
                     "description": "Set layer transparency from 1 (fully visible) to 0 (hidden).",
+                    "ecoscope:advanced": true,
                     "maximum": 1.0,
                     "minimum": 0.0,
                     "title": "Layer Opacity",
@@ -234,6 +237,7 @@
                   "opacity": {
                     "default": 1,
                     "description": "Set layer transparency from 1 (fully visible) to 0 (hidden).",
+                    "ecoscope:advanced": true,
                     "maximum": 1.0,
                     "minimum": 0.0,
                     "title": "Layer Opacity",
@@ -257,6 +261,7 @@
                   "opacity": {
                     "default": 1,
                     "description": "Set layer transparency from 1 (fully visible) to 0 (hidden).",
+                    "ecoscope:advanced": true,
                     "maximum": 1.0,
                     "minimum": 0.0,
                     "title": "Layer Opacity",
@@ -280,6 +285,7 @@
                   "opacity": {
                     "default": 1,
                     "description": "Set layer transparency from 1 (fully visible) to 0 (hidden).",
+                    "ecoscope:advanced": true,
                     "maximum": 1.0,
                     "minimum": 0.0,
                     "title": "Layer Opacity",
@@ -301,6 +307,7 @@
                   "opacity": {
                     "default": 1,
                     "description": "Set layer transparency from 1 (fully visible) to 0 (hidden).",
+                    "ecoscope:advanced": true,
                     "maximum": 1.0,
                     "minimum": 0.0,
                     "title": "Custom Layer Opacity",
@@ -334,9 +341,18 @@
       "required": [],
       "title": "Map Base Layers"
     },
-    "td": {
+    "set_etd_args": {
       "additionalProperties": false,
       "properties": {
+        "opacity": {
+          "default": 1,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Layer Opacity",
+          "type": "number",
+          "description": "Set layer transparency from 1 (fully visible) to 0 (hidden).",
+          "ecoscope:advanced": true
+        },
         "auto_scale_or_custom_cell_size": {
           "anyOf": [
             {
@@ -372,10 +388,39 @@
           "type": "number",
           "description": "Controls how far time density values spread across the grid, affecting the smoothness of the output.",
           "ecoscope:advanced": true
+        },
+        "percentiles": {
+          "default": [
+            "50",
+            "60",
+            "70",
+            "80",
+            "90",
+            "99.999"
+          ],
+          "items": {
+            "enum": [
+              "50",
+              "60",
+              "70",
+              "80",
+              "90",
+              "95",
+              "99",
+              "99.999",
+              "100"
+            ],
+            "type": "string"
+          },
+          "title": "Percentile Levels",
+          "type": "array",
+          "description": "Choose the time density percentile bins to display.",
+          "uniqueItems": true,
+          "ecoscope:advanced": true
         }
       },
-      "required": [],
       "type": "object",
+      "required": [],
       "title": ""
     }
   },
@@ -569,12 +614,14 @@
         "timezone"
       ]
     },
-    "td": {
+    "set_etd_args": {
       "ui:order": [
+        "opacity",
         "auto_scale_or_custom_cell_size",
         "crs",
         "max_speed_factor",
-        "expansion_factor"
+        "expansion_factor",
+        "percentiles"
       ]
     },
     "ui:order": [
@@ -585,7 +632,7 @@
       "groupers",
       "subject_traj",
       "base_map_defs",
-      "td"
+      "set_etd_args"
     ]
   },
   "additionalProperties": false

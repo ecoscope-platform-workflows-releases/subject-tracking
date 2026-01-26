@@ -72,10 +72,16 @@ from ecoscope_workflows_core.tasks.transformation import map_values as map_value
 from ecoscope_workflows_core.tasks.transformation import sort_values as sort_values
 from ecoscope_workflows_core.tasks.transformation import with_unit as with_unit
 from ecoscope_workflows_ext_ecoscope.tasks.analysis import (
-    calculate_elliptical_time_density as calculate_elliptical_time_density,
-)
-from ecoscope_workflows_ext_ecoscope.tasks.analysis import (
     get_night_day_ratio as get_night_day_ratio,
+)
+from ecoscope_workflows_ext_ecoscope.tasks.config import (
+    call_etd_from_combined_params as call_etd_from_combined_params,
+)
+from ecoscope_workflows_ext_ecoscope.tasks.config import (
+    get_opacity_from_combined_params as get_opacity_from_combined_params,
+)
+from ecoscope_workflows_ext_ecoscope.tasks.config import (
+    set_etd_args_with_opacity as set_etd_args_with_opacity,
 )
 from ecoscope_workflows_ext_ecoscope.tasks.preprocessing import (
     process_relocations as process_relocations,
@@ -183,10 +189,12 @@ def main(params: Params):
         "total_time_converted": ["total_time"],
         "total_time_sv_widgets": ["total_time_converted"],
         "total_time_grouped_sv_widget": ["total_time_sv_widgets"],
-        "td": ["split_subject_traj_groups"],
+        "set_etd_args": [],
+        "etd_opacity": ["set_etd_args"],
+        "td": ["set_etd_args", "split_subject_traj_groups"],
         "percentile_col_to_string": ["td"],
         "td_colormap": ["percentile_col_to_string"],
-        "td_map_layer": ["td_colormap"],
+        "td_map_layer": ["etd_opacity", "td_colormap"],
         "td_ecomap": ["base_map_defs", "set_td_map_title", "td_map_layer"],
         "td_ecomap_html_url": ["td_ecomap"],
         "td_map_widget": ["set_td_map_title", "td_ecomap_html_url"],
@@ -1586,8 +1594,47 @@ def main(params: Params):
             | (params_dict.get("total_time_grouped_sv_widget") or {}),
             method="call",
         ),
+        "set_etd_args": Node(
+            async_task=set_etd_args_with_opacity.validate()
+            .set_task_instance_id("set_etd_args")
+            .handle_errors()
+            .with_tracing()
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
+            .set_executor("lithops"),
+            partial={
+                "nodata_value": "nan",
+                "band_count": 1,
+            }
+            | (params_dict.get("set_etd_args") or {}),
+            method="call",
+        ),
+        "etd_opacity": Node(
+            async_task=get_opacity_from_combined_params.validate()
+            .set_task_instance_id("etd_opacity")
+            .handle_errors()
+            .with_tracing()
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
+            .set_executor("lithops"),
+            partial={
+                "combined_params": DependsOn("set_etd_args"),
+            }
+            | (params_dict.get("etd_opacity") or {}),
+            method="call",
+        ),
         "td": Node(
-            async_task=calculate_elliptical_time_density.validate()
+            async_task=call_etd_from_combined_params.validate()
             .set_task_instance_id("td")
             .handle_errors()
             .with_tracing()
@@ -1600,16 +1647,7 @@ def main(params: Params):
             )
             .set_executor("lithops"),
             partial={
-                "percentiles": [
-                    50.0,
-                    60.0,
-                    70.0,
-                    80.0,
-                    90.0,
-                    99.999,
-                ],
-                "nodata_value": "nan",
-                "band_count": 1,
+                "combined_params": DependsOn("set_etd_args"),
             }
             | (params_dict.get("td") or {}),
             method="mapvalues",
@@ -1685,7 +1723,7 @@ def main(params: Params):
             partial={
                 "layer_style": {
                     "fill_color_column": "percentile_colormap",
-                    "opacity": 0.7,
+                    "opacity": DependsOn("etd_opacity"),
                     "get_line_width": 0,
                 },
                 "legend": {
