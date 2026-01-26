@@ -56,10 +56,16 @@ from ecoscope_workflows_core.tasks.transformation import map_values as map_value
 from ecoscope_workflows_core.tasks.transformation import sort_values as sort_values
 from ecoscope_workflows_core.tasks.transformation import with_unit as with_unit
 from ecoscope_workflows_ext_ecoscope.tasks.analysis import (
-    calculate_elliptical_time_density as calculate_elliptical_time_density,
-)
-from ecoscope_workflows_ext_ecoscope.tasks.analysis import (
     get_night_day_ratio as get_night_day_ratio,
+)
+from ecoscope_workflows_ext_ecoscope.tasks.config import (
+    call_etd_from_combined_params as call_etd_from_combined_params,
+)
+from ecoscope_workflows_ext_ecoscope.tasks.config import (
+    get_opacity_from_combined_params as get_opacity_from_combined_params,
+)
+from ecoscope_workflows_ext_ecoscope.tasks.config import (
+    set_etd_args_with_opacity as set_etd_args_with_opacity,
 )
 from ecoscope_workflows_ext_ecoscope.tasks.io import (
     get_subjectgroup_observations as get_subjectgroup_observations,
@@ -1290,9 +1296,9 @@ def main(params: Params):
         .call()
     )
 
-    td = (
-        calculate_elliptical_time_density.validate()
-        .set_task_instance_id("td")
+    set_etd_args = (
+        set_etd_args_with_opacity.validate()
+        .set_task_instance_id("set_etd_args")
         .handle_errors()
         .with_tracing()
         .skipif(
@@ -1303,11 +1309,40 @@ def main(params: Params):
             unpack_depth=1,
         )
         .partial(
-            percentiles=[50.0, 60.0, 70.0, 80.0, 90.0, 99.999],
-            nodata_value="nan",
-            band_count=1,
-            **(params_dict.get("td") or {}),
+            nodata_value="nan", band_count=1, **(params_dict.get("set_etd_args") or {})
         )
+        .call()
+    )
+
+    etd_opacity = (
+        get_opacity_from_combined_params.validate()
+        .set_task_instance_id("etd_opacity")
+        .handle_errors()
+        .with_tracing()
+        .skipif(
+            conditions=[
+                any_is_empty_df,
+                any_dependency_skipped,
+            ],
+            unpack_depth=1,
+        )
+        .partial(combined_params=set_etd_args, **(params_dict.get("etd_opacity") or {}))
+        .call()
+    )
+
+    td = (
+        call_etd_from_combined_params.validate()
+        .set_task_instance_id("td")
+        .handle_errors()
+        .with_tracing()
+        .skipif(
+            conditions=[
+                any_is_empty_df,
+                any_dependency_skipped,
+            ],
+            unpack_depth=1,
+        )
+        .partial(combined_params=set_etd_args, **(params_dict.get("td") or {}))
         .mapvalues(argnames=["trajectory_gdf"], argvalues=split_subject_traj_groups)
     )
 
@@ -1367,7 +1402,7 @@ def main(params: Params):
         .partial(
             layer_style={
                 "fill_color_column": "percentile_colormap",
-                "opacity": 0.7,
+                "opacity": etd_opacity,
                 "get_line_width": 0,
             },
             legend={

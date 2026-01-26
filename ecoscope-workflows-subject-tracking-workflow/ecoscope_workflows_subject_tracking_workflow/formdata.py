@@ -198,6 +198,18 @@ class BaseMapDefs(BaseModel):
     )
 
 
+class Percentile(str, Enum):
+    field_50 = "50"
+    field_60 = "60"
+    field_70 = "70"
+    field_80 = "80"
+    field_90 = "90"
+    field_95 = "95"
+    field_99 = "99"
+    field_99_999 = "99.999"
+    field_100 = "100"
+
+
 class EarthRangerConnection(BaseModel):
     name: str = Field(..., title="Data Source")
 
@@ -321,9 +333,14 @@ class SubjectTraj(BaseModel):
     )
 
 
-class Td(BaseModel):
+class SetEtdArgs(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
+    )
+    opacity: confloat(ge=0.0, le=1.0) | None = Field(
+        0.7,
+        description="Set layer transparency from 1 (fully visible) to 0 (hidden).",
+        title="Layer Opacity",
     )
     auto_scale_or_custom_cell_size: (
         AutoScaleGridCellSize | CustomGridCellSize | None
@@ -348,10 +365,15 @@ class Td(BaseModel):
         description="Controls how far time density values spread across the grid, affecting the smoothness of the output.",
         title="Shape Buffer Expansion Factor",
     )
+    percentiles: list[Percentile] | None = Field(
+        ["50", "60", "70", "80", "90", "99.999"],
+        description="Choose the time density percentile bins to display.",
+        title="Percentile Levels",
+    )
 
 
 class TimeDensityMap(BaseModel):
-    td: Td | None = Field(None, title="")
+    set_etd_args: SetEtdArgs | None = Field(None, title="")
 
 
 class FormData(BaseModel):
