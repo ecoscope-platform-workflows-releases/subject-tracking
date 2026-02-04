@@ -69,6 +69,9 @@ from ecoscope_workflows_ext_ecoscope.tasks.config import (
     set_etd_args_with_opacity as set_etd_args_with_opacity,
 )
 from ecoscope_workflows_ext_ecoscope.tasks.io import (
+    get_spatial_features_group as get_spatial_features_group,
+)
+from ecoscope_workflows_ext_ecoscope.tasks.io import (
     get_subjectgroup_observations as get_subjectgroup_observations,
 )
 from ecoscope_workflows_ext_ecoscope.tasks.preprocessing import (
@@ -90,6 +93,9 @@ from ecoscope_workflows_ext_ecoscope.tasks.skip import (
     all_geometry_are_none as all_geometry_are_none,
 )
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import (
+    add_spatial_index as add_spatial_index,
+)
+from ecoscope_workflows_ext_ecoscope.tasks.transformation import (
     apply_classification as apply_classification,
 )
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import (
@@ -97,6 +103,12 @@ from ecoscope_workflows_ext_ecoscope.tasks.transformation import (
 )
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import (
     classify_is_night as classify_is_night,
+)
+from ecoscope_workflows_ext_ecoscope.tasks.transformation import (
+    extract_spatial_grouper_feature_group_ids as extract_spatial_grouper_feature_group_ids,
+)
+from ecoscope_workflows_ext_ecoscope.tasks.transformation import (
+    resolve_spatial_feature_groups_for_spatial_groupers as resolve_spatial_feature_groups_for_spatial_groupers,
 )
 from ecoscope_workflows_ext_ecoscope.tasks.warning import (
     mixed_subtype_warning as mixed_subtype_warning,
@@ -117,18 +129,22 @@ def main(params: Params):
         "warn_if_mixed_subtype": ["subject_obs"],
         "convert_to_user_timezone": ["subject_obs", "get_timezone"],
         "groupers": [],
+        "spatial_group_ids": ["groupers"],
+        "fetch_all_spatial_feature_groups": ["er_client_name", "spatial_group_ids"],
+        "resolved_groupers": ["groupers", "fetch_all_spatial_feature_groups"],
         "subject_reloc": ["convert_to_user_timezone"],
         "day_night_labels": ["subject_reloc"],
         "subject_traj": ["day_night_labels"],
-        "traj_add_temporal_index": ["subject_traj", "groupers"],
-        "rename_grouper_columns": ["traj_add_temporal_index"],
+        "traj_add_temporal_index": ["subject_traj", "resolved_groupers"],
+        "traj_add_spatial_index": ["traj_add_temporal_index", "resolved_groupers"],
+        "rename_grouper_columns": ["traj_add_spatial_index"],
         "map_subject_sex": ["rename_grouper_columns"],
         "classify_traj_speed": ["map_subject_sex"],
         "set_traj_map_title": [],
         "set_td_map_title": [],
         "set_night_day_map_title": [],
         "set_nsd_chart_title": [],
-        "split_subject_traj_groups": ["classify_traj_speed", "groupers"],
+        "split_subject_traj_groups": ["classify_traj_speed", "resolved_groupers"],
         "base_map_defs": [],
         "sort_traj_speed": ["split_subject_traj_groups"],
         "colormap_traj_speed": ["sort_traj_speed"],
@@ -202,7 +218,7 @@ def main(params: Params):
             "td_grouped_map_widget",
             "traj_nightday_grouped_map_widget",
             "grouped_nsd_chart_widget_merge",
-            "groupers",
+            "resolved_groupers",
             "time_range",
             "warn_if_mixed_subtype",
         ],
@@ -359,6 +375,67 @@ def main(params: Params):
             partial=(params_dict.get("groupers") or {}),
             method="call",
         ),
+        "spatial_group_ids": Node(
+            async_task=extract_spatial_grouper_feature_group_ids.validate()
+            .set_task_instance_id("spatial_group_ids")
+            .handle_errors()
+            .with_tracing()
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
+            .set_executor("lithops"),
+            partial={
+                "groupers": DependsOn("groupers"),
+            }
+            | (params_dict.get("spatial_group_ids") or {}),
+            method="call",
+        ),
+        "fetch_all_spatial_feature_groups": Node(
+            async_task=get_spatial_features_group.validate()
+            .set_task_instance_id("fetch_all_spatial_feature_groups")
+            .handle_errors()
+            .with_tracing()
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
+            .set_executor("lithops"),
+            partial={
+                "client": DependsOn("er_client_name"),
+            }
+            | (params_dict.get("fetch_all_spatial_feature_groups") or {}),
+            method="map",
+            kwargs={
+                "argnames": ["spatial_features_group_id"],
+                "argvalues": DependsOn("spatial_group_ids"),
+            },
+        ),
+        "resolved_groupers": Node(
+            async_task=resolve_spatial_feature_groups_for_spatial_groupers.validate()
+            .set_task_instance_id("resolved_groupers")
+            .handle_errors()
+            .with_tracing()
+            .skipif(
+                conditions=[
+                    never,
+                ],
+                unpack_depth=1,
+            )
+            .set_executor("lithops"),
+            partial={
+                "groupers": DependsOn("groupers"),
+                "spatial_feature_groups": DependsOn("fetch_all_spatial_feature_groups"),
+            }
+            | (params_dict.get("resolved_groupers") or {}),
+            method="call",
+        ),
         "subject_reloc": Node(
             async_task=process_relocations.validate()
             .set_task_instance_id("subject_reloc")
@@ -455,11 +532,31 @@ def main(params: Params):
             partial={
                 "df": DependsOn("subject_traj"),
                 "time_col": "segment_start",
-                "groupers": DependsOn("groupers"),
+                "groupers": DependsOn("resolved_groupers"),
                 "cast_to_datetime": True,
                 "format": "mixed",
             }
             | (params_dict.get("traj_add_temporal_index") or {}),
+            method="call",
+        ),
+        "traj_add_spatial_index": Node(
+            async_task=add_spatial_index.validate()
+            .set_task_instance_id("traj_add_spatial_index")
+            .handle_errors()
+            .with_tracing()
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
+            .set_executor("lithops"),
+            partial={
+                "gdf": DependsOn("traj_add_temporal_index"),
+                "groupers": DependsOn("resolved_groupers"),
+            }
+            | (params_dict.get("traj_add_spatial_index") or {}),
             method="call",
         ),
         "rename_grouper_columns": Node(
@@ -476,7 +573,7 @@ def main(params: Params):
             )
             .set_executor("lithops"),
             partial={
-                "df": DependsOn("traj_add_temporal_index"),
+                "df": DependsOn("traj_add_spatial_index"),
                 "rename_columns": {
                     "extra__name": "subject_name",
                     "extra__subject_subtype": "subject_subtype",
@@ -633,7 +730,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "df": DependsOn("classify_traj_speed"),
-                "groupers": DependsOn("groupers"),
+                "groupers": DependsOn("resolved_groupers"),
             }
             | (params_dict.get("split_subject_traj_groups") or {}),
             method="call",
@@ -1982,7 +2079,7 @@ def main(params: Params):
                     DependsOn("traj_nightday_grouped_map_widget"),
                     DependsOn("grouped_nsd_chart_widget_merge"),
                 ],
-                "groupers": DependsOn("groupers"),
+                "groupers": DependsOn("resolved_groupers"),
                 "time_range": DependsOn("time_range"),
                 "warning": DependsOn("warn_if_mixed_subtype"),
             }

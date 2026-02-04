@@ -1,14 +1,15 @@
 id: subject_tracking
 requirements:
   - name: ecoscope-workflows-core
-    version: 0.21.4
+    version: 0.22.0
     channel: https://repo.prefix.dev/ecoscope-workflows/
   - name: ecoscope-workflows-ext-ecoscope
-    version: 0.21.4
+    version: 0.22.0
     channel: https://repo.prefix.dev/ecoscope-workflows/
 rjsf-overrides:
   properties:
     Subject Group.properties.subject_obs.properties.subject_group_name.ecoscope:subject_group_name: properties.er_client_name.properties.data_source.properties.name
+    groupers.properties.groupers.ecoscope:spatial_feature_group: properties.er_client_name.properties.data_source.properties.name
     Time Density Map.properties.set_etd_args.properties.opacity.default: 0.700000
   $defs:
     ValueGrouper.oneOf:
@@ -87,6 +88,25 @@ workflow:
   - name: Group Data
     id: groupers
     task: set_groupers
+  - task: extract_spatial_grouper_feature_group_ids
+    id: spatial_group_ids
+    partial:
+      groupers: ${{ workflow.groupers.return }}
+  - task: get_spatial_features_group
+    id: fetch_all_spatial_feature_groups
+    partial:
+      client: ${{ workflow.er_client_name.return }}
+    map:
+      argnames: spatial_features_group_id
+      argvalues: ${{ workflow.spatial_group_ids.return }}
+  - task: resolve_spatial_feature_groups_for_spatial_groupers
+    id: resolved_groupers
+    skipif:
+      conditions:
+        - never
+    partial:
+      groupers: ${{ workflow.groupers.return }}
+      spatial_feature_groups: ${{ workflow.fetch_all_spatial_feature_groups.return }}
   - name: Transform Observations to Relocations
     id: subject_reloc
     task: process_relocations
@@ -123,14 +143,20 @@ workflow:
     partial:
       df: ${{ workflow.subject_traj.return }}
       time_col: segment_start
-      groupers: ${{ workflow.groupers.return }}
+      groupers: ${{ workflow.resolved_groupers.return }}
       cast_to_datetime: true
       format: mixed
+  - name: Add spatial index to Subject Trajectories
+    id: traj_add_spatial_index
+    task: add_spatial_index
+    partial:
+      gdf: ${{ workflow.traj_add_temporal_index.return }}
+      groupers: ${{ workflow.resolved_groupers.return }}
   - name: Rename value grouper columns
     id: rename_grouper_columns
     task: map_columns
     partial:
-      df: ${{ workflow.traj_add_temporal_index.return }}
+      df: ${{ workflow.traj_add_spatial_index.return }}
       drop_columns: []
       retain_columns: []
       rename_columns:
@@ -187,7 +213,7 @@ workflow:
     task: split_groups
     partial:
       df: ${{ workflow.classify_traj_speed.return }}
-      groupers: ${{ workflow.groupers.return }}
+      groupers: ${{ workflow.resolved_groupers.return }}
   - name: Map Base Layers
     id: base_map_defs
     task: set_base_maps
@@ -781,6 +807,6 @@ workflow:
         - ${{ workflow.td_grouped_map_widget.return }}
         - ${{ workflow.traj_nightday_grouped_map_widget.return }}
         - ${{ workflow.grouped_nsd_chart_widget_merge.return }}
-      groupers: ${{ workflow.groupers.return }}
+      groupers: ${{ workflow.resolved_groupers.return }}
       time_range: ${{ workflow.time_range.return}}
       warning: ${{ workflow.warn_if_mixed_subtype.return}}

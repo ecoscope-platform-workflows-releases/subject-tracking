@@ -42,6 +42,8 @@ all-grouper:
       auto_scale_or_custom_cell_size:
         auto_scale_or_custom: "Auto-scale"
       crs: "EPSG:3857"
+      max_speed_factor: 1.05
+      expansion_factor: 1.3
 
 month-grouper:
   name: Month Grouper
@@ -137,6 +139,54 @@ value-grouper:
       max_speed_factor: 1.05
       expansion_factor: 1.3
 
+spatial-grouper:
+  name: Spatial Grouper
+  description: A demonstration of the subject-tracking workflow with spatial grouping.
+  params:
+    workflow_details:
+      name: "Subject Tracking Dashboard"
+      description: "A dashboard for visualizing subject trajectories and home range."
+    er_client_name:
+      data_source:
+        name: "mep_dev"
+    groupers:
+      groupers:
+        - "efddee80-8072-4bb1-8078-b391c1b39dac"
+    time_range:
+      since: "2015-01-01T00:00:00"
+      until: "2015-12-31T23:59:59"
+      timezone:
+        label: "Africa/Nairobi (UTC+03:00)"
+        tzCode: "Africa/Nairobi"
+        name: "(UTC+03:00) Nairobi"
+        utc: "+03:00"
+    subject_obs:
+      subject_group_name: "Ecoscope"
+    subject_traj:
+      trajectory_segment_filter:
+        min_length_meters: 0.001
+        max_length_meters: 10000.0
+        max_time_secs: 21600.0
+        min_time_secs: 1.0
+        max_speed_kmhr: 10.0
+        min_speed_kmhr: 0.01
+    base_map_defs:
+      base_maps:
+        - url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"
+          opacity: 1.0
+        - url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+          opacity: 0.5
+          max_zoom: 17
+          min_zoom: null
+    set_etd_args:
+      opacity: 0.7
+      percentiles: ["50", "60", "70", "80", "90", "99.999"]
+      auto_scale_or_custom_cell_size:
+        auto_scale_or_custom: "Auto-scale"
+      crs: "EPSG:3857"
+      max_speed_factor: 1.05
+      expansion_factor: 1.3
+
 task-instance-error:
   name: Task Instance Error
   description: |
@@ -183,3 +233,5 @@ task-instance-error:
       auto_scale_or_custom_cell_size:
         auto_scale_or_custom: "Auto-scale"
       crs: "EPSG:3857"
+      max_speed_factor: 1.05
+      expansion_factor: 1.3
