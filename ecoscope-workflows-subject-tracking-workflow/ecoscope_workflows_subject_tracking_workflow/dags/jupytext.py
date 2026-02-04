@@ -78,6 +78,9 @@ from ecoscope_workflows_ext_ecoscope.tasks.config import (
     set_etd_args_with_opacity as set_etd_args_with_opacity,
 )
 from ecoscope_workflows_ext_ecoscope.tasks.io import (
+    get_spatial_features_group as get_spatial_features_group,
+)
+from ecoscope_workflows_ext_ecoscope.tasks.io import (
     get_subjectgroup_observations as get_subjectgroup_observations,
 )
 from ecoscope_workflows_ext_ecoscope.tasks.preprocessing import (
@@ -99,6 +102,9 @@ from ecoscope_workflows_ext_ecoscope.tasks.skip import (
     all_geometry_are_none as all_geometry_are_none,
 )
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import (
+    add_spatial_index as add_spatial_index,
+)
+from ecoscope_workflows_ext_ecoscope.tasks.transformation import (
     apply_classification as apply_classification,
 )
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import (
@@ -106,6 +112,12 @@ from ecoscope_workflows_ext_ecoscope.tasks.transformation import (
 )
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import (
     classify_is_night as classify_is_night,
+)
+from ecoscope_workflows_ext_ecoscope.tasks.transformation import (
+    extract_spatial_grouper_feature_group_ids as extract_spatial_grouper_feature_group_ids,
+)
+from ecoscope_workflows_ext_ecoscope.tasks.transformation import (
+    resolve_spatial_feature_groups_for_spatial_groupers as resolve_spatial_feature_groups_for_spatial_groupers,
 )
 from ecoscope_workflows_ext_ecoscope.tasks.warning import (
     mixed_subtype_warning as mixed_subtype_warning,
@@ -361,6 +373,95 @@ groupers = (
 
 
 # %% [markdown]
+# ##
+
+# %%
+# parameters
+
+spatial_group_ids_params = dict()
+
+# %%
+# call the task
+
+
+spatial_group_ids = (
+    extract_spatial_grouper_feature_group_ids.set_task_instance_id("spatial_group_ids")
+    .handle_errors()
+    .with_tracing()
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
+    .partial(groupers=groupers, **spatial_group_ids_params)
+    .call()
+)
+
+
+# %% [markdown]
+# ##
+
+# %%
+# parameters
+
+fetch_all_spatial_feature_groups_params = dict()
+
+# %%
+# call the task
+
+
+fetch_all_spatial_feature_groups = (
+    get_spatial_features_group.set_task_instance_id("fetch_all_spatial_feature_groups")
+    .handle_errors()
+    .with_tracing()
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
+    .partial(client=er_client_name, **fetch_all_spatial_feature_groups_params)
+    .map(argnames=["spatial_features_group_id"], argvalues=spatial_group_ids)
+)
+
+
+# %% [markdown]
+# ##
+
+# %%
+# parameters
+
+resolved_groupers_params = dict()
+
+# %%
+# call the task
+
+
+resolved_groupers = (
+    resolve_spatial_feature_groups_for_spatial_groupers.set_task_instance_id(
+        "resolved_groupers"
+    )
+    .handle_errors()
+    .with_tracing()
+    .skipif(
+        conditions=[
+            never,
+        ],
+        unpack_depth=1,
+    )
+    .partial(
+        groupers=groupers,
+        spatial_feature_groups=fetch_all_spatial_feature_groups,
+        **resolved_groupers_params,
+    )
+    .call()
+)
+
+
+# %% [markdown]
 # ## Transform Observations to Relocations
 
 # %%
@@ -489,10 +590,42 @@ traj_add_temporal_index = (
     .partial(
         df=subject_traj,
         time_col="segment_start",
-        groupers=groupers,
+        groupers=resolved_groupers,
         cast_to_datetime=True,
         format="mixed",
         **traj_add_temporal_index_params,
+    )
+    .call()
+)
+
+
+# %% [markdown]
+# ## Add spatial index to Subject Trajectories
+
+# %%
+# parameters
+
+traj_add_spatial_index_params = dict()
+
+# %%
+# call the task
+
+
+traj_add_spatial_index = (
+    add_spatial_index.set_task_instance_id("traj_add_spatial_index")
+    .handle_errors()
+    .with_tracing()
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
+    .partial(
+        gdf=traj_add_temporal_index,
+        groupers=resolved_groupers,
+        **traj_add_spatial_index_params,
     )
     .call()
 )
@@ -522,7 +655,7 @@ rename_grouper_columns = (
         unpack_depth=1,
     )
     .partial(
-        df=traj_add_temporal_index,
+        df=traj_add_spatial_index,
         drop_columns=[],
         retain_columns=[],
         rename_columns={
@@ -746,7 +879,9 @@ split_subject_traj_groups = (
         unpack_depth=1,
     )
     .partial(
-        df=classify_traj_speed, groupers=groupers, **split_subject_traj_groups_params
+        df=classify_traj_speed,
+        groupers=resolved_groupers,
+        **split_subject_traj_groups_params,
     )
     .call()
 )
@@ -2489,7 +2624,7 @@ subject_tracking_dashboard = (
             traj_nightday_grouped_map_widget,
             grouped_nsd_chart_widget_merge,
         ],
-        groupers=groupers,
+        groupers=resolved_groupers,
         time_range=time_range,
         warning=warn_if_mixed_subtype,
         **subject_tracking_dashboard_params,
