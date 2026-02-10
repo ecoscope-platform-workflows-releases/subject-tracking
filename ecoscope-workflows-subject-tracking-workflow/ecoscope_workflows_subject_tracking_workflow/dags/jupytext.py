@@ -276,6 +276,7 @@ subject_obs = (
         raise_on_empty=False,
         include_details=False,
         include_subjectsource_details=False,
+        filter="none",
         **subject_obs_params,
     )
     .call()

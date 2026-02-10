@@ -203,6 +203,7 @@ def main(params: Params):
             raise_on_empty=False,
             include_details=False,
             include_subjectsource_details=False,
+            filter="none",
             **(params_dict.get("subject_obs") or {}),
         )
         .call()
