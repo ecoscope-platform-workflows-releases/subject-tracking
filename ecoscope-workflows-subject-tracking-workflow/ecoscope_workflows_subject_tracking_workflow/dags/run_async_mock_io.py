@@ -330,6 +330,7 @@ def main(params: Params):
                 "raise_on_empty": False,
                 "include_details": False,
                 "include_subjectsource_details": False,
+                "filter": "none",
             }
             | (params_dict.get("subject_obs") or {}),
             method="call",
@@ -595,6 +596,7 @@ def main(params: Params):
                     "extra__subject_subtype": "subject_subtype",
                     "extra__sex": "subject_sex",
                 },
+                "raise_if_not_found": True,
             }
             | (params_dict.get("rename_grouper_columns") or {}),
             method="call",
@@ -846,6 +848,7 @@ def main(params: Params):
                     "subject_name": "Subject Name",
                     "subject_sex": "Subject Sex",
                 },
+                "raise_if_not_found": True,
             }
             | (params_dict.get("rename_speed_display_columns") or {}),
             method="mapvalues",
@@ -1064,6 +1067,7 @@ def main(params: Params):
                     "subject_sex": "Subject Sex",
                     "extra__is_night": "Nighttime",
                 },
+                "raise_if_not_found": True,
             }
             | (params_dict.get("rename_nightday_display_columns") or {}),
             method="mapvalues",
@@ -1960,6 +1964,7 @@ def main(params: Params):
                     "segment_start": "Time",
                     "nsd": "NSD (m²)",
                 },
+                "raise_if_not_found": True,
             }
             | (params_dict.get("nsd_rename_display_columns") or {}),
             method="mapvalues",
