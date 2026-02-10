@@ -1,10 +1,10 @@
 id: subject_tracking
 requirements:
   - name: ecoscope-workflows-core
-    version: 0.22.1
+    version: 0.22.3
     channel: https://repo.prefix.dev/ecoscope-workflows/
   - name: ecoscope-workflows-ext-ecoscope
-    version: 0.22.1
+    version: 0.22.3
     channel: https://repo.prefix.dev/ecoscope-workflows/
 rjsf-overrides:
   properties:
@@ -69,6 +69,7 @@ workflow:
           raise_on_empty: false
           include_details: false
           include_subjectsource_details: false
+          filter: none
   - name: Warn if mixed subtype
     id: warn_if_mixed_subtype
     task: mixed_subtype_warning
@@ -163,6 +164,7 @@ workflow:
         extra__name: subject_name
         extra__subject_subtype: subject_subtype
         extra__sex: subject_sex
+      raise_if_not_found: true
   - name: Map Subject Sex Values
     id: map_subject_sex
     task: map_values
@@ -256,6 +258,7 @@ workflow:
         extra__is_night: Nighttime
         subject_name: Subject Name
         subject_sex: Subject Sex
+      raise_if_not_found: true
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.colormap_traj_speed.return }}
@@ -360,6 +363,7 @@ workflow:
         subject_name: Subject Name
         subject_sex: Subject Sex
         extra__is_night: Nighttime
+      raise_if_not_found: true
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.colormap_traj_night.return }}
@@ -745,6 +749,7 @@ workflow:
       rename_columns:
         segment_start: Time
         nsd: NSD (m²)
+      raise_if_not_found: true
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_subject_traj_groups.return }}

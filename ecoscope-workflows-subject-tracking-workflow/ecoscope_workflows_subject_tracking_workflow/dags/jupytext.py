@@ -276,6 +276,7 @@ subject_obs = (
         raise_on_empty=False,
         include_details=False,
         include_subjectsource_details=False,
+        filter="none",
         **subject_obs_params,
     )
     .call()
@@ -663,6 +664,7 @@ rename_grouper_columns = (
             "extra__subject_subtype": "subject_subtype",
             "extra__sex": "subject_sex",
         },
+        raise_if_not_found=True,
         **rename_grouper_columns_params,
     )
     .call()
@@ -1017,6 +1019,7 @@ rename_speed_display_columns = (
             "subject_name": "Subject Name",
             "subject_sex": "Subject Sex",
         },
+        raise_if_not_found=True,
         **rename_speed_display_columns_params,
     )
     .mapvalues(argnames=["df"], argvalues=colormap_traj_speed)
@@ -1295,6 +1298,7 @@ rename_nightday_display_columns = (
             "subject_sex": "Subject Sex",
             "extra__is_night": "Nighttime",
         },
+        raise_if_not_found=True,
         **rename_nightday_display_columns_params,
     )
     .mapvalues(argnames=["df"], argvalues=colormap_traj_night)
@@ -2451,6 +2455,7 @@ nsd_rename_display_columns = (
         drop_columns=[],
         retain_columns=[],
         rename_columns={"segment_start": "Time", "nsd": "NSD (m²)"},
+        raise_if_not_found=True,
         **nsd_rename_display_columns_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
