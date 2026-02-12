@@ -350,7 +350,7 @@ class SetEtdArgs(BaseModel):
     )
     crs: str | None = Field(
         "EPSG:3857",
-        description="The coordinate reference system in which to perform the density calculation, must be a valid CRS authority code, for example ESRI:53042",
+        description="The coordinate reference system in which to perform the calculation, must be a valid CRS authority code, for example ESRI:53042",
         title="Coordinate Reference System",
     )
     max_speed_factor: float | None = Field(
@@ -366,6 +366,7 @@ class SetEtdArgs(BaseModel):
     percentiles: list[Percentile] | None = Field(
         ["50", "60", "70", "80", "90", "99.999"],
         description="Choose the time density percentile bins to display.",
+        min_length=1,
         title="Percentile Levels",
     )
 
