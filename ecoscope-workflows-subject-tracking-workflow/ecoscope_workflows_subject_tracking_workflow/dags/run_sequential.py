@@ -104,7 +104,7 @@ from ecoscope_workflows_ext_ecoscope.tasks.transformation import (
     classify_is_night as classify_is_night,
 )
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import (
-    extract_spatial_grouper_feature_group_ids as extract_spatial_grouper_feature_group_ids,
+    extract_spatial_grouper_feature_group_names as extract_spatial_grouper_feature_group_names,
 )
 from ecoscope_workflows_ext_ecoscope.tasks.transformation import (
     resolve_spatial_feature_groups_for_spatial_groupers as resolve_spatial_feature_groups_for_spatial_groupers,
@@ -264,7 +264,7 @@ def main(params: Params):
     )
 
     spatial_group_ids = (
-        extract_spatial_grouper_feature_group_ids.validate()
+        extract_spatial_grouper_feature_group_names.validate()
         .set_task_instance_id("spatial_group_ids")
         .handle_errors()
         .with_tracing()
@@ -295,7 +295,7 @@ def main(params: Params):
             client=er_client_name,
             **(params_dict.get("fetch_all_spatial_feature_groups") or {}),
         )
-        .map(argnames=["spatial_features_group_id"], argvalues=spatial_group_ids)
+        .map(argnames=["spatial_features_group_name"], argvalues=spatial_group_ids)
     )
 
     resolved_groupers = (
