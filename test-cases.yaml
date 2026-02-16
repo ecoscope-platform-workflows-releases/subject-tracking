@@ -57,7 +57,7 @@ month-grouper:
         name: "mep_dev"
     groupers:
       groupers:
-        - "%B"
+        - temporal_index: "%B"
     time_range:
       since: "2017-01-01T00:00:00"
       until: "2017-03-31T23:59:59"
@@ -103,9 +103,9 @@ value-grouper:
         name: "mep_dev"
     groupers:
       groupers:
-        - "subject_name"
-        - "subject_subtype"
-        - "subject_sex"
+        - index_name: "subject_name"
+        - index_name: "subject_subtype"
+        - index_name: "subject_sex"
     time_range:
       since: "2017-01-01T00:00:00"
       until: "2017-03-31T23:59:59"
@@ -151,7 +151,7 @@ spatial-grouper:
         name: "mep_dev"
     groupers:
       groupers:
-        - "efddee80-8072-4bb1-8078-b391c1b39dac"
+        - spatial_index_name: "SpatialGrouperTest"
     time_range:
       since: "2015-01-01T00:00:00"
       until: "2015-12-31T23:59:59"
