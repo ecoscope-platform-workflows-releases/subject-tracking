@@ -84,7 +84,8 @@ month-grouper:
           opacity: 0.5
     set_etd_args:
       opacity: 0.7
-      percentiles: ["50", "60", "70", "80", "90", "99.999"]
+      # an example of unsorted percentile input
+      percentiles: ["50", "80", "90", "99.999", "70", "60"]
       auto_scale_or_custom_cell_size:
         auto_scale_or_custom: "Auto-scale"
       crs: "EPSG:3857"
