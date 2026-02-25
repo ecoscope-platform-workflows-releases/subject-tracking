@@ -1,15 +1,23 @@
 id: subject_tracking
 requirements:
   - name: ecoscope-workflows-core
-    version: 0.22.11
+    version: 0.22.13
     channel: https://repo.prefix.dev/ecoscope-workflows/
   - name: ecoscope-workflows-ext-ecoscope
-    version: 0.22.11
+    version: 0.22.13
     channel: https://repo.prefix.dev/ecoscope-workflows/
 rjsf-overrides:
   properties:
-    Subject Group.properties.subject_obs.properties.subject_group_name.ecoscope:subject_group_name: properties.er_client_name.properties.data_source.properties.name
-    groupers.properties.groupers.ecoscope:spatial_feature_group: properties.er_client_name.properties.data_source.properties.name
+    Subject Group.properties.subject_obs.properties.subject_group_name.ecoscope:transform:
+      - transformer: EarthRangerEnumResolver
+        transformer_kws:
+          type: subject_group_name
+          depends_on: properties.er_client_name.properties.data_source.properties.name
+    groupers.properties.groupers.ecoscope:transform:
+      - transformer: EarthRangerEnumResolver
+        transformer_kws:
+          type: spatial_feature_group
+          depends_on: properties.er_client_name.properties.data_source.properties.name
     Time Density Map.properties.set_etd_args.properties.opacity.default: 0.700000
   $defs:
     ValueGrouper.properties.index_name.oneOf:
