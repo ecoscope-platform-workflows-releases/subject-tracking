@@ -5,11 +5,11 @@ from unittest.mock import patch
 
 import pydantic
 import pytest
-from ecoscope_workflows_runner.app import app
-from ecoscope_workflows_runner.testing import Case
 from ecoscope_workflows_subject_tracking_workflow.formdata import FormData
 from ecoscope_workflows_subject_tracking_workflow.params import Params
 from fastapi.testclient import TestClient
+from wt_runner.app import app
+from wt_runner.testing import Case
 
 
 @pytest.fixture
