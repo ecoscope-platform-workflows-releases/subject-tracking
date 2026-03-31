@@ -367,8 +367,8 @@ workflow:
     task: apply_color_map
     partial:
       colormap:
-        "true": '#292965'   # night
-        "false": '#e7a553'  # day
+        "True": '#292965'   # night
+        "False": '#e7a553'  # day
       input_column_name: extra__is_night
       output_column_name: is_night_colors
     mapvalues:
