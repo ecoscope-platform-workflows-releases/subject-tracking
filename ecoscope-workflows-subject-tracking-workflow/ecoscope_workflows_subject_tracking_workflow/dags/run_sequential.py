@@ -882,7 +882,7 @@ def main(params: Params):
             unpack_depth=1,
         )
         .partial(
-            colormap={"true": "#292965", "false": "#e7a553"},
+            colormap={"True": "#292965", "False": "#e7a553"},
             input_column_name="extra__is_night",
             output_column_name="is_night_colors",
             **(params_dict.get("colormap_traj_night") or {}),
