@@ -864,6 +864,26 @@ def main(params: Params):
         .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
     )
 
+    night_day_to_string = (
+        task(convert_column_values_to_string)
+        .validate()
+        .set_task_instance_id("night_day_to_string")
+        .handle_errors()
+        .with_tracing()
+        .skipif(
+            conditions=[
+                any_is_empty_df,
+                any_dependency_skipped,
+            ],
+            unpack_depth=1,
+        )
+        .partial(
+            columns=["extra__is_night"],
+            **(params_dict.get("night_day_to_string") or {}),
+        )
+        .mapvalues(argnames=["df"], argvalues=sort_traj_night_day)
+    )
+
     colormap_traj_night = (
         task(apply_color_map)
         .validate()
@@ -878,12 +898,12 @@ def main(params: Params):
             unpack_depth=1,
         )
         .partial(
-            colormap=["#292965", "#e7a553"],
+            colormap={"true": "#292965", "false": "#e7a553"},
             input_column_name="extra__is_night",
             output_column_name="is_night_colors",
             **(params_dict.get("colormap_traj_night") or {}),
         )
-        .mapvalues(argnames=["df"], argvalues=sort_traj_night_day)
+        .mapvalues(argnames=["df"], argvalues=night_day_to_string)
     )
 
     rename_nightday_display_columns = (
