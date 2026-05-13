@@ -533,7 +533,20 @@
     "ValueGrouper": {
       "properties": {
         "index_name": {
-          "oneOf": [],
+          "oneOf": [
+            {
+              "const": "subject_name",
+              "title": "Subject Name"
+            },
+            {
+              "const": "subject_subtype",
+              "title": "Subject Subtype"
+            },
+            {
+              "const": "subject_sex",
+              "title": "Subject Sex"
+            }
+          ],
           "title": "Category",
           "type": "string"
         }
