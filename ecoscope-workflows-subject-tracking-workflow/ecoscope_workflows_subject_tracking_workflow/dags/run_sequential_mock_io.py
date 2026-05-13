@@ -7,9 +7,9 @@ Lines specific to the testing context are marked with a test tube emoji (🧪) t
 that they would not be included (or would be different) in the production version of this file.
 """
 
-import json
 import os
 import warnings  # 🧪
+from typing import Any
 
 from ecoscope.platform.tasks.config import set_workflow_details as set_workflow_details
 from ecoscope.platform.tasks.filter import (
@@ -21,8 +21,11 @@ from ecoscope.platform.tasks.skip import (
     any_dependency_skipped as any_dependency_skipped,
 )
 from ecoscope.platform.tasks.skip import any_is_empty_df as any_is_empty_df
+from wt_contracts import validate as _validate
 from wt_task import task
 from wt_task.testing import create_func_magicmock  # 🧪
+
+from .. import metadata as _metadata
 
 get_subjectgroup_observations = create_func_magicmock(  # 🧪
     anchor="ecoscope.platform.tasks.io",  # 🧪
@@ -116,13 +119,12 @@ from ecoscope.platform.tasks.transformation import (
 from ecoscope.platform.tasks.transformation import sort_values as sort_values
 from ecoscope.platform.tasks.transformation import with_unit as with_unit
 
-from ..params import Params
 
-
-def main(params: Params):
+def main(params: dict[str, Any], validate_params_schema: bool = True):
     warnings.warn("This test script should not be used in production!")  # 🧪
 
-    params_dict = json.loads(params.model_dump_json(exclude_unset=True))
+    if validate_params_schema:
+        _validate(params, _metadata.load_params_schema())
 
     workflow_details = (
         task(set_workflow_details)
@@ -137,7 +139,7 @@ def main(params: Params):
             ],
             unpack_depth=1,
         )
-        .partial(**(params_dict.get("workflow_details") or {}))
+        .partial(**(params.get("workflow_details") or {}))
         .call()
     )
 
@@ -154,7 +156,7 @@ def main(params: Params):
             ],
             unpack_depth=1,
         )
-        .partial(**(params_dict.get("er_client_name") or {}))
+        .partial(**(params.get("er_client_name") or {}))
         .call()
     )
 
@@ -171,9 +173,7 @@ def main(params: Params):
             ],
             unpack_depth=1,
         )
-        .partial(
-            time_format="%d %b %Y %H:%M:%S", **(params_dict.get("time_range") or {})
-        )
+        .partial(time_format="%d %b %Y %H:%M:%S", **(params.get("time_range") or {}))
         .call()
     )
 
@@ -190,7 +190,7 @@ def main(params: Params):
             ],
             unpack_depth=1,
         )
-        .partial(time_range=time_range, **(params_dict.get("get_timezone") or {}))
+        .partial(time_range=time_range, **(params.get("get_timezone") or {}))
         .call()
     )
 
@@ -214,7 +214,7 @@ def main(params: Params):
             include_details=False,
             include_subjectsource_details=False,
             filter="none",
-            **(params_dict.get("subject_obs") or {}),
+            **(params.get("subject_obs") or {}),
         )
         .call()
     )
@@ -231,9 +231,7 @@ def main(params: Params):
             ],
             unpack_depth=1,
         )
-        .partial(
-            subject_obs=subject_obs, **(params_dict.get("warn_if_mixed_subtype") or {})
-        )
+        .partial(subject_obs=subject_obs, **(params.get("warn_if_mixed_subtype") or {}))
         .call()
     )
 
@@ -254,7 +252,7 @@ def main(params: Params):
             df=subject_obs,
             timezone=get_timezone,
             columns=["fixtime"],
-            **(params_dict.get("convert_to_user_timezone") or {}),
+            **(params.get("convert_to_user_timezone") or {}),
         )
         .call()
     )
@@ -272,7 +270,7 @@ def main(params: Params):
             ],
             unpack_depth=1,
         )
-        .partial(**(params_dict.get("groupers") or {}))
+        .partial(**(params.get("groupers") or {}))
         .call()
     )
 
@@ -289,7 +287,7 @@ def main(params: Params):
             ],
             unpack_depth=1,
         )
-        .partial(groupers=groupers, **(params_dict.get("spatial_group_ids") or {}))
+        .partial(groupers=groupers, **(params.get("spatial_group_ids") or {}))
         .call()
     )
 
@@ -308,7 +306,7 @@ def main(params: Params):
         )
         .partial(
             client=er_client_name,
-            **(params_dict.get("fetch_all_spatial_feature_groups") or {}),
+            **(params.get("fetch_all_spatial_feature_groups") or {}),
         )
         .map(argnames=["spatial_features_group_name"], argvalues=spatial_group_ids)
     )
@@ -328,7 +326,7 @@ def main(params: Params):
         .partial(
             groupers=groupers,
             spatial_feature_groups=fetch_all_spatial_feature_groups,
-            **(params_dict.get("resolved_groupers") or {}),
+            **(params.get("resolved_groupers") or {}),
         )
         .call()
     )
@@ -362,7 +360,7 @@ def main(params: Params):
                 {"x": 0.0, "y": 0.0},
                 {"x": 1.0, "y": 1.0},
             ],
-            **(params_dict.get("subject_reloc") or {}),
+            **(params.get("subject_reloc") or {}),
         )
         .call()
     )
@@ -380,9 +378,7 @@ def main(params: Params):
             ],
             unpack_depth=1,
         )
-        .partial(
-            relocations=subject_reloc, **(params_dict.get("day_night_labels") or {})
-        )
+        .partial(relocations=subject_reloc, **(params.get("day_night_labels") or {}))
         .call()
     )
 
@@ -399,9 +395,7 @@ def main(params: Params):
             ],
             unpack_depth=1,
         )
-        .partial(
-            relocations=day_night_labels, **(params_dict.get("subject_traj") or {})
-        )
+        .partial(relocations=day_night_labels, **(params.get("subject_traj") or {}))
         .call()
     )
 
@@ -424,7 +418,7 @@ def main(params: Params):
             groupers=resolved_groupers,
             cast_to_datetime=True,
             format="mixed",
-            **(params_dict.get("traj_add_temporal_index") or {}),
+            **(params.get("traj_add_temporal_index") or {}),
         )
         .call()
     )
@@ -445,7 +439,7 @@ def main(params: Params):
         .partial(
             gdf=traj_add_temporal_index,
             groupers=resolved_groupers,
-            **(params_dict.get("traj_add_spatial_index") or {}),
+            **(params.get("traj_add_spatial_index") or {}),
         )
         .call()
     )
@@ -473,7 +467,7 @@ def main(params: Params):
                 "extra__sex": "subject_sex",
             },
             raise_if_not_found=True,
-            **(params_dict.get("rename_grouper_columns") or {}),
+            **(params.get("rename_grouper_columns") or {}),
         )
         .call()
     )
@@ -497,7 +491,7 @@ def main(params: Params):
             value_map={"male": "male", "female": "female"},
             missing_values="replace",
             replacement="unknown",
-            **(params_dict.get("map_subject_sex") or {}),
+            **(params.get("map_subject_sex") or {}),
         )
         .call()
     )
@@ -525,7 +519,7 @@ def main(params: Params):
                 "label_decimals": 1,
                 "label_suffix": " km/h",
             },
-            **(params_dict.get("classify_traj_speed") or {}),
+            **(params.get("classify_traj_speed") or {}),
         )
         .call()
     )
@@ -545,7 +539,7 @@ def main(params: Params):
         )
         .partial(
             var="Subject Group Trajectory Map",
-            **(params_dict.get("set_traj_map_title") or {}),
+            **(params.get("set_traj_map_title") or {}),
         )
         .call()
     )
@@ -563,7 +557,7 @@ def main(params: Params):
             ],
             unpack_depth=1,
         )
-        .partial(var="Home Range Map", **(params_dict.get("set_td_map_title") or {}))
+        .partial(var="Home Range Map", **(params.get("set_td_map_title") or {}))
         .call()
     )
 
@@ -582,7 +576,7 @@ def main(params: Params):
         )
         .partial(
             var="Subject Group Night/Day Map",
-            **(params_dict.get("set_night_day_map_title") or {}),
+            **(params.get("set_night_day_map_title") or {}),
         )
         .call()
     )
@@ -601,8 +595,7 @@ def main(params: Params):
             unpack_depth=1,
         )
         .partial(
-            var="Net Square Displacement",
-            **(params_dict.get("set_nsd_chart_title") or {}),
+            var="Net Square Displacement", **(params.get("set_nsd_chart_title") or {})
         )
         .call()
     )
@@ -623,7 +616,7 @@ def main(params: Params):
         .partial(
             df=classify_traj_speed,
             groupers=resolved_groupers,
-            **(params_dict.get("split_subject_traj_groups") or {}),
+            **(params.get("split_subject_traj_groups") or {}),
         )
         .call()
     )
@@ -641,7 +634,7 @@ def main(params: Params):
             ],
             unpack_depth=1,
         )
-        .partial(**(params_dict.get("base_map_defs") or {}))
+        .partial(**(params.get("base_map_defs") or {}))
         .call()
     )
 
@@ -662,7 +655,7 @@ def main(params: Params):
             column_name="speed_kmhr",
             ascending=True,
             na_position="last",
-            **(params_dict.get("sort_traj_speed") or {}),
+            **(params.get("sort_traj_speed") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
     )
@@ -684,7 +677,7 @@ def main(params: Params):
             input_column_name="speed_bins",
             output_column_name="speed_bins_colormap",
             colormap=["#1a9850", "#91cf60", "#d9ef8b", "#fee08b", "#fc8d59", "#d73027"],
-            **(params_dict.get("colormap_traj_speed") or {}),
+            **(params.get("colormap_traj_speed") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=sort_traj_speed)
     )
@@ -714,7 +707,7 @@ def main(params: Params):
                 "subject_sex": "Subject Sex",
             },
             raise_if_not_found=True,
-            **(params_dict.get("rename_speed_display_columns") or {}),
+            **(params.get("rename_speed_display_columns") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=colormap_traj_speed)
     )
@@ -747,7 +740,7 @@ def main(params: Params):
                 "Subject Name",
                 "Subject Sex",
             ],
-            **(params_dict.get("traj_map_layers") or {}),
+            **(params.get("traj_map_layers") or {}),
         )
         .mapvalues(argnames=["geodataframe"], argvalues=rename_speed_display_columns)
     )
@@ -777,7 +770,7 @@ def main(params: Params):
             title=None,
             max_zoom=20,
             widget_id=set_traj_map_title,
-            **(params_dict.get("traj_ecomap") or {}),
+            **(params.get("traj_ecomap") or {}),
         )
         .mapvalues(argnames=["geo_layers"], argvalues=traj_map_layers)
     )
@@ -798,7 +791,7 @@ def main(params: Params):
         .partial(
             root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
             filename_suffix="v2",
-            **(params_dict.get("ecomap_html_urls") or {}),
+            **(params.get("ecomap_html_urls") or {}),
         )
         .mapvalues(argnames=["text"], argvalues=traj_ecomap)
     )
@@ -817,7 +810,7 @@ def main(params: Params):
         )
         .partial(
             title=set_traj_map_title,
-            **(params_dict.get("traj_map_widgets_single_views") or {}),
+            **(params.get("traj_map_widgets_single_views") or {}),
         )
         .map(argnames=["view", "data"], argvalues=ecomap_html_urls)
     )
@@ -837,7 +830,7 @@ def main(params: Params):
         )
         .partial(
             widgets=traj_map_widgets_single_views,
-            **(params_dict.get("traj_grouped_map_widget") or {}),
+            **(params.get("traj_grouped_map_widget") or {}),
         )
         .call()
     )
@@ -859,7 +852,7 @@ def main(params: Params):
             column_name="extra__is_night",
             ascending=False,
             na_position="last",
-            **(params_dict.get("sort_traj_night_day") or {}),
+            **(params.get("sort_traj_night_day") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
     )
@@ -878,8 +871,7 @@ def main(params: Params):
             unpack_depth=1,
         )
         .partial(
-            columns=["extra__is_night"],
-            **(params_dict.get("night_day_to_string") or {}),
+            columns=["extra__is_night"], **(params.get("night_day_to_string") or {})
         )
         .mapvalues(argnames=["df"], argvalues=sort_traj_night_day)
     )
@@ -901,7 +893,7 @@ def main(params: Params):
             colormap={"True": "#292965", "False": "#e7a553"},
             input_column_name="extra__is_night",
             output_column_name="is_night_colors",
-            **(params_dict.get("colormap_traj_night") or {}),
+            **(params.get("colormap_traj_night") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=night_day_to_string)
     )
@@ -928,7 +920,7 @@ def main(params: Params):
                 "extra__is_night": "Nighttime",
             },
             raise_if_not_found=True,
-            **(params_dict.get("rename_nightday_display_columns") or {}),
+            **(params.get("rename_nightday_display_columns") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=colormap_traj_night)
     )
@@ -951,7 +943,7 @@ def main(params: Params):
             layer_style={"color_column": "is_night_colors"},
             legend={"labels": ["Night", "Day"], "colors": ["#292965", "#e7a553"]},
             tooltip_columns=["Subject Name", "Subject Sex", "Nighttime"],
-            **(params_dict.get("traj_map_night_layers") or {}),
+            **(params.get("traj_map_night_layers") or {}),
         )
         .mapvalues(argnames=["geodataframe"], argvalues=rename_nightday_display_columns)
     )
@@ -981,7 +973,7 @@ def main(params: Params):
             title=None,
             max_zoom=20,
             widget_id=set_night_day_map_title,
-            **(params_dict.get("traj_nightday_ecomap") or {}),
+            **(params.get("traj_nightday_ecomap") or {}),
         )
         .mapvalues(argnames=["geo_layers"], argvalues=traj_map_night_layers)
     )
@@ -1002,7 +994,7 @@ def main(params: Params):
         .partial(
             root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
             filename_suffix="v2",
-            **(params_dict.get("ecomap_nightday_html_urls") or {}),
+            **(params.get("ecomap_nightday_html_urls") or {}),
         )
         .mapvalues(argnames=["text"], argvalues=traj_nightday_ecomap)
     )
@@ -1021,7 +1013,7 @@ def main(params: Params):
         )
         .partial(
             title=set_night_day_map_title,
-            **(params_dict.get("traj_map_nightday_widgets_sv") or {}),
+            **(params.get("traj_map_nightday_widgets_sv") or {}),
         )
         .map(argnames=["view", "data"], argvalues=ecomap_nightday_html_urls)
     )
@@ -1041,7 +1033,7 @@ def main(params: Params):
         )
         .partial(
             widgets=traj_map_nightday_widgets_sv,
-            **(params_dict.get("traj_nightday_grouped_map_widget") or {}),
+            **(params.get("traj_nightday_grouped_map_widget") or {}),
         )
         .call()
     )
@@ -1059,7 +1051,7 @@ def main(params: Params):
             ],
             unpack_depth=1,
         )
-        .partial(column_name="speed_kmhr", **(params_dict.get("mean_speed") or {}))
+        .partial(column_name="speed_kmhr", **(params.get("mean_speed") or {}))
         .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
     )
 
@@ -1079,7 +1071,7 @@ def main(params: Params):
         .partial(
             original_unit="km/h",
             new_unit="km/h",
-            **(params_dict.get("average_speed_converted") or {}),
+            **(params.get("average_speed_converted") or {}),
         )
         .mapvalues(argnames=["value"], argvalues=mean_speed)
     )
@@ -1099,7 +1091,7 @@ def main(params: Params):
         .partial(
             title="Mean Speed",
             decimal_places=1,
-            **(params_dict.get("mean_speed_sv_widgets") or {}),
+            **(params.get("mean_speed_sv_widgets") or {}),
         )
         .map(argnames=["view", "data"], argvalues=average_speed_converted)
     )
@@ -1119,7 +1111,7 @@ def main(params: Params):
         )
         .partial(
             widgets=mean_speed_sv_widgets,
-            **(params_dict.get("mean_speed_grouped_sv_widget") or {}),
+            **(params.get("mean_speed_grouped_sv_widget") or {}),
         )
         .call()
     )
@@ -1137,7 +1129,7 @@ def main(params: Params):
             ],
             unpack_depth=1,
         )
-        .partial(column_name="speed_kmhr", **(params_dict.get("max_speed") or {}))
+        .partial(column_name="speed_kmhr", **(params.get("max_speed") or {}))
         .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
     )
 
@@ -1157,7 +1149,7 @@ def main(params: Params):
         .partial(
             original_unit="km/h",
             new_unit="km/h",
-            **(params_dict.get("max_speed_converted") or {}),
+            **(params.get("max_speed_converted") or {}),
         )
         .mapvalues(argnames=["value"], argvalues=max_speed)
     )
@@ -1177,7 +1169,7 @@ def main(params: Params):
         .partial(
             title="Max Speed",
             decimal_places=1,
-            **(params_dict.get("max_speed_sv_widgets") or {}),
+            **(params.get("max_speed_sv_widgets") or {}),
         )
         .map(argnames=["view", "data"], argvalues=max_speed_converted)
     )
@@ -1197,7 +1189,7 @@ def main(params: Params):
         )
         .partial(
             widgets=max_speed_sv_widgets,
-            **(params_dict.get("max_speed_grouped_sv_widget") or {}),
+            **(params.get("max_speed_grouped_sv_widget") or {}),
         )
         .call()
     )
@@ -1215,7 +1207,7 @@ def main(params: Params):
             ],
             unpack_depth=1,
         )
-        .partial(**(params_dict.get("num_location") or {}))
+        .partial(**(params.get("num_location") or {}))
         .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
     )
 
@@ -1234,7 +1226,7 @@ def main(params: Params):
         .partial(
             title="Number of Locations",
             decimal_places=1,
-            **(params_dict.get("num_location_sv_widgets") or {}),
+            **(params.get("num_location_sv_widgets") or {}),
         )
         .map(argnames=["view", "data"], argvalues=num_location)
     )
@@ -1254,7 +1246,7 @@ def main(params: Params):
         )
         .partial(
             widgets=num_location_sv_widgets,
-            **(params_dict.get("num_location_grouped_sv_widget") or {}),
+            **(params.get("num_location_grouped_sv_widget") or {}),
         )
         .call()
     )
@@ -1272,7 +1264,7 @@ def main(params: Params):
             ],
             unpack_depth=1,
         )
-        .partial(**(params_dict.get("nightday_ratio") or {}))
+        .partial(**(params.get("nightday_ratio") or {}))
         .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
     )
 
@@ -1291,7 +1283,7 @@ def main(params: Params):
         .partial(
             title="Night/Day Ratio",
             decimal_places=1,
-            **(params_dict.get("nightday_ratio_sv_widgets") or {}),
+            **(params.get("nightday_ratio_sv_widgets") or {}),
         )
         .map(argnames=["view", "data"], argvalues=nightday_ratio)
     )
@@ -1311,7 +1303,7 @@ def main(params: Params):
         )
         .partial(
             widgets=nightday_ratio_sv_widgets,
-            **(params_dict.get("nightday_ratio_grouped_sv_widget") or {}),
+            **(params.get("nightday_ratio_grouped_sv_widget") or {}),
         )
         .call()
     )
@@ -1329,7 +1321,7 @@ def main(params: Params):
             ],
             unpack_depth=1,
         )
-        .partial(column_name="dist_meters", **(params_dict.get("total_distance") or {}))
+        .partial(column_name="dist_meters", **(params.get("total_distance") or {}))
         .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
     )
 
@@ -1349,7 +1341,7 @@ def main(params: Params):
         .partial(
             original_unit="m",
             new_unit="km",
-            **(params_dict.get("total_dist_converted") or {}),
+            **(params.get("total_dist_converted") or {}),
         )
         .mapvalues(argnames=["value"], argvalues=total_distance)
     )
@@ -1369,7 +1361,7 @@ def main(params: Params):
         .partial(
             title="Total Distance",
             decimal_places=1,
-            **(params_dict.get("total_distance_sv_widgets") or {}),
+            **(params.get("total_distance_sv_widgets") or {}),
         )
         .map(argnames=["view", "data"], argvalues=total_dist_converted)
     )
@@ -1389,7 +1381,7 @@ def main(params: Params):
         )
         .partial(
             widgets=total_distance_sv_widgets,
-            **(params_dict.get("total_dist_grouped_sv_widget") or {}),
+            **(params.get("total_dist_grouped_sv_widget") or {}),
         )
         .call()
     )
@@ -1407,9 +1399,7 @@ def main(params: Params):
             ],
             unpack_depth=1,
         )
-        .partial(
-            column_name="timespan_seconds", **(params_dict.get("total_time") or {})
-        )
+        .partial(column_name="timespan_seconds", **(params.get("total_time") or {}))
         .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
     )
 
@@ -1429,7 +1419,7 @@ def main(params: Params):
         .partial(
             original_unit="s",
             new_unit="h",
-            **(params_dict.get("total_time_converted") or {}),
+            **(params.get("total_time_converted") or {}),
         )
         .mapvalues(argnames=["value"], argvalues=total_time)
     )
@@ -1449,7 +1439,7 @@ def main(params: Params):
         .partial(
             title="Total Time",
             decimal_places=1,
-            **(params_dict.get("total_time_sv_widgets") or {}),
+            **(params.get("total_time_sv_widgets") or {}),
         )
         .map(argnames=["view", "data"], argvalues=total_time_converted)
     )
@@ -1469,7 +1459,7 @@ def main(params: Params):
         )
         .partial(
             widgets=total_time_sv_widgets,
-            **(params_dict.get("total_time_grouped_sv_widget") or {}),
+            **(params.get("total_time_grouped_sv_widget") or {}),
         )
         .call()
     )
@@ -1487,9 +1477,7 @@ def main(params: Params):
             ],
             unpack_depth=1,
         )
-        .partial(
-            nodata_value="nan", band_count=1, **(params_dict.get("set_etd_args") or {})
-        )
+        .partial(nodata_value="nan", band_count=1, **(params.get("set_etd_args") or {}))
         .call()
     )
 
@@ -1506,7 +1494,7 @@ def main(params: Params):
             ],
             unpack_depth=1,
         )
-        .partial(combined_params=set_etd_args, **(params_dict.get("etd_opacity") or {}))
+        .partial(combined_params=set_etd_args, **(params.get("etd_opacity") or {}))
         .call()
     )
 
@@ -1523,7 +1511,7 @@ def main(params: Params):
             ],
             unpack_depth=1,
         )
-        .partial(combined_params=set_etd_args, **(params_dict.get("td") or {}))
+        .partial(combined_params=set_etd_args, **(params.get("td") or {}))
         .mapvalues(argnames=["trajectory_gdf"], argvalues=split_subject_traj_groups)
     )
 
@@ -1541,8 +1529,7 @@ def main(params: Params):
             unpack_depth=1,
         )
         .partial(
-            columns=["percentile"],
-            **(params_dict.get("percentile_col_to_string") or {}),
+            columns=["percentile"], **(params.get("percentile_col_to_string") or {})
         )
         .mapvalues(argnames=["df"], argvalues=td)
     )
@@ -1564,7 +1551,7 @@ def main(params: Params):
             input_column_name="percentile",
             colormap="RdYlGn_r",
             output_column_name="percentile_colormap",
-            **(params_dict.get("td_colormap") or {}),
+            **(params.get("td_colormap") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=percentile_col_to_string)
     )
@@ -1596,7 +1583,7 @@ def main(params: Params):
                 "sort": "ascending",
             },
             tooltip_columns=["percentile"],
-            **(params_dict.get("td_map_layer") or {}),
+            **(params.get("td_map_layer") or {}),
         )
         .mapvalues(argnames=["geodataframe"], argvalues=td_colormap)
     )
@@ -1626,7 +1613,7 @@ def main(params: Params):
             title=None,
             max_zoom=20,
             widget_id=set_td_map_title,
-            **(params_dict.get("td_ecomap") or {}),
+            **(params.get("td_ecomap") or {}),
         )
         .mapvalues(argnames=["geo_layers"], argvalues=td_map_layer)
     )
@@ -1647,7 +1634,7 @@ def main(params: Params):
         .partial(
             root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
             filename_suffix="v2",
-            **(params_dict.get("td_ecomap_html_url") or {}),
+            **(params.get("td_ecomap_html_url") or {}),
         )
         .mapvalues(argnames=["text"], argvalues=td_ecomap)
     )
@@ -1664,7 +1651,7 @@ def main(params: Params):
             ],
             unpack_depth=1,
         )
-        .partial(title=set_td_map_title, **(params_dict.get("td_map_widget") or {}))
+        .partial(title=set_td_map_title, **(params.get("td_map_widget") or {}))
         .map(argnames=["view", "data"], argvalues=td_ecomap_html_url)
     )
 
@@ -1681,9 +1668,7 @@ def main(params: Params):
             ],
             unpack_depth=1,
         )
-        .partial(
-            widgets=td_map_widget, **(params_dict.get("td_grouped_map_widget") or {})
-        )
+        .partial(widgets=td_map_widget, **(params.get("td_grouped_map_widget") or {}))
         .call()
     )
 
@@ -1705,7 +1690,7 @@ def main(params: Params):
             retain_columns=[],
             rename_columns={"segment_start": "Time", "nsd": "NSD (m²)"},
             raise_if_not_found=True,
-            **(params_dict.get("nsd_rename_display_columns") or {}),
+            **(params.get("nsd_rename_display_columns") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
     )
@@ -1735,7 +1720,7 @@ def main(params: Params):
             ],
             tickformat="%b-%Y",
             widget_id=set_nsd_chart_title,
-            **(params_dict.get("nsd_chart") or {}),
+            **(params.get("nsd_chart") or {}),
         )
         .mapvalues(argnames=["dataframe"], argvalues=nsd_rename_display_columns)
     )
@@ -1756,7 +1741,7 @@ def main(params: Params):
         .partial(
             root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
             filename_suffix="v2",
-            **(params_dict.get("nsd_chart_html_url") or {}),
+            **(params.get("nsd_chart_html_url") or {}),
         )
         .mapvalues(argnames=["text"], argvalues=nsd_chart)
     )
@@ -1773,9 +1758,7 @@ def main(params: Params):
             ],
             unpack_depth=1,
         )
-        .partial(
-            title=set_nsd_chart_title, **(params_dict.get("nsd_chart_widget") or {})
-        )
+        .partial(title=set_nsd_chart_title, **(params.get("nsd_chart_widget") or {}))
         .map(argnames=["view", "data"], argvalues=nsd_chart_html_url)
     )
 
@@ -1794,7 +1777,7 @@ def main(params: Params):
         )
         .partial(
             widgets=nsd_chart_widget,
-            **(params_dict.get("grouped_nsd_chart_widget_merge") or {}),
+            **(params.get("grouped_nsd_chart_widget_merge") or {}),
         )
         .call()
     )
@@ -1829,7 +1812,7 @@ def main(params: Params):
             groupers=resolved_groupers,
             time_range=time_range,
             warning=warn_if_mixed_subtype,
-            **(params_dict.get("subject_tracking_dashboard") or {}),
+            **(params.get("subject_tracking_dashboard") or {}),
         )
         .call()
     )
