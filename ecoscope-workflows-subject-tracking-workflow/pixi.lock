@@ -117,7 +117,7 @@ environments:
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-gcp-0.1.3-pyh4616a5c_0.conda
       - pypi: git+https://github.com/PADAS/er-client?rev=v1.3.3#4d61b450d471c7161c64d2f48dfa735a52a6bcf9
       - pypi: git+https://github.com/wildlife-dynamics/ecoscope-earthranger-io-core.git?rev=v0.0.14#2b819587539598dc8711391b0a52554dce94991a
-      - pypi: git+https://github.com/wildlife-dynamics/ecoscope?branch=am%2Fbottleneck-tasks#8937559b195b1e8eb6b634c2fae33e2c349697ff
+      - pypi: git+https://github.com/wildlife-dynamics/ecoscope?branch=am%2Fbottleneck-tasks#fe95150afd44ba9cf67e65d3c02088ff9111e80a
       - pypi: git+https://github.com/wildlife-dynamics/lonboard?rev=v0.0.8#5a9facbab4674c85a8e520e9d79c0f3048784ba1
       - pypi: https://files.pythonhosted.org/packages/01/8e/1e35281b8ab6d5d72ebe9911edcdffa3f36b04ed9d51dec6dd140396e220/scipy-1.17.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/04/4b/29cac41a4d98d144bf5f6d33995617b185d14b22401f75ca86f384e87ff1/h11-0.16.0-py3-none-any.whl
@@ -335,7 +335,7 @@ environments:
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-gcp-0.1.3-pyh4616a5c_0.conda
       - pypi: git+https://github.com/PADAS/er-client?rev=v1.3.3#4d61b450d471c7161c64d2f48dfa735a52a6bcf9
       - pypi: git+https://github.com/wildlife-dynamics/ecoscope-earthranger-io-core.git?rev=v0.0.14#2b819587539598dc8711391b0a52554dce94991a
-      - pypi: git+https://github.com/wildlife-dynamics/ecoscope?branch=am%2Fbottleneck-tasks#8937559b195b1e8eb6b634c2fae33e2c349697ff
+      - pypi: git+https://github.com/wildlife-dynamics/ecoscope?branch=am%2Fbottleneck-tasks#fe95150afd44ba9cf67e65d3c02088ff9111e80a
       - pypi: git+https://github.com/wildlife-dynamics/lonboard?rev=v0.0.8#5a9facbab4674c85a8e520e9d79c0f3048784ba1
       - pypi: https://files.pythonhosted.org/packages/04/4b/29cac41a4d98d144bf5f6d33995617b185d14b22401f75ca86f384e87ff1/h11-0.16.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/05/7f/798705f5296a58ca505d600456748d1be48078eac8a7050d8a98bc9edb89/decorator-5.3.1-py3-none-any.whl
@@ -549,7 +549,7 @@ environments:
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-gcp-0.1.3-pyh4616a5c_0.conda
       - pypi: git+https://github.com/PADAS/er-client?rev=v1.3.3#4d61b450d471c7161c64d2f48dfa735a52a6bcf9
       - pypi: git+https://github.com/wildlife-dynamics/ecoscope-earthranger-io-core.git?rev=v0.0.14#2b819587539598dc8711391b0a52554dce94991a
-      - pypi: git+https://github.com/wildlife-dynamics/ecoscope?branch=am%2Fbottleneck-tasks#8937559b195b1e8eb6b634c2fae33e2c349697ff
+      - pypi: git+https://github.com/wildlife-dynamics/ecoscope?branch=am%2Fbottleneck-tasks#fe95150afd44ba9cf67e65d3c02088ff9111e80a
       - pypi: git+https://github.com/wildlife-dynamics/lonboard?rev=v0.0.8#5a9facbab4674c85a8e520e9d79c0f3048784ba1
       - pypi: https://files.pythonhosted.org/packages/01/3c/5b2ada5b6166495ad1fd1f93127a6ad313833a25c38f98bab0c9b4acc95d/geoarrow_c-0.3.1-cp312-cp312-macosx_10_13_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/01/88/a8952b6d5c21e74cbf158515b779666f692846502623e9e3c39d8e8ba25f/llvmlite-0.47.0.tar.gz
@@ -762,7 +762,7 @@ environments:
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-gcp-0.1.3-pyh4616a5c_0.conda
       - pypi: git+https://github.com/PADAS/er-client?rev=v1.3.3#4d61b450d471c7161c64d2f48dfa735a52a6bcf9
       - pypi: git+https://github.com/wildlife-dynamics/ecoscope-earthranger-io-core.git?rev=v0.0.14#2b819587539598dc8711391b0a52554dce94991a
-      - pypi: git+https://github.com/wildlife-dynamics/ecoscope?branch=am%2Fbottleneck-tasks#8937559b195b1e8eb6b634c2fae33e2c349697ff
+      - pypi: git+https://github.com/wildlife-dynamics/ecoscope?branch=am%2Fbottleneck-tasks#fe95150afd44ba9cf67e65d3c02088ff9111e80a
       - pypi: git+https://github.com/wildlife-dynamics/lonboard?rev=v0.0.8#5a9facbab4674c85a8e520e9d79c0f3048784ba1
       - pypi: https://files.pythonhosted.org/packages/04/4b/29cac41a4d98d144bf5f6d33995617b185d14b22401f75ca86f384e87ff1/h11-0.16.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/04/90/67bd7260b4ea9b8b20b4f58afef6c223ecb3abf368eb4ec5bc2cdef81b49/pyproj-3.7.2.tar.gz
@@ -981,7 +981,7 @@ environments:
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-gcp-0.1.3-pyh4616a5c_0.conda
       - pypi: git+https://github.com/PADAS/er-client?rev=v1.3.3#4d61b450d471c7161c64d2f48dfa735a52a6bcf9
       - pypi: git+https://github.com/wildlife-dynamics/ecoscope-earthranger-io-core.git?rev=v0.0.14#2b819587539598dc8711391b0a52554dce94991a
-      - pypi: git+https://github.com/wildlife-dynamics/ecoscope?branch=am%2Fbottleneck-tasks#8937559b195b1e8eb6b634c2fae33e2c349697ff
+      - pypi: git+https://github.com/wildlife-dynamics/ecoscope?branch=am%2Fbottleneck-tasks#fe95150afd44ba9cf67e65d3c02088ff9111e80a
       - pypi: git+https://github.com/wildlife-dynamics/lonboard?rev=v0.0.8#5a9facbab4674c85a8e520e9d79c0f3048784ba1
       - pypi: https://files.pythonhosted.org/packages/04/4b/29cac41a4d98d144bf5f6d33995617b185d14b22401f75ca86f384e87ff1/h11-0.16.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/04/a1/4571fc46e7702de8d0c2dc54ad1b2f8e29328dea3ee90831181f7353d93c/matplotlib-3.10.9-cp312-cp312-win_amd64.whl
@@ -16854,9 +16854,9 @@ packages:
   - pytest ; extra == 'test'
   - pytest-asyncio ; extra == 'test'
   requires_python: '>=3.10,<3.13'
-- pypi: git+https://github.com/wildlife-dynamics/ecoscope?branch=am%2Fbottleneck-tasks#8937559b195b1e8eb6b634c2fae33e2c349697ff
+- pypi: git+https://github.com/wildlife-dynamics/ecoscope?branch=am%2Fbottleneck-tasks#fe95150afd44ba9cf67e65d3c02088ff9111e80a
   name: ecoscope
-  version: 2.11.21.dev46+g8937559
+  version: 2.11.21.dev47+gfe95150
   requires_dist:
   - backoff>=2
   - earthengine-api>=1.4,<1.7.13
