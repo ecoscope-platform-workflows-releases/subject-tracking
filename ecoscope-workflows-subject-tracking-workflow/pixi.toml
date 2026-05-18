@@ -48,7 +48,7 @@ channel = "https://repo.prefix.dev/ecoscope-workflows/"
 
 [pypi-dependencies.ecoscope]
 git = "https://github.com/wildlife-dynamics/ecoscope"
-branch = "am/bottleneck-tasks"
+branch = "am/bottleneck-tasks-2"
 extras = [
     "analysis",
     "mapping",

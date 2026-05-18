@@ -2,7 +2,7 @@ id: subject_tracking
 requirements:
   - name: ecoscope
     git: https://github.com/wildlife-dynamics/ecoscope
-    branch: am/bottleneck-tasks
+    branch: am/bottleneck-tasks-2
     extras: [analysis, mapping, plotting, platform]
   # ecoscope-platform already declares this exact pydeck dependency. it is
   # re-stated here as a workaround for a known issue. for further detail, see:

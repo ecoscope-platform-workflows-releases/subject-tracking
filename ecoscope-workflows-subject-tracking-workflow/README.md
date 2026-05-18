@@ -6,7 +6,7 @@
 ```yaml
 # fingerprint:
 artifacts_sha256_basic: bf42ba7e73f608051a0502b14e6c04e8d4432b754cee9e238760020149c1f7f1
-artifacts_sha256_strict: 0387a8e445985f34674b0a018280a6b12d7e0ad1b4cfd1e9cd616e1772ee003c
+artifacts_sha256_strict: 361ac87c08ece7913c7e099cfa6e1b3d6a738f2b7e961f503fabf57c72404633
 installed_requirements:
 - channel: conda-forge
   name: pydeck
