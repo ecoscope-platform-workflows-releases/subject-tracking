@@ -87,7 +87,7 @@ workflow:
           raise_on_empty: false
           include_details: false
           include_subjectsource_details: false
-          filter: none
+          filter: clean
   - name: Warn if mixed subtype
     id: warn_if_mixed_subtype
     task: mixed_subtype_warning
