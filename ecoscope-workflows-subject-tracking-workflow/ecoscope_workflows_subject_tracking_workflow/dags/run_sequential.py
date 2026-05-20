@@ -197,7 +197,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             raise_on_empty=False,
             include_details=False,
             include_subjectsource_details=False,
-            filter="none",
+            filter="clean",
             **(params.get("subject_obs") or {}),
         )
         .call()
