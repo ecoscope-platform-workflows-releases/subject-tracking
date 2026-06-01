@@ -290,8 +290,8 @@ workflow:
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.rename_speed_display_columns.return }}
-  - name: Combine patrol events gdf and data url
-    id: combine_events_gdf_and_url
+  - name: Combine speed gdf and data url
+    id: combine_speed_gdf_and_url
     skipif:
       conditions:
         - all_keyed_iterables_are_skips
@@ -324,7 +324,7 @@ workflow:
         - Subject Sex
     mapvalues:
       argnames: [geodataframe, data_url]
-      argvalues: ${{ workflow.combine_events_gdf_and_url.return }}
+      argvalues: ${{ workflow.combine_speed_gdf_and_url.return }}
   - name: Draw Ecomaps for each trajectory group
     id: traj_ecomap
     task: draw_map
@@ -426,8 +426,8 @@ workflow:
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.rename_nightday_display_columns.return }}
-  - name: Combine patrol events gdf and data url
-    id: combine_events_gdf_and_url
+  - name: Combine night dat gdf and data url
+    id: combine_night_day_gdf_and_url
     skipif:
       conditions:
         - all_keyed_iterables_are_skips
@@ -461,7 +461,7 @@ workflow:
         - Nighttime
     mapvalues:
       argnames: [geodataframe, data_url]
-      argvalues: ${{ workflow.combine_events_gdf_and_url.return }}
+      argvalues: ${{ workflow.combine_night_day_gdf_and_url.return }}
   - name: Draw Ecomaps for each trajectory group
     id: traj_nightday_ecomap
     task: draw_map
@@ -753,8 +753,8 @@ workflow:
         mapvalues:
           argnames: df
           argvalues: ${{ workflow.td_colormap.return }}
-      - name: Combine patrol events gdf and data url
-        id: combine_events_gdf_and_url
+      - name: Combine td gdf and data url
+        id: combine_td_gdf_and_url
         skipif:
           conditions:
             - all_keyed_iterables_are_skips
@@ -786,7 +786,7 @@ workflow:
             - percentile
         mapvalues:
           argnames: [geodataframe, data_url]
-          argvalues: ${{ workflow.combine_events_gdf_and_url.return }}
+          argvalues: ${{ workflow.combine_td_gdf_and_url.return }}
       - name: Draw Ecomap from Time Density
         id: td_ecomap
         task: draw_map
