@@ -1,8 +1,8 @@
 id: subject_tracking
 requirements:
-  - name: ecoscope-platform
-    version: 2.13.0
-    channel: https://repo.prefix.dev/ecoscope-workflows/
+  - name: ecoscope
+    git: https://github.com/wildlife-dynamics/ecoscope
+    branch: am/pydeck-geoarrow-layers
   # ecoscope-platform already declares this exact pydeck dependency. it is
   # re-stated here as a workaround for a known issue. for further detail, see:
   # https://github.com/wildlife-dynamics/wt/issues/167#issuecomment-4451993697
@@ -280,6 +280,26 @@ workflow:
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.colormap_traj_speed.return }}
+  - name: Persist speed traj to parquet
+    id: persist_speed_parquet
+    task: persist_arrow
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}          
+      filename: null
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.rename_speed_display_columns.return }}
+  - name: Combine patrol events gdf and data url
+    id: combine_events_gdf_and_url
+    skipif:
+      conditions:
+        - all_keyed_iterables_are_skips
+      unpack_depth: 1
+    task: groupbykey
+    partial:
+      iterables:
+        - ${{ workflow.rename_speed_display_columns.return }}
+        - ${{ workflow.persist_speed_parquet.return }}
   - name: Create map layer for each trajectory group
     id: traj_map_layers
     task: create_polyline_layer
@@ -302,11 +322,11 @@ workflow:
         - Subject Name
         - Subject Sex
     mapvalues:
-      argnames: geodataframe
-      argvalues: ${{ workflow.rename_speed_display_columns.return }}
+      argnames: [geodataframe, data_url]
+      argvalues: ${{ workflow.combine_events_gdf_and_url.return }}
   - name: Draw Ecomaps for each trajectory group
     id: traj_ecomap
-    task: draw_ecomap
+    task: draw_map
     partial:
       tile_layers: ${{ workflow.base_map_defs.return }}
       north_arrow_style:
@@ -316,7 +336,9 @@ workflow:
         format_title: false
         placement: bottom-right
       static: false
+      output_type: json
       title: null
+      view_state: null
       max_zoom: 20
       widget_id: ${{ workflow.set_traj_map_title.return }}
     mapvalues:
@@ -333,7 +355,7 @@ workflow:
       argvalues: ${{ workflow.traj_ecomap.return }}
   - name: Create Map Widgets for Trajectories
     id: traj_map_widgets_single_views
-    task: create_map_widget_single_view
+    task: create_map_v2_widget_single_view
     skipif:
       conditions:
         - never
@@ -343,7 +365,7 @@ workflow:
       argnames:
         - view
         - data
-      argvalues: ${{ workflow.ecomap_html_urls.return }}
+      argvalues: ${{ workflow.traj_ecomap.return }}
   - name: Merge EcoMap Widget Views
     id: traj_grouped_map_widget
     task: merge_widget_views
@@ -394,6 +416,26 @@ workflow:
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.colormap_traj_night.return }}
+  - name: Persist night day traj to parquet
+    id: persist_night_day_parquet
+    task: persist_arrow
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}          
+      filename: null
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.rename_nightday_display_columns.return }}
+  - name: Combine patrol events gdf and data url
+    id: combine_events_gdf_and_url
+    skipif:
+      conditions:
+        - all_keyed_iterables_are_skips
+      unpack_depth: 1
+    task: groupbykey
+    partial:
+      iterables:
+        - ${{ workflow.rename_nightday_display_columns.return }}
+        - ${{ workflow.persist_night_day_parquet.return }}
   - name: Create map layer for each trajectory group
     id: traj_map_night_layers
     task: create_polyline_layer
@@ -417,11 +459,11 @@ workflow:
         - Subject Sex
         - Nighttime
     mapvalues:
-      argnames: geodataframe
-      argvalues: ${{ workflow.rename_nightday_display_columns.return }}
+      argnames: [geodataframe, data_url]
+      argvalues: ${{ workflow.combine_events_gdf_and_url.return }}
   - name: Draw Ecomaps for each trajectory group
     id: traj_nightday_ecomap
-    task: draw_ecomap
+    task: draw_map
     partial:
       tile_layers: ${{ workflow.base_map_defs.return }}
       north_arrow_style:
@@ -431,7 +473,9 @@ workflow:
         format_title: false
         placement: bottom-right
       static: false
+      output_type: json
       title: null
+      view_state: null
       max_zoom: 20
       widget_id: ${{ workflow.set_night_day_map_title.return }}
     mapvalues:
@@ -448,12 +492,12 @@ workflow:
       argvalues: ${{ workflow.traj_nightday_ecomap.return }}
   - name: Create Map Widgets for Trajectories
     id: traj_map_nightday_widgets_sv
-    task: create_map_widget_single_view
+    task: create_map_v2_widget_single_view
     skipif:
       conditions:
         - never
     partial:
-      title: ${{ workflow.set_night_day_map_title.return }}
+      title: ${{ workflow.traj_nightday_ecomap.return }}
     map:
       argnames:
         - view
@@ -699,6 +743,26 @@ workflow:
         mapvalues:
           argnames: df
           argvalues: ${{ workflow.percentile_col_to_string.return }}
+      - name: Persist td to parquet
+        id: persist_td_parquet
+        task: persist_arrow
+        partial:
+          root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}          
+          filename: null
+        mapvalues:
+          argnames: df
+          argvalues: ${{ workflow.td_colormap.return }}
+      - name: Combine patrol events gdf and data url
+        id: combine_events_gdf_and_url
+        skipif:
+          conditions:
+            - all_keyed_iterables_are_skips
+          unpack_depth: 1
+        task: groupbykey
+        partial:
+          iterables:
+            - ${{ workflow.td_colormap.return }}
+            - ${{ workflow.persist_td_parquet.return }}
       - name: Create map layer from Time Density
         id: td_map_layer
         task: create_polygon_layer
@@ -720,11 +784,11 @@ workflow:
           tooltip_columns:
             - percentile
         mapvalues:
-          argnames: geodataframe
-          argvalues: ${{ workflow.td_colormap.return }}
+          argnames: [geodataframe, data_url]
+          argvalues: ${{ workflow.combine_events_gdf_and_url.return }}
       - name: Draw Ecomap from Time Density
         id: td_ecomap
-        task: draw_ecomap
+        task: draw_map
         partial:
           tile_layers: ${{ workflow.base_map_defs.return }}
           north_arrow_style:
@@ -734,7 +798,9 @@ workflow:
             format_title: false
             placement: bottom-right
           static: false
+          output_type: json
           title: null
+          view_state: null
           max_zoom: 20
           widget_id: ${{ workflow.set_td_map_title.return }}
         mapvalues:
@@ -751,7 +817,7 @@ workflow:
           argvalues: ${{ workflow.td_ecomap.return }}
       - name: Create Time Density Map Widget
         id: td_map_widget
-        task: create_map_widget_single_view
+        task: create_map_v2_widget_single_view
         skipif:
           conditions:
             - never
@@ -761,7 +827,7 @@ workflow:
           argnames:
             - view
             - data
-          argvalues: ${{ workflow.td_ecomap_html_url.return }}
+          argvalues: ${{ workflow.td_ecomap.return }}
       - name: Merge Time Density Map Widget Views
         id: td_grouped_map_widget
         task: merge_widget_views
