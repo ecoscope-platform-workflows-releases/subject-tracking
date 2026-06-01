@@ -288,7 +288,7 @@ workflow:
       root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}          
       filename: null
     mapvalues:
-      argnames: df
+      argnames: gdf
       argvalues: ${{ workflow.rename_speed_display_columns.return }}
   - name: Combine speed gdf and data url
     id: combine_speed_gdf_and_url
@@ -424,7 +424,7 @@ workflow:
       root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}          
       filename: null
     mapvalues:
-      argnames: df
+      argnames: gdf
       argvalues: ${{ workflow.rename_nightday_display_columns.return }}
   - name: Combine night dat gdf and data url
     id: combine_night_day_gdf_and_url
@@ -751,7 +751,7 @@ workflow:
           root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}          
           filename: null
         mapvalues:
-          argnames: df
+          argnames: gdf
           argvalues: ${{ workflow.td_colormap.return }}
       - name: Combine td gdf and data url
         id: combine_td_gdf_and_url
