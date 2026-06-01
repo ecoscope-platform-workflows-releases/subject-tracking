@@ -283,7 +283,7 @@ workflow:
       argvalues: ${{ workflow.colormap_traj_speed.return }}
   - name: Persist speed traj to parquet
     id: persist_speed_parquet
-    task: persist_arrow
+    task: persist_geoarrow_for_pydeck
     partial:
       root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}          
       filename: null
@@ -419,7 +419,7 @@ workflow:
       argvalues: ${{ workflow.colormap_traj_night.return }}
   - name: Persist night day traj to parquet
     id: persist_night_day_parquet
-    task: persist_arrow
+    task: persist_geoarrow_for_pydeck
     partial:
       root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}          
       filename: null
@@ -746,7 +746,7 @@ workflow:
           argvalues: ${{ workflow.percentile_col_to_string.return }}
       - name: Persist td to parquet
         id: persist_td_parquet
-        task: persist_arrow
+        task: persist_geoarrow_for_pydeck
         partial:
           root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}          
           filename: null
