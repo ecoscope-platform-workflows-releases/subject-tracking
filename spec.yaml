@@ -3,6 +3,7 @@ requirements:
   - name: ecoscope
     git: https://github.com/wildlife-dynamics/ecoscope
     branch: am/pydeck-geoarrow-layers
+    extras: [analysis,mapping,plotting,platform]
   # ecoscope-platform already declares this exact pydeck dependency. it is
   # re-stated here as a workaround for a known issue. for further detail, see:
   # https://github.com/wildlife-dynamics/wt/issues/167#issuecomment-4451993697
