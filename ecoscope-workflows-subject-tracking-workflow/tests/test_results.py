@@ -11,6 +11,16 @@ from syrupy import SnapshotAssertion
 from syrupy.matchers import path_type
 
 
+def _scrub_volatile(value):
+    if isinstance(value, dict):
+        return {k: _scrub_volatile(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_scrub_volatile(v) for v in value]
+    if isinstance(value, str) and value.startswith("/tmp/pytest-"):
+        return "<TMPFILE>"
+    return value
+
+
 def test_failure_response(
     response_json_failure: dict, snapshot_json: SnapshotAssertion
 ):
@@ -30,17 +40,7 @@ def test_failure_response(
 def test_dashboard_json(
     no_data: bool, response_json_success: dict, snapshot_json: SnapshotAssertion
 ):
-    if no_data:
-        kws = {}
-    else:
-        exclude_results_data = {
-            f"result.views.{key}.{i}.data": (str,)
-            for key in response_json_success["result"]["views"]
-            for i, view in enumerate(response_json_success["result"]["views"][key])
-            if isinstance(view.get("data"), str)
-        }
-        kws = {"matcher": path_type(exclude_results_data)}
-    assert response_json_success == snapshot_json(**kws)
+    assert _scrub_volatile(response_json_success) == snapshot_json
 
 
 @pytest.mark.asyncio
