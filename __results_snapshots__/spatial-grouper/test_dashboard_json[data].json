@@ -52,7 +52,7 @@
               {
                 "@@type": "TiledBitmapLayer",
                 "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
-                "id": "23537b7a-d02a-4e93-8de9-599277a15720",
+                "id": "dc7ca65c-69d0-40e8-ad68-5b391d3f9bbd",
                 "maxZoom": 20,
                 "minZoom": 0,
                 "opacity": 1.0,
@@ -62,7 +62,7 @@
               {
                 "@@type": "TiledBitmapLayer",
                 "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-                "id": "4dcf01c6-062f-4f61-8fcc-c98fb7d0e375",
+                "id": "88c828d9-a070-4087-bc16-c0f90861077c",
                 "maxZoom": 17,
                 "minZoom": 0,
                 "opacity": 0.5,
@@ -74,7 +74,7 @@
                 "autoHighlight": false,
                 "billboard": false,
                 "capRounded": true,
-                "data": "/tmp/pytest-of-runner/pytest-0/results0/app-sequential-mock-io/spatial-grouper-data/a3dac4270ad743c2b6dcae4f49f995fc/9064a7a.parquet",
+                "data": "<TMPFILE>",
                 "getColor": "speed_bins_colormap",
                 "getWidth": 3,
                 "id": "GeoArrowPathLayer-0",
@@ -99,7 +99,7 @@
             "widgets": [
               {
                 "@@type": "NorthArrowWidget",
-                "id": "9fd16779-dd7e-4b8d-b41e-f23c2014dcb8",
+                "id": "992f5e31-2f00-49d2-ae94-c962ba0d8d1d",
                 "placement": "top-left",
                 "style": {
                   "transform": "scale(0.8)"
@@ -107,17 +107,17 @@
               },
               {
                 "@@type": "ScaleWidget",
-                "id": "aedcf7e6-44a4-4b23-976b-521abec05f53",
+                "id": "399bd8cd-2609-4664-9c13-3d93d1e2d93e",
                 "placement": "bottom-left"
               },
               {
                 "@@type": "SaveImageWidget",
-                "id": "9620c506-a54e-403c-8f3e-69f04d02bcb4",
+                "id": "690e697a-98f1-471a-bcec-4623db1646d9",
                 "placement": "top-right"
               },
               {
                 "@@type": "LegendWidget",
-                "id": "9aaff001-277e-459e-af44-6aa854c66651",
+                "id": "394b3617-fa82-419a-acea-88778afdbe2a",
                 "legendValues": [
                   {
                     "title": "Speed",
@@ -173,42 +173,42 @@
           "widget_type": "map_v2"
         },
         {
-          "data": "str",
+          "data": "1.8 km/h",
           "id": 1,
           "is_filtered": true,
           "title": "Mean Speed",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "10.0 km/h",
           "id": 2,
           "is_filtered": true,
           "title": "Max Speed",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "822",
           "id": 3,
           "is_filtered": true,
           "title": "Number of Locations",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "0.8",
           "id": 4,
           "is_filtered": true,
           "title": "Night/Day Ratio",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "238.9 km",
           "id": 5,
           "is_filtered": true,
           "title": "Total Distance",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "135.9 h",
           "id": 6,
           "is_filtered": true,
           "title": "Total Time",
@@ -227,7 +227,7 @@
               {
                 "@@type": "TiledBitmapLayer",
                 "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
-                "id": "e07aea3d-cd1a-424e-beeb-45fa71b9a14d",
+                "id": "8b639de6-d107-4ef7-beac-cde2ccaa3942",
                 "maxZoom": 20,
                 "minZoom": 0,
                 "opacity": 1.0,
@@ -237,7 +237,7 @@
               {
                 "@@type": "TiledBitmapLayer",
                 "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-                "id": "30855456-0411-4de9-80e8-5af41c3b3a8c",
+                "id": "a1938f79-5cc4-4582-8395-7b81ddf6060e",
                 "maxZoom": 17,
                 "minZoom": 0,
                 "opacity": 0.5,
@@ -249,7 +249,7 @@
                 "antialiasing": true,
                 "autoHighlight": false,
                 "billboard": false,
-                "data": "/tmp/pytest-of-runner/pytest-0/results0/app-sequential-mock-io/spatial-grouper-data/a3dac4270ad743c2b6dcae4f49f995fc/54de1fb.parquet",
+                "data": "<TMPFILE>",
                 "extruded": false,
                 "filled": true,
                 "getFillColor": "percentile_colormap",
@@ -279,7 +279,7 @@
             "widgets": [
               {
                 "@@type": "NorthArrowWidget",
-                "id": "b5307564-bf42-4a0e-bef5-d92151fb7242",
+                "id": "d45c3d70-913e-4d1e-abcf-c56ee49f087f",
                 "placement": "top-left",
                 "style": {
                   "transform": "scale(0.8)"
@@ -287,17 +287,17 @@
               },
               {
                 "@@type": "ScaleWidget",
-                "id": "61cd8c8e-04f3-44c5-8f4a-338b3109add9",
+                "id": "8d44001c-e124-4d0b-9651-e9988ce120eb",
                 "placement": "bottom-left"
               },
               {
                 "@@type": "SaveImageWidget",
-                "id": "dabbd809-c618-45b3-a98d-ec695c831a30",
+                "id": "ab7448a7-d1e8-495d-adc7-de7393718e71",
                 "placement": "top-right"
               },
               {
                 "@@type": "LegendWidget",
-                "id": "583c250d-eef4-4bae-8343-2e5537c87b06",
+                "id": "d6688836-818c-40d3-b414-5556501338d7",
                 "legendValues": [
                   {
                     "title": "Time Spent",
@@ -360,7 +360,7 @@
               {
                 "@@type": "TiledBitmapLayer",
                 "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
-                "id": "9ba0f31a-dec8-4f8c-8cac-2c7bea226181",
+                "id": "2210fb70-908f-4c49-8eab-aa80023a13c5",
                 "maxZoom": 20,
                 "minZoom": 0,
                 "opacity": 1.0,
@@ -370,7 +370,7 @@
               {
                 "@@type": "TiledBitmapLayer",
                 "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-                "id": "335475e6-0479-4e0d-9a98-34bcf45ab542",
+                "id": "ce63ac60-8940-4a2e-883c-94d098a98a5a",
                 "maxZoom": 17,
                 "minZoom": 0,
                 "opacity": 0.5,
@@ -382,7 +382,7 @@
                 "autoHighlight": false,
                 "billboard": false,
                 "capRounded": true,
-                "data": "/tmp/pytest-of-runner/pytest-0/results0/app-sequential-mock-io/spatial-grouper-data/a3dac4270ad743c2b6dcae4f49f995fc/89efc67.parquet",
+                "data": "<TMPFILE>",
                 "getColor": "is_night_colors",
                 "getWidth": 3,
                 "id": "GeoArrowPathLayer-0",
@@ -407,7 +407,7 @@
             "widgets": [
               {
                 "@@type": "NorthArrowWidget",
-                "id": "2be83b17-12eb-4df2-b43d-c2f653b302a1",
+                "id": "212a6bda-a7e4-412f-9049-3709d162c6d6",
                 "placement": "top-left",
                 "style": {
                   "transform": "scale(0.8)"
@@ -415,17 +415,17 @@
               },
               {
                 "@@type": "ScaleWidget",
-                "id": "0b9f5fc9-ba12-493e-8b6e-f925b762b543",
+                "id": "d1ab0201-a146-4396-88b5-476826872f9b",
                 "placement": "bottom-left"
               },
               {
                 "@@type": "SaveImageWidget",
-                "id": "0d2360ff-bdbe-4356-947d-f5f71ad9977a",
+                "id": "3ee1a75e-6986-494a-9609-84590668307e",
                 "placement": "top-right"
               },
               {
                 "@@type": "LegendWidget",
-                "id": "a89937cf-c173-43e2-93ac-582b3227a307",
+                "id": "b148bf2c-ba4f-4b8e-81e4-eb52f91c18c5",
                 "legendValues": [
                   {
                     "title": "Day / Night Movement",
@@ -462,7 +462,7 @@
           "widget_type": "map_v2"
         },
         {
-          "data": "str",
+          "data": "<TMPFILE>",
           "id": 9,
           "is_filtered": true,
           "title": "Net Square Displacement",
@@ -483,7 +483,7 @@
               {
                 "@@type": "TiledBitmapLayer",
                 "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
-                "id": "a760e977-de76-4ee2-9a18-2b1c81743cc9",
+                "id": "70fd83d5-cb77-46b1-863d-37f2a6c502d5",
                 "maxZoom": 20,
                 "minZoom": 0,
                 "opacity": 1.0,
@@ -493,7 +493,7 @@
               {
                 "@@type": "TiledBitmapLayer",
                 "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-                "id": "aec3d14c-0132-4158-8b94-ba0cc8519304",
+                "id": "2865b161-d890-46a6-947f-9bb94bb90053",
                 "maxZoom": 17,
                 "minZoom": 0,
                 "opacity": 0.5,
@@ -505,7 +505,7 @@
                 "autoHighlight": false,
                 "billboard": false,
                 "capRounded": true,
-                "data": "/tmp/pytest-of-runner/pytest-0/results0/app-sequential-mock-io/spatial-grouper-data/a3dac4270ad743c2b6dcae4f49f995fc/775c22b.parquet",
+                "data": "<TMPFILE>",
                 "getColor": "speed_bins_colormap",
                 "getWidth": 3,
                 "id": "GeoArrowPathLayer-0",
@@ -530,7 +530,7 @@
             "widgets": [
               {
                 "@@type": "NorthArrowWidget",
-                "id": "8bbb604d-8f33-42b5-937b-9ffee4b07154",
+                "id": "1a40e4dc-cc3b-4c2f-92ac-b0ecca980244",
                 "placement": "top-left",
                 "style": {
                   "transform": "scale(0.8)"
@@ -538,17 +538,17 @@
               },
               {
                 "@@type": "ScaleWidget",
-                "id": "f8c0e002-1822-4f7b-8bcc-027cb1067c6a",
+                "id": "16410711-7b0d-4c7a-a2aa-ae1960d4e2f0",
                 "placement": "bottom-left"
               },
               {
                 "@@type": "SaveImageWidget",
-                "id": "5572c542-c4d0-4a50-8a1a-f6bc5dc7a64b",
+                "id": "6f808b6a-89dd-4859-937f-869a53b2de23",
                 "placement": "top-right"
               },
               {
                 "@@type": "LegendWidget",
-                "id": "5e73058d-c89c-4205-9494-b484cd2993f4",
+                "id": "2c75862c-3865-4b34-b475-224a1c2c1ae7",
                 "legendValues": [
                   {
                     "title": "Speed",
@@ -604,42 +604,42 @@
           "widget_type": "map_v2"
         },
         {
-          "data": "str",
+          "data": "1.9 km/h",
           "id": 1,
           "is_filtered": true,
           "title": "Mean Speed",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "10.0 km/h",
           "id": 2,
           "is_filtered": true,
           "title": "Max Speed",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "6370",
           "id": 3,
           "is_filtered": true,
           "title": "Number of Locations",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "1.0",
           "id": 4,
           "is_filtered": true,
           "title": "Night/Day Ratio",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "2001.3 km",
           "id": 5,
           "is_filtered": true,
           "title": "Total Distance",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "1060.7 h",
           "id": 6,
           "is_filtered": true,
           "title": "Total Time",
@@ -658,7 +658,7 @@
               {
                 "@@type": "TiledBitmapLayer",
                 "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
-                "id": "b58165f6-af38-4adc-847f-4c257eff35dc",
+                "id": "7166dfc5-466d-4a73-b3be-0c7e89860fa1",
                 "maxZoom": 20,
                 "minZoom": 0,
                 "opacity": 1.0,
@@ -668,7 +668,7 @@
               {
                 "@@type": "TiledBitmapLayer",
                 "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-                "id": "1737282b-0028-4631-b28a-00e505e38807",
+                "id": "5c51354a-33fe-4d04-9901-8c16fb3e4b01",
                 "maxZoom": 17,
                 "minZoom": 0,
                 "opacity": 0.5,
@@ -680,7 +680,7 @@
                 "antialiasing": true,
                 "autoHighlight": false,
                 "billboard": false,
-                "data": "/tmp/pytest-of-runner/pytest-0/results0/app-sequential-mock-io/spatial-grouper-data/a3dac4270ad743c2b6dcae4f49f995fc/e1009be.parquet",
+                "data": "<TMPFILE>",
                 "extruded": false,
                 "filled": true,
                 "getFillColor": "percentile_colormap",
@@ -710,7 +710,7 @@
             "widgets": [
               {
                 "@@type": "NorthArrowWidget",
-                "id": "d7dce28f-b34f-438d-b423-a3e858d2e99d",
+                "id": "609e36b7-b23e-4047-bada-2b2d8efa1d63",
                 "placement": "top-left",
                 "style": {
                   "transform": "scale(0.8)"
@@ -718,17 +718,17 @@
               },
               {
                 "@@type": "ScaleWidget",
-                "id": "f2481da6-0f5c-4b5e-9504-6e5713ba35f4",
+                "id": "26846578-b284-4649-87ec-6b8d95e371ed",
                 "placement": "bottom-left"
               },
               {
                 "@@type": "SaveImageWidget",
-                "id": "eb50f46f-0a33-4163-8fc3-ea35013d211b",
+                "id": "12ce928a-3ae0-4a20-8c79-faed981d6cfd",
                 "placement": "top-right"
               },
               {
                 "@@type": "LegendWidget",
-                "id": "12296aa3-ef1e-428b-a0a5-1850a1d72c76",
+                "id": "ef330419-c0cc-446a-b729-ce8c59f482c0",
                 "legendValues": [
                   {
                     "title": "Time Spent",
@@ -791,7 +791,7 @@
               {
                 "@@type": "TiledBitmapLayer",
                 "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
-                "id": "35395d5c-4050-429f-afbf-5865f1344cb6",
+                "id": "702cfb58-dc9a-4c2f-8ee2-4c31da8c0f2e",
                 "maxZoom": 20,
                 "minZoom": 0,
                 "opacity": 1.0,
@@ -801,7 +801,7 @@
               {
                 "@@type": "TiledBitmapLayer",
                 "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-                "id": "4ceb6891-7a01-494c-bf70-7b907d84a648",
+                "id": "cf916414-8be8-43a9-83e3-30e1b40e1e48",
                 "maxZoom": 17,
                 "minZoom": 0,
                 "opacity": 0.5,
@@ -813,7 +813,7 @@
                 "autoHighlight": false,
                 "billboard": false,
                 "capRounded": true,
-                "data": "/tmp/pytest-of-runner/pytest-0/results0/app-sequential-mock-io/spatial-grouper-data/a3dac4270ad743c2b6dcae4f49f995fc/26551d6.parquet",
+                "data": "<TMPFILE>",
                 "getColor": "is_night_colors",
                 "getWidth": 3,
                 "id": "GeoArrowPathLayer-0",
@@ -838,7 +838,7 @@
             "widgets": [
               {
                 "@@type": "NorthArrowWidget",
-                "id": "ea793218-988c-4018-ad83-bcc95883820f",
+                "id": "c26ffdda-376b-4d9c-84a7-6a0a530e550e",
                 "placement": "top-left",
                 "style": {
                   "transform": "scale(0.8)"
@@ -846,17 +846,17 @@
               },
               {
                 "@@type": "ScaleWidget",
-                "id": "cb9686f3-0bd5-4584-9117-d1f1d6e9825b",
+                "id": "e4aaae31-2a89-45a4-a426-1f4b3559b04b",
                 "placement": "bottom-left"
               },
               {
                 "@@type": "SaveImageWidget",
-                "id": "3d3e2644-7ccd-4f47-a5ba-0203de665e8d",
+                "id": "c25cd4d8-803b-4545-8a3f-4d9488f329b4",
                 "placement": "top-right"
               },
               {
                 "@@type": "LegendWidget",
-                "id": "818c3a8d-ecf5-48f6-98d3-c032b3ec92cf",
+                "id": "7c97406d-3993-4dcb-87d0-4eeca8d665c8",
                 "legendValues": [
                   {
                     "title": "Day / Night Movement",
@@ -893,7 +893,7 @@
           "widget_type": "map_v2"
         },
         {
-          "data": "str",
+          "data": "<TMPFILE>",
           "id": 9,
           "is_filtered": true,
           "title": "Net Square Displacement",
