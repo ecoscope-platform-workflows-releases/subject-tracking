@@ -36,7 +36,133 @@
     "views": {
       "{\"TemporalGrouper_%B\": \"January\"}": [
         {
-          "data": "dict",
+          "data": {
+            "initialViewState": {
+              "bearing": 0,
+              "latitude": -2.5000234255941325,
+              "longitude": 38.58301098661846,
+              "pitch": 0,
+              "zoom": 7.0
+            },
+            "layers": [
+              {
+                "@@type": "TiledBitmapLayer",
+                "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+                "id": "d509a04a-9241-49b2-8d1a-0e2b3b83b2db",
+                "maxZoom": 20,
+                "minZoom": 0,
+                "opacity": 1.0,
+                "tileSize": 256,
+                "widgetId": "Subject Group Trajectory Map"
+              },
+              {
+                "@@type": "TiledBitmapLayer",
+                "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+                "id": "1b38695a-ae7b-4b24-9ecc-871258ba5f3e",
+                "maxZoom": 20,
+                "minZoom": 0,
+                "opacity": 0.5,
+                "tileSize": 256,
+                "widgetId": "Subject Group Trajectory Map"
+              },
+              {
+                "@@type": "GeoArrowPathLayer",
+                "autoHighlight": false,
+                "billboard": false,
+                "capRounded": true,
+                "data": "/tmp/pytest-of-runner/pytest-0/results0/app-sequential-mock-io/month-grouper-data/0e41b13162df4a798757bdda6fd96664/6a1dc57.parquet",
+                "getColor": "speed_bins_colormap",
+                "getWidth": 3,
+                "id": "GeoArrowPathLayer-0",
+                "jointRounded": false,
+                "opacity": 1,
+                "pickable": true,
+                "widthMinPixels": 0,
+                "widthScale": 1,
+                "widthUnits": "pixels"
+              }
+            ],
+            "mapProvider": "carto",
+            "mapStyle": "https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json",
+            "parameters": {
+              "depthTest": false
+            },
+            "views": {
+              "@@type": "MapView",
+              "controller": true,
+              "repeat": true
+            },
+            "widgets": [
+              {
+                "@@type": "NorthArrowWidget",
+                "id": "0d436c33-a135-4b38-ab55-7e560dce0817",
+                "placement": "top-left",
+                "style": {
+                  "transform": "scale(0.8)"
+                }
+              },
+              {
+                "@@type": "ScaleWidget",
+                "id": "75bf45df-ce04-4154-a240-ab6fd54d96e6",
+                "placement": "bottom-left"
+              },
+              {
+                "@@type": "SaveImageWidget",
+                "id": "0ec9fa3d-dff6-4000-8f78-ecdfe06484b0",
+                "placement": "top-right"
+              },
+              {
+                "@@type": "LegendWidget",
+                "id": "2b56041e-ccea-47e2-9cae-443504b73d6c",
+                "legendValues": [
+                  {
+                    "title": "Speed",
+                    "values": [
+                      {
+                        "color": "rgba(26, 152, 80, 1.0)",
+                        "label": "0.0 - 1.7 km/h"
+                      },
+                      {
+                        "color": "rgba(145, 207, 96, 1.0)",
+                        "label": "1.7 - 3.3 km/h"
+                      },
+                      {
+                        "color": "rgba(217, 239, 139, 1.0)",
+                        "label": "3.3 - 5.0 km/h"
+                      },
+                      {
+                        "color": "rgba(254, 224, 139, 1.0)",
+                        "label": "5.0 - 6.7 km/h"
+                      },
+                      {
+                        "color": "rgba(252, 141, 89, 1.0)",
+                        "label": "6.7 - 8.3 km/h"
+                      },
+                      {
+                        "color": "rgba(215, 48, 39, 1.0)",
+                        "label": "8.3 - 10.0 km/h"
+                      }
+                    ]
+                  }
+                ],
+                "placement": "bottom-right"
+              },
+              {
+                "@@type": "TooltipWidget",
+                "id": "TooltipWidget",
+                "layerColumns": {
+                  "GeoArrowPathLayer-0": [
+                    "Start",
+                    "Duration (s)",
+                    "Speed (kph)",
+                    "Nighttime",
+                    "Subject Name",
+                    "Subject Sex"
+                  ]
+                }
+              }
+            ]
+          },
           "id": 0,
           "is_filtered": true,
           "title": "Subject Group Trajectory Map",
@@ -85,14 +211,247 @@
           "widget_type": "stat"
         },
         {
-          "data": "dict",
+          "data": {
+            "initialViewState": {
+              "bearing": 0,
+              "latitude": -2.501610217544091,
+              "longitude": 38.58220135141669,
+              "pitch": 0,
+              "zoom": 7.0
+            },
+            "layers": [
+              {
+                "@@type": "TiledBitmapLayer",
+                "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+                "id": "045f2442-6cb7-4480-8d37-757841051cb2",
+                "maxZoom": 20,
+                "minZoom": 0,
+                "opacity": 1.0,
+                "tileSize": 256,
+                "widgetId": "Home Range Map"
+              },
+              {
+                "@@type": "TiledBitmapLayer",
+                "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+                "id": "c55cfee3-5598-4894-8edd-f754a7035b3f",
+                "maxZoom": 20,
+                "minZoom": 0,
+                "opacity": 0.5,
+                "tileSize": 256,
+                "widgetId": "Home Range Map"
+              },
+              {
+                "@@type": "GeoArrowPolygonLayer",
+                "antialiasing": true,
+                "autoHighlight": false,
+                "billboard": false,
+                "data": "/tmp/pytest-of-runner/pytest-0/results0/app-sequential-mock-io/month-grouper-data/0e41b13162df4a798757bdda6fd96664/7aa40a0.parquet",
+                "extruded": false,
+                "filled": true,
+                "getFillColor": "percentile_colormap",
+                "getLineWidth": 0.0,
+                "id": "GeoArrowPolygonLayer-0",
+                "lineJointRounded": false,
+                "lineMiterLimit": 4,
+                "lineWidthMinPixels": 0,
+                "lineWidthScale": 1,
+                "lineWidthUnits": "pixels",
+                "opacity": 0.7,
+                "pickable": true,
+                "stroked": false,
+                "wireframe": true
+              }
+            ],
+            "mapProvider": "carto",
+            "mapStyle": "https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json",
+            "parameters": {
+              "depthTest": false
+            },
+            "views": {
+              "@@type": "MapView",
+              "controller": true,
+              "repeat": true
+            },
+            "widgets": [
+              {
+                "@@type": "NorthArrowWidget",
+                "id": "5a348cab-1da9-4138-a30b-26244cd5c882",
+                "placement": "top-left",
+                "style": {
+                  "transform": "scale(0.8)"
+                }
+              },
+              {
+                "@@type": "ScaleWidget",
+                "id": "45c79521-41a2-4aa9-83e3-83f131445785",
+                "placement": "bottom-left"
+              },
+              {
+                "@@type": "SaveImageWidget",
+                "id": "5120d2c0-0689-411d-88cd-9d33f48af68b",
+                "placement": "top-right"
+              },
+              {
+                "@@type": "LegendWidget",
+                "id": "9b7da4f6-dede-4bb2-bc84-519ba8bbdaf0",
+                "legendValues": [
+                  {
+                    "title": "Time Spent",
+                    "values": [
+                      {
+                        "color": "rgba(165, 0, 38, 1.0)",
+                        "label": "50.0 %"
+                      },
+                      {
+                        "color": "rgba(244, 109, 67, 1.0)",
+                        "label": "60.0 %"
+                      },
+                      {
+                        "color": "rgba(254, 224, 139, 1.0)",
+                        "label": "70.0 %"
+                      },
+                      {
+                        "color": "rgba(217, 239, 139, 1.0)",
+                        "label": "80.0 %"
+                      },
+                      {
+                        "color": "rgba(102, 189, 99, 1.0)",
+                        "label": "90.0 %"
+                      },
+                      {
+                        "color": "rgba(0, 104, 55, 1.0)",
+                        "label": "99.999 %"
+                      }
+                    ]
+                  }
+                ],
+                "placement": "bottom-right"
+              },
+              {
+                "@@type": "TooltipWidget",
+                "id": "TooltipWidget",
+                "layerColumns": {
+                  "GeoArrowPolygonLayer-0": [
+                    "percentile"
+                  ]
+                }
+              }
+            ]
+          },
           "id": 7,
           "is_filtered": true,
           "title": "Home Range Map",
           "widget_type": "map_v2"
         },
         {
-          "data": "dict",
+          "data": {
+            "initialViewState": {
+              "bearing": 0,
+              "latitude": -2.5000234255941325,
+              "longitude": 38.58301098661846,
+              "pitch": 0,
+              "zoom": 7.0
+            },
+            "layers": [
+              {
+                "@@type": "TiledBitmapLayer",
+                "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+                "id": "272d7eb1-7ac6-419d-9550-151e722c0788",
+                "maxZoom": 20,
+                "minZoom": 0,
+                "opacity": 1.0,
+                "tileSize": 256,
+                "widgetId": "Subject Group Night/Day Map"
+              },
+              {
+                "@@type": "TiledBitmapLayer",
+                "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+                "id": "1cf4b962-d33d-4448-a945-021c8d9c48cb",
+                "maxZoom": 20,
+                "minZoom": 0,
+                "opacity": 0.5,
+                "tileSize": 256,
+                "widgetId": "Subject Group Night/Day Map"
+              },
+              {
+                "@@type": "GeoArrowPathLayer",
+                "autoHighlight": false,
+                "billboard": false,
+                "capRounded": true,
+                "data": "/tmp/pytest-of-runner/pytest-0/results0/app-sequential-mock-io/month-grouper-data/0e41b13162df4a798757bdda6fd96664/56ea11e.parquet",
+                "getColor": "is_night_colors",
+                "getWidth": 3,
+                "id": "GeoArrowPathLayer-0",
+                "jointRounded": false,
+                "opacity": 1,
+                "pickable": true,
+                "widthMinPixels": 0,
+                "widthScale": 1,
+                "widthUnits": "pixels"
+              }
+            ],
+            "mapProvider": "carto",
+            "mapStyle": "https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json",
+            "parameters": {
+              "depthTest": false
+            },
+            "views": {
+              "@@type": "MapView",
+              "controller": true,
+              "repeat": true
+            },
+            "widgets": [
+              {
+                "@@type": "NorthArrowWidget",
+                "id": "723ad02b-7b76-4dff-8078-97ffec531c8c",
+                "placement": "top-left",
+                "style": {
+                  "transform": "scale(0.8)"
+                }
+              },
+              {
+                "@@type": "ScaleWidget",
+                "id": "9e96bdd4-65f8-4764-99fb-a10586ca0a76",
+                "placement": "bottom-left"
+              },
+              {
+                "@@type": "SaveImageWidget",
+                "id": "ccd7b001-b1ac-4cc2-bb8d-5fb2ca268fab",
+                "placement": "top-right"
+              },
+              {
+                "@@type": "LegendWidget",
+                "id": "d518a9bb-daf4-48da-8658-87d76c520938",
+                "legendValues": [
+                  {
+                    "title": "Day / Night Movement",
+                    "values": [
+                      {
+                        "color": "#292965",
+                        "label": "Night"
+                      },
+                      {
+                        "color": "#e7a553",
+                        "label": "Day"
+                      }
+                    ]
+                  }
+                ],
+                "placement": "bottom-right"
+              },
+              {
+                "@@type": "TooltipWidget",
+                "id": "TooltipWidget",
+                "layerColumns": {
+                  "GeoArrowPathLayer-0": [
+                    "Subject Name",
+                    "Subject Sex",
+                    "Nighttime"
+                  ]
+                }
+              }
+            ]
+          },
           "id": 8,
           "is_filtered": true,
           "title": "Subject Group Night/Day Map",
