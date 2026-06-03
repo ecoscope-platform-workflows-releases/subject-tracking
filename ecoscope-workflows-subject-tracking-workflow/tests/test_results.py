@@ -34,7 +34,7 @@ def test_dashboard_json(
         kws = {}
     else:
         exclude_results_data = {
-            f"result.views.{key}.{i}.data": (str,)
+            f"result.views.{key}.{i}.data": (str, dict)
             for key in response_json_success["result"]["views"]
             for i, _ in enumerate(response_json_success["result"]["views"][key])
         }
