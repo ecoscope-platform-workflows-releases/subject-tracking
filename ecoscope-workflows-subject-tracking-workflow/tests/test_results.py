@@ -34,9 +34,10 @@ def test_dashboard_json(
         kws = {}
     else:
         exclude_results_data = {
-            f"result.views.{key}.{i}.data": (str, dict)
+            f"result.views.{key}.{i}.data": (str,)
             for key in response_json_success["result"]["views"]
-            for i, _ in enumerate(response_json_success["result"]["views"][key])
+            for i, view in enumerate(response_json_success["result"]["views"][key])
+            if isinstance(view.get("data"), str)
         }
         kws = {"matcher": path_type(exclude_results_data)}
     assert response_json_success == snapshot_json(**kws)
