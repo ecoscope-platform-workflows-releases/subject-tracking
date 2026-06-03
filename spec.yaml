@@ -775,7 +775,7 @@ workflow:
       retain_columns: []
       rename_columns:
         segment_start: Time
-        nsd: NSD (m²)
+        nsd: NSD (km²)
       raise_if_not_found: true
     mapvalues:
       argnames: df
