@@ -1645,7 +1645,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             unpack_depth=1,
         )
         .partial(
-            iterables=[td_colormap, persist_td_parquet],
+            iterables=[td_crs, persist_td_parquet],
             **(params.get("combine_td_gdf_and_url") or {}),
         )
         .call()
