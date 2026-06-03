@@ -52,7 +52,7 @@
               {
                 "@@type": "TiledBitmapLayer",
                 "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
-                "id": "<UUID>",
+                "id": "uuid",
                 "maxZoom": 20,
                 "minZoom": 0,
                 "opacity": 1.0,
@@ -62,7 +62,7 @@
               {
                 "@@type": "TiledBitmapLayer",
                 "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-                "id": "<UUID>",
+                "id": "uuid",
                 "maxZoom": 17,
                 "minZoom": 0,
                 "opacity": 0.5,
@@ -74,7 +74,7 @@
                 "autoHighlight": false,
                 "billboard": false,
                 "capRounded": true,
-                "data": "<TMPFILE>",
+                "data": "tmpfile",
                 "getColor": "speed_bins_colormap",
                 "getWidth": 3,
                 "id": "GeoArrowPathLayer-0",
@@ -99,7 +99,7 @@
             "widgets": [
               {
                 "@@type": "NorthArrowWidget",
-                "id": "<UUID>",
+                "id": "uuid",
                 "placement": "top-left",
                 "style": {
                   "transform": "scale(0.8)"
@@ -107,17 +107,17 @@
               },
               {
                 "@@type": "ScaleWidget",
-                "id": "<UUID>",
+                "id": "uuid",
                 "placement": "bottom-left"
               },
               {
                 "@@type": "SaveImageWidget",
-                "id": "<UUID>",
+                "id": "uuid",
                 "placement": "top-right"
               },
               {
                 "@@type": "LegendWidget",
-                "id": "<UUID>",
+                "id": "uuid",
                 "legendValues": [
                   {
                     "title": "Speed",
@@ -227,7 +227,7 @@
               {
                 "@@type": "TiledBitmapLayer",
                 "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
-                "id": "<UUID>",
+                "id": "uuid",
                 "maxZoom": 20,
                 "minZoom": 0,
                 "opacity": 1.0,
@@ -237,7 +237,7 @@
               {
                 "@@type": "TiledBitmapLayer",
                 "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-                "id": "<UUID>",
+                "id": "uuid",
                 "maxZoom": 17,
                 "minZoom": 0,
                 "opacity": 0.5,
@@ -249,7 +249,7 @@
                 "antialiasing": true,
                 "autoHighlight": false,
                 "billboard": false,
-                "data": "<TMPFILE>",
+                "data": "tmpfile",
                 "extruded": false,
                 "filled": true,
                 "getFillColor": "percentile_colormap",
@@ -279,7 +279,7 @@
             "widgets": [
               {
                 "@@type": "NorthArrowWidget",
-                "id": "<UUID>",
+                "id": "uuid",
                 "placement": "top-left",
                 "style": {
                   "transform": "scale(0.8)"
@@ -287,17 +287,17 @@
               },
               {
                 "@@type": "ScaleWidget",
-                "id": "<UUID>",
+                "id": "uuid",
                 "placement": "bottom-left"
               },
               {
                 "@@type": "SaveImageWidget",
-                "id": "<UUID>",
+                "id": "uuid",
                 "placement": "top-right"
               },
               {
                 "@@type": "LegendWidget",
-                "id": "<UUID>",
+                "id": "uuid",
                 "legendValues": [
                   {
                     "title": "Time Spent",
@@ -360,7 +360,7 @@
               {
                 "@@type": "TiledBitmapLayer",
                 "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
-                "id": "<UUID>",
+                "id": "uuid",
                 "maxZoom": 20,
                 "minZoom": 0,
                 "opacity": 1.0,
@@ -370,7 +370,7 @@
               {
                 "@@type": "TiledBitmapLayer",
                 "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-                "id": "<UUID>",
+                "id": "uuid",
                 "maxZoom": 17,
                 "minZoom": 0,
                 "opacity": 0.5,
@@ -382,7 +382,7 @@
                 "autoHighlight": false,
                 "billboard": false,
                 "capRounded": true,
-                "data": "<TMPFILE>",
+                "data": "tmpfile",
                 "getColor": "is_night_colors",
                 "getWidth": 3,
                 "id": "GeoArrowPathLayer-0",
@@ -407,7 +407,7 @@
             "widgets": [
               {
                 "@@type": "NorthArrowWidget",
-                "id": "<UUID>",
+                "id": "uuid",
                 "placement": "top-left",
                 "style": {
                   "transform": "scale(0.8)"
@@ -415,17 +415,17 @@
               },
               {
                 "@@type": "ScaleWidget",
-                "id": "<UUID>",
+                "id": "uuid",
                 "placement": "bottom-left"
               },
               {
                 "@@type": "SaveImageWidget",
-                "id": "<UUID>",
+                "id": "uuid",
                 "placement": "top-right"
               },
               {
                 "@@type": "LegendWidget",
-                "id": "<UUID>",
+                "id": "uuid",
                 "legendValues": [
                   {
                     "title": "Day / Night Movement",
@@ -483,7 +483,7 @@
               {
                 "@@type": "TiledBitmapLayer",
                 "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
-                "id": "<UUID>",
+                "id": "uuid",
                 "maxZoom": 20,
                 "minZoom": 0,
                 "opacity": 1.0,
@@ -493,7 +493,7 @@
               {
                 "@@type": "TiledBitmapLayer",
                 "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-                "id": "<UUID>",
+                "id": "uuid",
                 "maxZoom": 17,
                 "minZoom": 0,
                 "opacity": 0.5,
@@ -505,7 +505,7 @@
                 "autoHighlight": false,
                 "billboard": false,
                 "capRounded": true,
-                "data": "<TMPFILE>",
+                "data": "tmpfile",
                 "getColor": "speed_bins_colormap",
                 "getWidth": 3,
                 "id": "GeoArrowPathLayer-0",
@@ -530,7 +530,7 @@
             "widgets": [
               {
                 "@@type": "NorthArrowWidget",
-                "id": "<UUID>",
+                "id": "uuid",
                 "placement": "top-left",
                 "style": {
                   "transform": "scale(0.8)"
@@ -538,17 +538,17 @@
               },
               {
                 "@@type": "ScaleWidget",
-                "id": "<UUID>",
+                "id": "uuid",
                 "placement": "bottom-left"
               },
               {
                 "@@type": "SaveImageWidget",
-                "id": "<UUID>",
+                "id": "uuid",
                 "placement": "top-right"
               },
               {
                 "@@type": "LegendWidget",
-                "id": "<UUID>",
+                "id": "uuid",
                 "legendValues": [
                   {
                     "title": "Speed",
@@ -658,7 +658,7 @@
               {
                 "@@type": "TiledBitmapLayer",
                 "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
-                "id": "<UUID>",
+                "id": "uuid",
                 "maxZoom": 20,
                 "minZoom": 0,
                 "opacity": 1.0,
@@ -668,7 +668,7 @@
               {
                 "@@type": "TiledBitmapLayer",
                 "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-                "id": "<UUID>",
+                "id": "uuid",
                 "maxZoom": 17,
                 "minZoom": 0,
                 "opacity": 0.5,
@@ -680,7 +680,7 @@
                 "antialiasing": true,
                 "autoHighlight": false,
                 "billboard": false,
-                "data": "<TMPFILE>",
+                "data": "tmpfile",
                 "extruded": false,
                 "filled": true,
                 "getFillColor": "percentile_colormap",
@@ -710,7 +710,7 @@
             "widgets": [
               {
                 "@@type": "NorthArrowWidget",
-                "id": "<UUID>",
+                "id": "uuid",
                 "placement": "top-left",
                 "style": {
                   "transform": "scale(0.8)"
@@ -718,17 +718,17 @@
               },
               {
                 "@@type": "ScaleWidget",
-                "id": "<UUID>",
+                "id": "uuid",
                 "placement": "bottom-left"
               },
               {
                 "@@type": "SaveImageWidget",
-                "id": "<UUID>",
+                "id": "uuid",
                 "placement": "top-right"
               },
               {
                 "@@type": "LegendWidget",
-                "id": "<UUID>",
+                "id": "uuid",
                 "legendValues": [
                   {
                     "title": "Time Spent",
@@ -791,7 +791,7 @@
               {
                 "@@type": "TiledBitmapLayer",
                 "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
-                "id": "<UUID>",
+                "id": "uuid",
                 "maxZoom": 20,
                 "minZoom": 0,
                 "opacity": 1.0,
@@ -801,7 +801,7 @@
               {
                 "@@type": "TiledBitmapLayer",
                 "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-                "id": "<UUID>",
+                "id": "uuid",
                 "maxZoom": 17,
                 "minZoom": 0,
                 "opacity": 0.5,
@@ -813,7 +813,7 @@
                 "autoHighlight": false,
                 "billboard": false,
                 "capRounded": true,
-                "data": "<TMPFILE>",
+                "data": "tmpfile",
                 "getColor": "is_night_colors",
                 "getWidth": 3,
                 "id": "GeoArrowPathLayer-0",
@@ -838,7 +838,7 @@
             "widgets": [
               {
                 "@@type": "NorthArrowWidget",
-                "id": "<UUID>",
+                "id": "uuid",
                 "placement": "top-left",
                 "style": {
                   "transform": "scale(0.8)"
@@ -846,17 +846,17 @@
               },
               {
                 "@@type": "ScaleWidget",
-                "id": "<UUID>",
+                "id": "uuid",
                 "placement": "bottom-left"
               },
               {
                 "@@type": "SaveImageWidget",
-                "id": "<UUID>",
+                "id": "uuid",
                 "placement": "top-right"
               },
               {
                 "@@type": "LegendWidget",
-                "id": "<UUID>",
+                "id": "uuid",
                 "legendValues": [
                   {
                     "title": "Day / Night Movement",
