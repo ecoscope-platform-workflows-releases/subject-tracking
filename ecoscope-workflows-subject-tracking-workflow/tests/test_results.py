@@ -2,6 +2,7 @@
 
 import asyncio
 import json
+import re
 from typing import Any, Coroutine
 
 import pytest
@@ -10,14 +11,20 @@ from conftest import MATCHSPEC_OVERRIDE, ReconstructedOtelSpan, RunParams
 from syrupy import SnapshotAssertion
 from syrupy.matchers import path_type
 
+_UUID_RE = re.compile(
+    r"\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b"
+)
+
 
 def _scrub_volatile(value):
     if isinstance(value, dict):
         return {k: _scrub_volatile(v) for k, v in value.items()}
     if isinstance(value, list):
         return [_scrub_volatile(v) for v in value]
-    if isinstance(value, str) and value.startswith("/tmp/pytest-"):
-        return "<TMPFILE>"
+    if isinstance(value, str):
+        if value.startswith("/tmp/pytest-"):
+            return "<TMPFILE>"
+        return _UUID_RE.sub("<UUID>", value)
     return value
 
 
@@ -40,7 +47,17 @@ def test_failure_response(
 def test_dashboard_json(
     no_data: bool, response_json_success: dict, snapshot_json: SnapshotAssertion
 ):
-    assert _scrub_volatile(response_json_success) == snapshot_json
+    if no_data:
+        kws = {}
+    else:
+        exclude_results_data = {
+            f"result.views.{key}.{i}.data": (str,)
+            for key in response_json_success["result"]["views"]
+            for i, view in enumerate(response_json_success["result"]["views"][key])
+            if isinstance(view.get("data"), str)
+        }
+        kws = {"matcher": path_type(exclude_results_data)}
+    assert _scrub_volatile(response_json_success) == snapshot_json(**kws)
 
 
 @pytest.mark.asyncio
