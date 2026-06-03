@@ -23,8 +23,8 @@ def _scrub_volatile(value):
         return [_scrub_volatile(v) for v in value]
     if isinstance(value, str):
         if value.startswith("/tmp/pytest-"):
-            return "<TMPFILE>"
-        return _UUID_RE.sub("<UUID>", value)
+            return "tmpfile"
+        return _UUID_RE.sub("uuid", value)
     return value
 
 
