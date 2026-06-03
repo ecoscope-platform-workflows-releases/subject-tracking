@@ -40,11 +40,11 @@
     "views": {
       "{\"SpatialGrouper_SpatialGrouperTest\": \"Central\"}": [
         {
-          "data": "str",
+          "data": "dict",
           "id": 0,
           "is_filtered": true,
           "title": "Subject Group Trajectory Map",
-          "widget_type": "map"
+          "widget_type": "map_v2"
         },
         {
           "data": "str",
@@ -89,18 +89,18 @@
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "dict",
           "id": 7,
           "is_filtered": true,
           "title": "Home Range Map",
-          "widget_type": "map"
+          "widget_type": "map_v2"
         },
         {
-          "data": "str",
+          "data": "dict",
           "id": 8,
           "is_filtered": true,
           "title": "Subject Group Night/Day Map",
-          "widget_type": "map"
+          "widget_type": "map_v2"
         },
         {
           "data": "str",
@@ -112,11 +112,11 @@
       ],
       "{\"SpatialGrouper_SpatialGrouperTest\": \"West\"}": [
         {
-          "data": "str",
+          "data": "dict",
           "id": 0,
           "is_filtered": true,
           "title": "Subject Group Trajectory Map",
-          "widget_type": "map"
+          "widget_type": "map_v2"
         },
         {
           "data": "str",
@@ -161,18 +161,18 @@
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "dict",
           "id": 7,
           "is_filtered": true,
           "title": "Home Range Map",
-          "widget_type": "map"
+          "widget_type": "map_v2"
         },
         {
-          "data": "str",
+          "data": "dict",
           "id": 8,
           "is_filtered": true,
           "title": "Subject Group Night/Day Map",
-          "widget_type": "map"
+          "widget_type": "map_v2"
         },
         {
           "data": "str",

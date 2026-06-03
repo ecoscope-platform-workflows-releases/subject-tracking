@@ -78,11 +78,11 @@
     "views": {
       "{\"subject_name\": \"eco_1\", \"subject_sex\": \"male\", \"subject_subtype\": \"ranger\"}": [
         {
-          "data": "str",
+          "data": "dict",
           "id": 0,
           "is_filtered": true,
           "title": "Subject Group Trajectory Map",
-          "widget_type": "map"
+          "widget_type": "map_v2"
         },
         {
           "data": "str",
@@ -127,18 +127,18 @@
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "dict",
           "id": 7,
           "is_filtered": true,
           "title": "Home Range Map",
-          "widget_type": "map"
+          "widget_type": "map_v2"
         },
         {
-          "data": "str",
+          "data": "dict",
           "id": 8,
           "is_filtered": true,
           "title": "Subject Group Night/Day Map",
-          "widget_type": "map"
+          "widget_type": "map_v2"
         },
         {
           "data": "str",
@@ -150,11 +150,11 @@
       ],
       "{\"subject_name\": \"eco_2\", \"subject_sex\": \"female\", \"subject_subtype\": \"helicopter\"}": [
         {
-          "data": "str",
+          "data": "dict",
           "id": 0,
           "is_filtered": true,
           "title": "Subject Group Trajectory Map",
-          "widget_type": "map"
+          "widget_type": "map_v2"
         },
         {
           "data": "str",
@@ -199,18 +199,18 @@
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "dict",
           "id": 7,
           "is_filtered": true,
           "title": "Home Range Map",
-          "widget_type": "map"
+          "widget_type": "map_v2"
         },
         {
-          "data": "str",
+          "data": "dict",
           "id": 8,
           "is_filtered": true,
           "title": "Subject Group Night/Day Map",
-          "widget_type": "map"
+          "widget_type": "map_v2"
         },
         {
           "data": "str",
