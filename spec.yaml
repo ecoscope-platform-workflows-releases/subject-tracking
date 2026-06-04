@@ -817,7 +817,7 @@ workflow:
       retain_columns: []
       rename_columns:
         segment_start: Time
-        nsd: NSD (m²)
+        nsd: NSD (km²)
       raise_if_not_found: true
     mapvalues:
       argnames: df
@@ -829,7 +829,7 @@ workflow:
       group_by: subject_name
       ecoplot_configs:
         - x_col: Time
-          y_col: NSD (m²)
+          y_col: NSD (km²)
           plot_style:
             xperiodalignment: null
           color_column: null
