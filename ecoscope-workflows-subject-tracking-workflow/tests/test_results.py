@@ -3,11 +3,11 @@
 import asyncio
 import json
 import re
+from pathlib import Path
 from typing import Any, Coroutine
 
 import pytest
 import pytest_check.context_manager
-from conftest import MATCHSPEC_OVERRIDE, ReconstructedOtelSpan, RunParams
 from syrupy import SnapshotAssertion
 from syrupy.matchers import path_type
 
@@ -16,13 +16,13 @@ _UUID_RE = re.compile(
 )
 
 
-def _replace_ephemeral_values(value):
+def _replace_ephemeral_values(value, tmp_root: str):
     if isinstance(value, dict):
-        return {k: _replace_ephemeral_values(v) for k, v in value.items()}
+        return {k: _replace_ephemeral_values(v, tmp_root) for k, v in value.items()}
     if isinstance(value, list):
-        return [_replace_ephemeral_values(v) for v in value]
+        return [_replace_ephemeral_values(v, tmp_root) for v in value]
     if isinstance(value, str):
-        if value.startswith("/tmp/pytest-"):
+        if value.startswith(tmp_root):
             return "tmpfile"
         return _UUID_RE.sub("uuid", value)
     return value
@@ -45,10 +45,13 @@ def test_failure_response(
 
 
 def test_dashboard_json(
-    response_json_success: dict, snapshot_json: SnapshotAssertion
+    response_json_success: dict,
+    snapshot_json: SnapshotAssertion,
+    tmp_path: Path,
 ):
     # replace any UUIDs or paths to test output in the response_json
-    assert _replace_ephemeral_values(response_json_success) == snapshot_json()
+    tmp_root = str(tmp_path.parent)
+    assert _replace_ephemeral_values(response_json_success, tmp_root) == snapshot_json()
 
 
 @pytest.mark.asyncio
