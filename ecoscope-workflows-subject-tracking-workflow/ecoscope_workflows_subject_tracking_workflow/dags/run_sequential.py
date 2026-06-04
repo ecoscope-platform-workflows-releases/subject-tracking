@@ -1697,7 +1697,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             ecoplot_configs=[
                 {
                     "x_col": "Time",
-                    "y_col": "NSD (m²)",
+                    "y_col": "NSD (km²)",
                     "plot_style": {"xperiodalignment": None},
                     "color_column": None,
                 }

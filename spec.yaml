@@ -787,7 +787,7 @@ workflow:
       group_by: subject_name
       ecoplot_configs:
         - x_col: Time
-          y_col: NSD (m²)
+          y_col: NSD (km²)
           plot_style:
             xperiodalignment: null
           color_column: null
