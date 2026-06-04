@@ -16,11 +16,11 @@ _UUID_RE = re.compile(
 )
 
 
-def _scrub_volatile(value):
+def _replace_ephemeral_values(value):
     if isinstance(value, dict):
-        return {k: _scrub_volatile(v) for k, v in value.items()}
+        return {k: _replace_ephemeral_values(v) for k, v in value.items()}
     if isinstance(value, list):
-        return [_scrub_volatile(v) for v in value]
+        return [_replace_ephemeral_values(v) for v in value]
     if isinstance(value, str):
         if value.startswith("/tmp/pytest-"):
             return "tmpfile"
@@ -45,19 +45,10 @@ def test_failure_response(
 
 
 def test_dashboard_json(
-    no_data: bool, response_json_success: dict, snapshot_json: SnapshotAssertion
+    response_json_success: dict, snapshot_json: SnapshotAssertion
 ):
-    if no_data:
-        kws = {}
-    else:
-        exclude_results_data = {
-            f"result.views.{key}.{i}.data": (str,)
-            for key in response_json_success["result"]["views"]
-            for i, view in enumerate(response_json_success["result"]["views"][key])
-            if isinstance(view.get("data"), str)
-        }
-        kws = {"matcher": path_type(exclude_results_data)}
-    assert _scrub_volatile(response_json_success) == snapshot_json(**kws)
+    # replace any UUIDs or paths to test output in the response_json
+    assert _replace_ephemeral_values(response_json_success) == snapshot_json()
 
 
 @pytest.mark.asyncio
