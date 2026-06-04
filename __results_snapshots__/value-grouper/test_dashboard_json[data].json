@@ -211,42 +211,42 @@
           "widget_type": "map_v2"
         },
         {
-          "data": "str",
+          "data": "1.9 km/h",
           "id": 1,
           "is_filtered": true,
           "title": "Mean Speed",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "10.0 km/h",
           "id": 2,
           "is_filtered": true,
           "title": "Max Speed",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "3587",
           "id": 3,
           "is_filtered": true,
           "title": "Number of Locations",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "1.1",
           "id": 4,
           "is_filtered": true,
           "title": "Night/Day Ratio",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "1118.1 km",
           "id": 5,
           "is_filtered": true,
           "title": "Total Distance",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "597.8 h",
           "id": 6,
           "is_filtered": true,
           "title": "Total Time",
@@ -500,7 +500,7 @@
           "widget_type": "map_v2"
         },
         {
-          "data": "str",
+          "data": "tmpfile",
           "id": 9,
           "is_filtered": true,
           "title": "Net Square Displacement",
@@ -642,42 +642,42 @@
           "widget_type": "map_v2"
         },
         {
-          "data": "str",
+          "data": "1.9 km/h",
           "id": 1,
           "is_filtered": true,
           "title": "Mean Speed",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "10.0 km/h",
           "id": 2,
           "is_filtered": true,
           "title": "Max Speed",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "3599",
           "id": 3,
           "is_filtered": true,
           "title": "Number of Locations",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "1.0",
           "id": 4,
           "is_filtered": true,
           "title": "Night/Day Ratio",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "1124.4 km",
           "id": 5,
           "is_filtered": true,
           "title": "Total Distance",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "599.8 h",
           "id": 6,
           "is_filtered": true,
           "title": "Total Time",
@@ -931,7 +931,7 @@
           "widget_type": "map_v2"
         },
         {
-          "data": "str",
+          "data": "tmpfile",
           "id": 9,
           "is_filtered": true,
           "title": "Net Square Displacement",
