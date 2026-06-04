@@ -1688,7 +1688,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .partial(
             drop_columns=[],
             retain_columns=[],
-            rename_columns={"segment_start": "Time", "nsd": "NSD (m²)"},
+            rename_columns={"segment_start": "Time", "nsd": "NSD (km²)"},
             raise_if_not_found=True,
             **(params.get("nsd_rename_display_columns") or {}),
         )
@@ -1713,7 +1713,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             ecoplot_configs=[
                 {
                     "x_col": "Time",
-                    "y_col": "NSD (m²)",
+                    "y_col": "NSD (km²)",
                     "plot_style": {"xperiodalignment": None},
                     "color_column": None,
                 }
