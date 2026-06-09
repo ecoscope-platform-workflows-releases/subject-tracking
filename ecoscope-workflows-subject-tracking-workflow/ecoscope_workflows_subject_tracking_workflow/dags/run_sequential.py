@@ -70,12 +70,12 @@ from ecoscope.platform.tasks.results._pydeck import (
 )
 from ecoscope.platform.tasks.skip import all_geometry_are_none as all_geometry_are_none
 from ecoscope.platform.tasks.skip import (
-    all_keyed_iterables_are_skips as all_keyed_iterables_are_skips,
-)
-from ecoscope.platform.tasks.skip import (
     any_dependency_skipped as any_dependency_skipped,
 )
 from ecoscope.platform.tasks.skip import any_is_empty_df as any_is_empty_df
+from ecoscope.platform.tasks.skip import (
+    any_keyed_iterables_are_skips as any_keyed_iterables_are_skips,
+)
 from ecoscope.platform.tasks.skip import never as never
 from ecoscope.platform.tasks.transformation import (
     add_spatial_index as add_spatial_index,
@@ -716,6 +716,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             conditions=[
                 any_is_empty_df,
                 any_dependency_skipped,
+                all_geometry_are_none,
             ],
             unpack_depth=1,
         )
@@ -735,7 +736,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .with_tracing()
         .skipif(
             conditions=[
-                all_keyed_iterables_are_skips,
+                any_keyed_iterables_are_skips,
             ],
             unpack_depth=1,
         )
@@ -948,6 +949,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             conditions=[
                 any_is_empty_df,
                 any_dependency_skipped,
+                all_geometry_are_none,
             ],
             unpack_depth=1,
         )
@@ -967,7 +969,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .with_tracing()
         .skipif(
             conditions=[
-                all_keyed_iterables_are_skips,
+                any_keyed_iterables_are_skips,
             ],
             unpack_depth=1,
         )
@@ -1621,6 +1623,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             conditions=[
                 any_is_empty_df,
                 any_dependency_skipped,
+                all_geometry_are_none,
             ],
             unpack_depth=1,
         )
@@ -1640,7 +1643,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .with_tracing()
         .skipif(
             conditions=[
-                all_keyed_iterables_are_skips,
+                any_keyed_iterables_are_skips,
             ],
             unpack_depth=1,
         )
