@@ -1655,7 +1655,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .partial(
             drop_columns=[],
             retain_columns=[],
-            rename_columns={"area_sqkm": "Area (km²)"},
+            rename_columns={"percentile": "Percentile", "area_sqkm": "Area"},
             raise_if_not_found=True,
             **(params.get("td_rename_display_columns") or {}),
         )
@@ -1742,12 +1742,12 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             },
             legend={
                 "title": "Time Spent",
-                "label_column": "percentile",
+                "label_column": "Percentile",
                 "label_suffix": " %",
                 "color_column": "percentile_colormap",
                 "sort": "ascending",
             },
-            tooltip_columns=["percentile", "Area (km²)"],
+            tooltip_columns=["Percentile", "Area"],
             **(params.get("td_map_layer") or {}),
         )
         .mapvalues(

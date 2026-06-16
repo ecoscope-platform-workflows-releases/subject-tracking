@@ -750,7 +750,8 @@ workflow:
           drop_columns: []
           retain_columns: []
           rename_columns:
-            area_sqkm: "Area (km²)"
+            percentile: "Percentile"
+            area_sqkm: "Area"
           raise_if_not_found: true
         mapvalues:
           argnames: df
@@ -804,13 +805,13 @@ workflow:
             get_line_width: 0
           legend:
             title: Time Spent
-            label_column: percentile
+            label_column: Percentile
             label_suffix: ' %'
             color_column: percentile_colormap
             sort: ascending
           tooltip_columns:
-            - percentile
-            - "Area (km²)"
+            - Percentile
+            - Area
         mapvalues:
           argnames: [geodataframe, data_url]
           argvalues: ${{ workflow.combine_td_gdf_and_url.return }}
