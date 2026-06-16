@@ -810,6 +810,7 @@ workflow:
             sort: ascending
           tooltip_columns:
             - percentile
+            - "Area (km²)"
         mapvalues:
           argnames: [geodataframe, data_url]
           argvalues: ${{ workflow.combine_td_gdf_and_url.return }}

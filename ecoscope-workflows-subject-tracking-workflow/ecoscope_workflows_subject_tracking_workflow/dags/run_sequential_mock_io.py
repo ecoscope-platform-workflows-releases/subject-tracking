@@ -1747,7 +1747,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
                 "color_column": "percentile_colormap",
                 "sort": "ascending",
             },
-            tooltip_columns=["percentile"],
+            tooltip_columns=["percentile", "Area (km²)"],
             **(params.get("td_map_layer") or {}),
         )
         .mapvalues(
