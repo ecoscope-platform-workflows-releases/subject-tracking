@@ -1,7 +1,7 @@
 id: subject_tracking
 requirements:
   - name: ecoscope-platform
-    version: 2.13.2
+    version: 2.16.0
     channel: https://repo.prefix.dev/ecoscope-workflows/
   # ecoscope-platform already declares this exact pydeck dependency. it is
   # re-stated here as a workaround for a known issue. for further detail, see:
@@ -699,6 +699,31 @@ workflow:
         mapvalues:
           argnames: df
           argvalues: ${{ workflow.percentile_col_to_string.return }}
+      - name: Format area values for display
+        id: sqkm_display
+        task: map_values_with_unit
+        partial:
+          input_column_name: area_sqkm
+          output_column_name: area_sqkm
+          original_unit: "km²"
+          new_unit: "km²"
+          decimal_places: 2
+        mapvalues:
+          argnames: df
+          argvalues: ${{ workflow.td_colormap.return }}
+      - name: Rename area column
+        id: td_rename_display_columns
+        task: map_columns
+        partial:
+          drop_columns: []
+          retain_columns: []
+          rename_columns:
+            percentile: "Percentile"
+            area_sqkm: "Area"
+          raise_if_not_found: true
+        mapvalues:
+          argnames: df
+          argvalues: ${{ workflow.sqkm_display.return }}
       - name: Create map layer from Time Density
         id: td_map_layer
         task: create_polygon_layer
@@ -713,15 +738,16 @@ workflow:
             opacity: ${{ workflow.etd_opacity.return }}
             get_line_width: 0
           legend:
-            label_column: percentile
+            label_column: Percentile
             label_suffix: ' %'
             color_column: percentile_colormap
             sort: ascending
           tooltip_columns:
-            - percentile
+            - Percentile
+            - Area
         mapvalues:
           argnames: geodataframe
-          argvalues: ${{ workflow.td_colormap.return }}
+          argvalues: ${{ workflow.td_rename_display_columns.return }}
       - name: Draw Ecomap from Time Density
         id: td_ecomap
         task: draw_ecomap
