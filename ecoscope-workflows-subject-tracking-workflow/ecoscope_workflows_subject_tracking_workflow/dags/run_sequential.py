@@ -103,6 +103,9 @@ from ecoscope.platform.tasks.transformation import (
 from ecoscope.platform.tasks.transformation import map_columns as map_columns
 from ecoscope.platform.tasks.transformation import map_values as map_values
 from ecoscope.platform.tasks.transformation import (
+    map_values_with_unit as map_values_with_unit,
+)
+from ecoscope.platform.tasks.transformation import (
     resolve_spatial_feature_groups_for_spatial_groupers as resolve_spatial_feature_groups_for_spatial_groupers,
 )
 from ecoscope.platform.tasks.transformation import sort_values as sort_values
@@ -1596,6 +1599,53 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .mapvalues(argnames=["df"], argvalues=percentile_col_to_string)
     )
 
+    sqkm_display = (
+        task(map_values_with_unit)
+        .validate()
+        .set_task_instance_id("sqkm_display")
+        .handle_errors()
+        .with_tracing()
+        .skipif(
+            conditions=[
+                any_is_empty_df,
+                any_dependency_skipped,
+            ],
+            unpack_depth=1,
+        )
+        .partial(
+            input_column_name="area_sqkm",
+            output_column_name="area_sqkm",
+            original_unit="km²",
+            new_unit="km²",
+            decimal_places=2,
+            **(params.get("sqkm_display") or {}),
+        )
+        .mapvalues(argnames=["df"], argvalues=td_colormap)
+    )
+
+    td_rename_display_columns = (
+        task(map_columns)
+        .validate()
+        .set_task_instance_id("td_rename_display_columns")
+        .handle_errors()
+        .with_tracing()
+        .skipif(
+            conditions=[
+                any_is_empty_df,
+                any_dependency_skipped,
+            ],
+            unpack_depth=1,
+        )
+        .partial(
+            drop_columns=[],
+            retain_columns=[],
+            rename_columns={"area_sqkm": "Area (km²)"},
+            raise_if_not_found=True,
+            **(params.get("td_rename_display_columns") or {}),
+        )
+        .mapvalues(argnames=["df"], argvalues=sqkm_display)
+    )
+
     td_crs = (
         task(convert_crs)
         .validate()
@@ -1610,7 +1660,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             unpack_depth=1,
         )
         .partial(crs="EPSG:4326", **(params.get("td_crs") or {}))
-        .mapvalues(argnames=["df"], argvalues=td_colormap)
+        .mapvalues(argnames=["df"], argvalues=td_rename_display_columns)
     )
 
     persist_td_parquet = (
