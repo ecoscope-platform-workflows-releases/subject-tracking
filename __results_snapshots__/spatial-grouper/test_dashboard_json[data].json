@@ -336,7 +336,8 @@
                 "id": "TooltipWidget",
                 "layerColumns": {
                   "GeoArrowPolygonLayer-0": [
-                    "percentile"
+                    "Percentile",
+                    "Area"
                   ]
                 }
               }
@@ -767,7 +768,8 @@
                 "id": "TooltipWidget",
                 "layerColumns": {
                   "GeoArrowPolygonLayer-0": [
-                    "percentile"
+                    "Percentile",
+                    "Area"
                   ]
                 }
               }
