@@ -1,7 +1,7 @@
 id: subject_tracking
 requirements:
   - name: ecoscope-platform
-    version: 2.15.0
+    version: 2.16.0
     channel: https://repo.prefix.dev/ecoscope-workflows/
   # ecoscope-platform already declares this exact pydeck dependency. it is
   # re-stated here as a workaround for a known issue. for further detail, see:
@@ -730,6 +730,31 @@ workflow:
         mapvalues:
           argnames: df
           argvalues: ${{ workflow.percentile_col_to_string.return }}
+      - name: Format area values for display
+        id: sqkm_display
+        task: map_values_with_unit
+        partial:
+          input_column_name: area_sqkm
+          output_column_name: area_sqkm
+          original_unit: "km²"
+          new_unit: "km²"
+          decimal_places: 2
+        mapvalues:
+          argnames: df
+          argvalues: ${{ workflow.td_colormap.return }}
+      - name: Rename area column
+        id: td_rename_display_columns
+        task: map_columns
+        partial:
+          drop_columns: []
+          retain_columns: []
+          rename_columns:
+            percentile: "Percentile"
+            area_sqkm: "Area"
+          raise_if_not_found: true
+        mapvalues:
+          argnames: df
+          argvalues: ${{ workflow.sqkm_display.return }}
       # calculate_etd by default outputs in EPSG:3857
       - name: Convert patrol td crs
         id: td_crs
@@ -738,7 +763,7 @@ workflow:
           crs: "EPSG:4326"
         mapvalues:
           argnames: df
-          argvalues: ${{ workflow.td_colormap.return }}      
+          argvalues: ${{ workflow.td_rename_display_columns.return }}      
       - name: Persist td to parquet
         id: persist_td_parquet
         task: persist_geoarrow_for_pydeck
@@ -779,12 +804,13 @@ workflow:
             get_line_width: 0
           legend:
             title: Time Spent
-            label_column: percentile
+            label_column: Percentile
             label_suffix: ' %'
             color_column: percentile_colormap
             sort: ascending
           tooltip_columns:
-            - percentile
+            - Percentile
+            - Area
         mapvalues:
           argnames: [geodataframe, data_url]
           argvalues: ${{ workflow.combine_td_gdf_and_url.return }}
