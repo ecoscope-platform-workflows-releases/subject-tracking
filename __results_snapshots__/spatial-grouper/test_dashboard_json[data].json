@@ -40,70 +40,70 @@
     "views": {
       "{\"SpatialGrouper_SpatialGrouperTest\": \"Central\"}": [
         {
-          "data": "str",
+          "data": "tmpfile",
           "id": 0,
           "is_filtered": true,
           "title": "Subject Group Trajectory Map",
           "widget_type": "map"
         },
         {
-          "data": "str",
+          "data": "1.8 km/h",
           "id": 1,
           "is_filtered": true,
           "title": "Mean Speed",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "10.0 km/h",
           "id": 2,
           "is_filtered": true,
           "title": "Max Speed",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "822",
           "id": 3,
           "is_filtered": true,
           "title": "Number of Locations",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "0.8",
           "id": 4,
           "is_filtered": true,
           "title": "Night/Day Ratio",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "238.9 km",
           "id": 5,
           "is_filtered": true,
           "title": "Total Distance",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "135.9 h",
           "id": 6,
           "is_filtered": true,
           "title": "Total Time",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "tmpfile",
           "id": 7,
           "is_filtered": true,
           "title": "Home Range Map",
           "widget_type": "map"
         },
         {
-          "data": "str",
+          "data": "tmpfile",
           "id": 8,
           "is_filtered": true,
           "title": "Subject Group Night/Day Map",
           "widget_type": "map"
         },
         {
-          "data": "str",
+          "data": "tmpfile",
           "id": 9,
           "is_filtered": true,
           "title": "Net Square Displacement",
@@ -112,70 +112,70 @@
       ],
       "{\"SpatialGrouper_SpatialGrouperTest\": \"West\"}": [
         {
-          "data": "str",
+          "data": "tmpfile",
           "id": 0,
           "is_filtered": true,
           "title": "Subject Group Trajectory Map",
           "widget_type": "map"
         },
         {
-          "data": "str",
+          "data": "1.9 km/h",
           "id": 1,
           "is_filtered": true,
           "title": "Mean Speed",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "10.0 km/h",
           "id": 2,
           "is_filtered": true,
           "title": "Max Speed",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "6370",
           "id": 3,
           "is_filtered": true,
           "title": "Number of Locations",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "1.0",
           "id": 4,
           "is_filtered": true,
           "title": "Night/Day Ratio",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "2001.3 km",
           "id": 5,
           "is_filtered": true,
           "title": "Total Distance",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "1060.7 h",
           "id": 6,
           "is_filtered": true,
           "title": "Total Time",
           "widget_type": "stat"
         },
         {
-          "data": "str",
+          "data": "tmpfile",
           "id": 7,
           "is_filtered": true,
           "title": "Home Range Map",
           "widget_type": "map"
         },
         {
-          "data": "str",
+          "data": "tmpfile",
           "id": 8,
           "is_filtered": true,
           "title": "Subject Group Night/Day Map",
           "widget_type": "map"
         },
         {
-          "data": "str",
+          "data": "tmpfile",
           "id": 9,
           "is_filtered": true,
           "title": "Net Square Displacement",
