@@ -5,17 +5,17 @@
 
 ```yaml
 # fingerprint:
-artifacts_sha256_basic: 19988ac19b48876f70e126232431de38f779ac65948b76d562a8d1466b56dd6f
-artifacts_sha256_strict: 3aee56eb85f637c8a05aff25a9e2475af6b7bfed6749d2c1b5b24c09342fe8c8
+artifacts_sha256_basic: 8c4c01330d20be6d6981935029b20a0a94c47a410b7f24e0a55849a8075ac084
+artifacts_sha256_strict: 7248c503a71bbc54a9cf7221cc059ff33486c2839c939ec4ca6b70a71d819667
 installed_requirements:
 - channel: https://repo.prefix.dev/ecoscope-workflows/
   name: ecoscope-platform
-  version: {version: ==2.16.1}
+  version: {version: ==2.17.6}
 - channel: conda-forge
   name: pydeck
   version: {version: ==0.9.2}
-params_sha256: 59faf653a263ebee6357693eac081eb4ea3f617bf5fe97134728f9e46019f4fd
-spec_sha256: 2266d52c58c9e4decd6a1268c1f7e240d48e1f42bf699fc4d83616fa30622d4c
+params_sha256: 01a337f78b27f8e09ea86dbcbe3a2db8e2378294a873a1bcaed3d00f52e8db31
+spec_sha256: 19e4df94e0cc971aa7b93d074f2795f6436334209022e145a2a8ea5489396024
 
 ```
 
