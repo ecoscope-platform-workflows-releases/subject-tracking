@@ -89,13 +89,6 @@
                   }
                 }
               ]
-            },
-            "include_subject_additional": {
-              "default": false,
-              "title": "Include Subject Additional",
-              "type": "boolean",
-              "description": "Whether or not to include the subject's free-form `additional` JSON",
-              "ecoscope:advanced": true
             }
           },
           "required": [
@@ -686,14 +679,6 @@
         "until",
         "timezone"
       ]
-    },
-    "Subject Group": {
-      "subject_obs": {
-        "ui:order": [
-          "subject_group_name",
-          "include_subject_additional"
-        ]
-      }
     },
     "Time Density Map": {
       "set_etd_args": {

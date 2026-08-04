@@ -75,13 +75,6 @@
           "title": "Subject Group Name",
           "type": "string",
           "description": "\u26a0\ufe0f The use of a group with mixed subtypes could lead to unexpected results"
-        },
-        "include_subject_additional": {
-          "default": false,
-          "title": "Include Subject Additional",
-          "type": "boolean",
-          "description": "Whether or not to include the subject's free-form `additional` JSON",
-          "ecoscope:advanced": true
         }
       },
       "required": [
@@ -639,12 +632,6 @@
         "since",
         "until",
         "timezone"
-      ]
-    },
-    "subject_obs": {
-      "ui:order": [
-        "subject_group_name",
-        "include_subject_additional"
       ]
     },
     "set_etd_args": {
