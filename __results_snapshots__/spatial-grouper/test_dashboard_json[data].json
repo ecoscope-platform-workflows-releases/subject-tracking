@@ -194,7 +194,7 @@
           "widget_type": "stat"
         },
         {
-          "data": "0.8",
+          "data": "1.0",
           "id": 4,
           "is_filtered": true,
           "title": "Night/Day Ratio",
