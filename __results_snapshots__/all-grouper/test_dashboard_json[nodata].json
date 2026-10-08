@@ -22,7 +22,7 @@
           "id": 0,
           "is_filtered": false,
           "title": "Subject Group Trajectory Map",
-          "widget_type": "map"
+          "widget_type": "map_v2"
         },
         {
           "data": null,
@@ -71,14 +71,14 @@
           "id": 7,
           "is_filtered": false,
           "title": "Home Range Map",
-          "widget_type": "map"
+          "widget_type": "map_v2"
         },
         {
           "data": null,
           "id": 8,
           "is_filtered": false,
           "title": "Subject Group Night/Day Map",
-          "widget_type": "map"
+          "widget_type": "map_v2"
         },
         {
           "data": null,
