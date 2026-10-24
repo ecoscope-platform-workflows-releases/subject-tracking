@@ -1,7 +1,7 @@
 id: subject_tracking
 requirements:
   - name: ecoscope-platform
-    version: 2.20.0
+    version: 2.26.0
     channel: https://repo.prefix.dev/ecoscope-workflows/
   # ecoscope-platform already declares this exact pydeck dependency. it is
   # re-stated here as a workaround for a known issue. for further detail, see:
@@ -184,6 +184,7 @@ workflow:
         extra__subject_subtype: subject_subtype
         extra__sex: subject_sex
       raise_if_not_found: true
+      duplicate_strategy: overwrite
   - name: Map Subject Sex Values
     id: map_subject_sex
     task: map_values
@@ -278,6 +279,7 @@ workflow:
         subject_name: Subject Name
         subject_sex: Subject Sex
       raise_if_not_found: true
+      duplicate_strategy: overwrite
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.colormap_traj_speed.return }}
@@ -408,6 +410,7 @@ workflow:
         subject_sex: Subject Sex
         extra__is_night: Nighttime
       raise_if_not_found: true
+      duplicate_strategy: overwrite
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.colormap_traj_night.return }}
@@ -753,6 +756,7 @@ workflow:
             percentile: "Percentile"
             area_sqkm: "Area"
           raise_if_not_found: true
+          duplicate_strategy: overwrite
         mapvalues:
           argnames: df
           argvalues: ${{ workflow.sqkm_display.return }}
@@ -860,6 +864,7 @@ workflow:
         segment_start: Time
         nsd: NSD (km²)
       raise_if_not_found: true
+      duplicate_strategy: overwrite
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_subject_traj_groups.return }}

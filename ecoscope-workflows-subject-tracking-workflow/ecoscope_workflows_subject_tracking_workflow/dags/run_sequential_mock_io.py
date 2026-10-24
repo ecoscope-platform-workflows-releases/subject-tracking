@@ -480,6 +480,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
                 "extra__sex": "subject_sex",
             },
             raise_if_not_found=True,
+            duplicate_strategy="overwrite",
             **(params.get("rename_grouper_columns") or {}),
         )
         .call()
@@ -720,6 +721,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
                 "subject_sex": "Subject Sex",
             },
             raise_if_not_found=True,
+            duplicate_strategy="overwrite",
             **(params.get("rename_speed_display_columns") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=colormap_traj_speed)
@@ -953,6 +955,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
                 "extra__is_night": "Nighttime",
             },
             raise_if_not_found=True,
+            duplicate_strategy="overwrite",
             **(params.get("rename_nightday_display_columns") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=colormap_traj_night)
@@ -1657,6 +1660,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             retain_columns=[],
             rename_columns={"percentile": "Percentile", "area_sqkm": "Area"},
             raise_if_not_found=True,
+            duplicate_strategy="overwrite",
             **(params.get("td_rename_display_columns") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=sqkm_display)
@@ -1833,6 +1837,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             retain_columns=[],
             rename_columns={"segment_start": "Time", "nsd": "NSD (km²)"},
             raise_if_not_found=True,
+            duplicate_strategy="overwrite",
             **(params.get("nsd_rename_display_columns") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_subject_traj_groups)
