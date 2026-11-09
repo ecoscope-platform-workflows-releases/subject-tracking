@@ -5,20 +5,21 @@
 
 ```yaml
 # fingerprint:
-artifacts_sha256_basic: 4da6b3fd7e427f0928297bc6137a86c662aa17543e2a94c2424557d3b080c0d3
-artifacts_sha256_strict: 4202f3e1703e4726fde28daed4bb47c898c5f98b3a935feb6d615b76215ad346
+artifacts_sha256_basic: 2a9a9dbd412a5871964e6b8eb10e442143e69357adba4d3470247feb79923108
+artifacts_sha256_strict: fdcadd3fc8f99824222c408c5b5b68f548e874a558f6ebe6b1b0bdd6eb6ed556
 installed_requirements:
 - channel: https://repo.prefix.dev/ecoscope-workflows/
   name: ecoscope-platform
-  version: {version: ==2.26.0}
+  version: {version: ==2.31.0}
 - channel: conda-forge
   name: pydeck
   version: {version: ==0.9.2}
-params_sha256: 59faf653a263ebee6357693eac081eb4ea3f617bf5fe97134728f9e46019f4fd
-spec_sha256: 959415dc01405e61903cafc8b5dfadb4b9dbb0bfb571ae3a83b18a8c17e62285
+params_sha256: 718e43ae367f2754464e0de951febb524ee940566a52b6205393d31d28c242be
+spec_sha256: 9483c3d398c76dfd01a0f53521d8ee671f664c6e25518c53aa3110446f9bcf08
 
 ```
 
 # ecoscope-workflows-subject-tracking-workflow
 
 ![](graph.png)
+
