@@ -156,14 +156,21 @@
           ]
         },
         "trajectory_segment_filter_overrides": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/TrajectorySegmentFilterOverride"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
           "default": null,
           "description": "Use a different segment filter for specific values, e.g. a subject subtype or patrol type. Values without an override use the filter above. Only used by workflows that support per-type filtering.",
           "ecoscope:advanced": true,
-          "items": {
-            "$ref": "#/$defs/TrajectorySegmentFilterOverride"
-          },
           "title": "Filter Overrides",
-          "type": "array",
           "ecoscope:transform": [
             {
               "transformer": "TrajectoryFilterOverrideSuggester",
