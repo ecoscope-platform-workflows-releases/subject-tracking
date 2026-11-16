@@ -5,12 +5,12 @@
 
 ```yaml
 # fingerprint:
-artifacts_sha256_basic: 269bc655249d9af77be73eb29732ebf56c8431bf8dbf7dc0b692dbf907dab0de
-artifacts_sha256_strict: daf0f97144c64f065937065fd2303cf6a0bc77d3ad9b7c7ead9863964ef17985
+artifacts_sha256_basic: 0ec32d79e450f2cbe42d8038a03ea63d5e478d28f5eb720a56011362dd43e8d8
+artifacts_sha256_strict: d6ad09aa4505ec30c682b4735a87f349bf7a7453929e88c6c0743e2230f9adb4
 installed_requirements:
 - channel: https://repo.prefix.dev/ecoscope-workflows/
   name: ecoscope-platform
-  version: {version: ==2.28.0}
+  version: {version: ==2.31.0}
 - channel: conda-forge
   name: sqlalchemy
   version: {version: ==2.0.54}
@@ -18,10 +18,11 @@ installed_requirements:
   name: pydeck
   version: {version: ==0.9.2}
 params_sha256: 94606b1bb8c0801b38ed3d4b7ccd13818504ae34b36138538006259eb2803d7a
-spec_sha256: c008a0baa329d001143c5ffc0fd934cdbb63750a0f72cbe3ce094e754aa9f084
+spec_sha256: 97afd5f367bcd141638943e9cd48acae358144eb6d66e154d55b9474b723b2a3
 
 ```
 
 # ecoscope-workflows-subject-tracking-workflow
 
 ![](graph.png)
+

@@ -562,16 +562,16 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/xyzservices-2026.9.1-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/zipp-4.1.2-pyh5ded981_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/earthranger-client-1.0.49-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-2.28.0-pyh4616a5c_5.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-2.31.0-pyh4616a5c_5.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-earthranger-io-core-0.0.28-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-platform-2.28.0-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-platform-2.31.0-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/lonboard-0.0.8-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-contracts-0.3.0-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-registry-0.2.2-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-0.1.3-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-gcp-0.1.3-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-registry-0.3.1-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-0.3.0-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-gcp-0.3.0-pyh4616a5c_0.conda
       - pypi: git+https://github.com/PADAS/er-client?rev=v1.3.3#4d61b450d471c7161c64d2f48dfa735a52a6bcf9
-      - pypi: git+https://github.com/wildlife-dynamics/ecoscope.git?branch=feat%2Ftraj-filter-presets#cf007ff961042286b95ea30e9a1ec91f59c9d309
+      - pypi: git+https://github.com/wildlife-dynamics/ecoscope.git?branch=feat%2Ftraj-filter-presets#eef267a58d349b430b3a9e0f31d667aeaf34c3da
       linux-aarch64-linux-4-4-0:
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/_openmp_mutex-4.5-20_gnu.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/aiohttp-3.14.5-py312he7c6268_0.conda
@@ -1092,16 +1092,16 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/xyzservices-2026.9.1-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/zipp-4.1.2-pyh5ded981_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/earthranger-client-1.0.49-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-2.28.0-pyh4616a5c_5.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-2.31.0-pyh4616a5c_5.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-earthranger-io-core-0.0.28-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-platform-2.28.0-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-platform-2.31.0-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/lonboard-0.0.8-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-contracts-0.3.0-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-registry-0.2.2-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-0.1.3-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-gcp-0.1.3-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-registry-0.3.1-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-0.3.0-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-gcp-0.3.0-pyh4616a5c_0.conda
       - pypi: git+https://github.com/PADAS/er-client?rev=v1.3.3#4d61b450d471c7161c64d2f48dfa735a52a6bcf9
-      - pypi: git+https://github.com/wildlife-dynamics/ecoscope.git?branch=feat%2Ftraj-filter-presets#cf007ff961042286b95ea30e9a1ec91f59c9d309
+      - pypi: git+https://github.com/wildlife-dynamics/ecoscope.git?branch=feat%2Ftraj-filter-presets#eef267a58d349b430b3a9e0f31d667aeaf34c3da
       osx-64:
       - conda: https://conda.anaconda.org/conda-forge/noarch/_python_abi3_support-1.0-hd8ed1ab_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/adwaita-icon-theme-51.0-unix_0.conda
@@ -1601,16 +1601,16 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-64/zlib-ng-2.3.3-h646e873_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/zstd-1.5.7-hbc1a06c_7.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/earthranger-client-1.0.49-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-2.28.0-pyh4616a5c_5.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-2.31.0-pyh4616a5c_5.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-earthranger-io-core-0.0.28-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-platform-2.28.0-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-platform-2.31.0-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/lonboard-0.0.8-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-contracts-0.3.0-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-registry-0.2.2-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-0.1.3-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-gcp-0.1.3-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-registry-0.3.1-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-0.3.0-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-gcp-0.3.0-pyh4616a5c_0.conda
       - pypi: git+https://github.com/PADAS/er-client?rev=v1.3.3#4d61b450d471c7161c64d2f48dfa735a52a6bcf9
-      - pypi: git+https://github.com/wildlife-dynamics/ecoscope.git?branch=feat%2Ftraj-filter-presets#cf007ff961042286b95ea30e9a1ec91f59c9d309
+      - pypi: git+https://github.com/wildlife-dynamics/ecoscope.git?branch=feat%2Ftraj-filter-presets#eef267a58d349b430b3a9e0f31d667aeaf34c3da
       osx-arm64:
       - conda: https://conda.anaconda.org/conda-forge/noarch/_python_abi3_support-1.0-hd8ed1ab_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/adwaita-icon-theme-51.0-unix_0.conda
@@ -2104,16 +2104,16 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zlib-ng-2.3.3-h31dac16_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zstd-1.5.7-hf451053_7.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/earthranger-client-1.0.49-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-2.28.0-pyh4616a5c_5.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-2.31.0-pyh4616a5c_5.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-earthranger-io-core-0.0.28-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-platform-2.28.0-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-platform-2.31.0-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/lonboard-0.0.8-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-contracts-0.3.0-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-registry-0.2.2-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-0.1.3-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-gcp-0.1.3-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-registry-0.3.1-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-0.3.0-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-gcp-0.3.0-pyh4616a5c_0.conda
       - pypi: git+https://github.com/PADAS/er-client?rev=v1.3.3#4d61b450d471c7161c64d2f48dfa735a52a6bcf9
-      - pypi: git+https://github.com/wildlife-dynamics/ecoscope.git?branch=feat%2Ftraj-filter-presets#cf007ff961042286b95ea30e9a1ec91f59c9d309
+      - pypi: git+https://github.com/wildlife-dynamics/ecoscope.git?branch=feat%2Ftraj-filter-presets#eef267a58d349b430b3a9e0f31d667aeaf34c3da
       win-64:
       - conda: https://conda.anaconda.org/conda-forge/noarch/_python_abi3_support-1.0-hd8ed1ab_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/affine-3.0.1-pyhecae5ae_0.conda
@@ -2596,17 +2596,17 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/win-64/zlib-ng-2.3.3-h0261ad2_1.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/zstd-1.5.7-h534d264_7.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/earthranger-client-1.0.49-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-2.28.0-pyh4616a5c_5.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-2.31.0-pyh4616a5c_5.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-earthranger-io-core-0.0.28-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-platform-2.28.0-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-platform-2.31.0-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/lonboard-0.0.8-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-contracts-0.3.0-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-registry-0.2.2-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-0.1.3-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-gcp-0.1.3-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-registry-0.3.1-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-0.3.0-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-gcp-0.3.0-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/win-64/astropy-base-7.2.0-strip_manifest_h196c9fc_0.conda
       - pypi: git+https://github.com/PADAS/er-client?rev=v1.3.3#4d61b450d471c7161c64d2f48dfa735a52a6bcf9
-      - pypi: git+https://github.com/wildlife-dynamics/ecoscope.git?branch=feat%2Ftraj-filter-presets#cf007ff961042286b95ea30e9a1ec91f59c9d309
+      - pypi: git+https://github.com/wildlife-dynamics/ecoscope.git?branch=feat%2Ftraj-filter-presets#eef267a58d349b430b3a9e0f31d667aeaf34c3da
   runner:
     channels:
     - url: https://repo.prefix.dev/ecoscope-workflows/
@@ -2770,8 +2770,8 @@ environments:
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-contracts-0.3.0-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-invokers-0.7.0-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-invokers-gcp-0.7.0-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-0.3.2-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-gcp-0.3.2-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-0.3.3-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-gcp-0.3.3-pyh4616a5c_0.conda
       linux-aarch64-linux-4-4-0:
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/_openmp_mutex-4.5-20_gnu.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/aiohttp-3.14.5-py313hd50f550_0.conda
@@ -2929,8 +2929,8 @@ environments:
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-contracts-0.3.0-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-invokers-0.7.0-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-invokers-gcp-0.7.0-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-0.3.2-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-gcp-0.3.2-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-0.3.3-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-gcp-0.3.3-pyh4616a5c_0.conda
       osx-64:
       - conda: https://conda.anaconda.org/conda-forge/noarch/_python_abi3_support-1.0-hd8ed1ab_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/aiohappyeyeballs-2.7.1-pyhd8ed1ab_0.conda
@@ -3080,8 +3080,8 @@ environments:
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-contracts-0.3.0-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-invokers-0.7.0-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-invokers-gcp-0.7.0-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-0.3.2-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-gcp-0.3.2-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-0.3.3-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-gcp-0.3.3-pyh4616a5c_0.conda
       osx-arm64:
       - conda: https://conda.anaconda.org/conda-forge/noarch/_python_abi3_support-1.0-hd8ed1ab_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/aiohappyeyeballs-2.7.1-pyhd8ed1ab_0.conda
@@ -3231,8 +3231,8 @@ environments:
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-contracts-0.3.0-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-invokers-0.7.0-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-invokers-gcp-0.7.0-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-0.3.2-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-gcp-0.3.2-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-0.3.3-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-gcp-0.3.3-pyh4616a5c_0.conda
       win-64:
       - conda: https://conda.anaconda.org/conda-forge/noarch/_python_abi3_support-1.0-hd8ed1ab_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/aiohappyeyeballs-2.7.1-pyhd8ed1ab_0.conda
@@ -3382,8 +3382,8 @@ environments:
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-contracts-0.3.0-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-invokers-0.7.0-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-invokers-gcp-0.7.0-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-0.3.2-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-gcp-0.3.2-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-0.3.3-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-gcp-0.3.3-pyh4616a5c_0.conda
   test:
     channels:
     - url: https://repo.prefix.dev/ecoscope-workflows/
@@ -3654,8 +3654,8 @@ environments:
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-contracts-0.3.0-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-invokers-0.7.0-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-invokers-gcp-0.7.0-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-0.3.2-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-gcp-0.3.2-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-0.3.3-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-gcp-0.3.3-pyh4616a5c_0.conda
       linux-aarch64-linux-4-4-0:
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/_openmp_mutex-4.5-20_gnu.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/aiohttp-3.14.5-py313hd50f550_0.conda
@@ -3920,8 +3920,8 @@ environments:
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-contracts-0.3.0-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-invokers-0.7.0-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-invokers-gcp-0.7.0-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-0.3.2-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-gcp-0.3.2-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-0.3.3-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-gcp-0.3.3-pyh4616a5c_0.conda
       osx-64:
       - conda: https://conda.anaconda.org/conda-forge/noarch/_python_abi3_support-1.0-hd8ed1ab_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/aiohappyeyeballs-2.7.1-pyhd8ed1ab_0.conda
@@ -4178,8 +4178,8 @@ environments:
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-contracts-0.3.0-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-invokers-0.7.0-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-invokers-gcp-0.7.0-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-0.3.2-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-gcp-0.3.2-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-0.3.3-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-gcp-0.3.3-pyh4616a5c_0.conda
       osx-arm64:
       - conda: https://conda.anaconda.org/conda-forge/noarch/_python_abi3_support-1.0-hd8ed1ab_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/aiohappyeyeballs-2.7.1-pyhd8ed1ab_0.conda
@@ -4436,8 +4436,8 @@ environments:
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-contracts-0.3.0-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-invokers-0.7.0-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-invokers-gcp-0.7.0-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-0.3.2-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-gcp-0.3.2-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-0.3.3-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-gcp-0.3.3-pyh4616a5c_0.conda
       win-64:
       - conda: https://conda.anaconda.org/conda-forge/noarch/_python_abi3_support-1.0-hd8ed1ab_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/aiohappyeyeballs-2.7.1-pyhd8ed1ab_0.conda
@@ -4684,8 +4684,8 @@ environments:
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-contracts-0.3.0-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-invokers-0.7.0-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-invokers-gcp-0.7.0-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-0.3.2-pyh4616a5c_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-gcp-0.3.2-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-0.3.3-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-gcp-0.3.3-pyh4616a5c_0.conda
 packages:
 - conda: https://conda.anaconda.org/conda-forge/linux-64/_openmp_mutex-4.5-20_gnu.conda
   build_number: 20
@@ -4735,7 +4735,7 @@ packages:
   - python_abi 3.12.* *_cp312
   license: MIT AND Apache-2.0
   purls:
-  - pkg:pypi/aiohttp?source=compressed-mapping
+  - pkg:pypi/aiohttp?source=hash-mapping
   run_exports: {}
   size: 1240813
   timestamp: 1791734313039
@@ -5591,7 +5591,7 @@ packages:
   license: MIT
   license_family: MIT
   purls:
-  - pkg:pypi/debugpy?source=compressed-mapping
+  - pkg:pypi/debugpy?source=hash-mapping
   run_exports: {}
   size: 2842039
   timestamp: 1793558459911
@@ -5635,7 +5635,7 @@ packages:
   license: MIT
   license_family: MIT
   purls:
-  - pkg:pypi/fastar?source=compressed-mapping
+  - pkg:pypi/fastar?source=hash-mapping
   run_exports: {}
   size: 353129
   timestamp: 1792373173749
@@ -5689,7 +5689,7 @@ packages:
   license: MIT
   license_family: MIT
   purls:
-  - pkg:pypi/fonttools?source=compressed-mapping
+  - pkg:pypi/fonttools?source=hash-mapping
   run_exports: {}
   size: 3234738
   timestamp: 1793164688563
@@ -5749,7 +5749,7 @@ packages:
   license: Apache-2.0
   license_family: APACHE
   purls:
-  - pkg:pypi/frozenlist?source=compressed-mapping
+  - pkg:pypi/frozenlist?source=hash-mapping
   run_exports: {}
   size: 62480
   timestamp: 1792669279772
@@ -8332,7 +8332,7 @@ packages:
   license: BSD-3-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/markupsafe?source=compressed-mapping
+  - pkg:pypi/markupsafe?source=hash-mapping
   run_exports: {}
   size: 27696
   timestamp: 1793707103879
@@ -8470,7 +8470,7 @@ packages:
   license: Apache-2.0
   license_family: APACHE
   purls:
-  - pkg:pypi/multidict?source=compressed-mapping
+  - pkg:pypi/multidict?source=hash-mapping
   run_exports: {}
   size: 279956
   timestamp: 1793017932775
@@ -9229,7 +9229,7 @@ packages:
   - numpy >=1.25,<3
   license: BSD-3-Clause
   purls:
-  - pkg:pypi/pytensor?source=compressed-mapping
+  - pkg:pypi/pytensor?source=hash-mapping
   run_exports: {}
   size: 3278201
   timestamp: 1794089434393
@@ -9379,7 +9379,7 @@ packages:
   license: BSD-3-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/pyzmq?source=compressed-mapping
+  - pkg:pypi/pyzmq?source=hash-mapping
   run_exports: {}
   size: 216444
   timestamp: 1793791645017
@@ -9465,7 +9465,7 @@ packages:
   license: Apache-2.0 AND CNRI-Python
   license_family: PSF
   purls:
-  - pkg:pypi/regex?source=compressed-mapping
+  - pkg:pypi/regex?source=hash-mapping
   run_exports: {}
   size: 421384
   timestamp: 1794189291298
@@ -10011,7 +10011,7 @@ packages:
   license: BSD-2-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/wrapt?source=compressed-mapping
+  - pkg:pypi/wrapt?source=hash-mapping
   run_exports: {}
   size: 153549
   timestamp: 1793358802876
@@ -10350,7 +10350,7 @@ packages:
   license: Apache-2.0
   license_family: Apache
   purls:
-  - pkg:pypi/yarl?source=compressed-mapping
+  - pkg:pypi/yarl?source=hash-mapping
   run_exports: {}
   size: 185237
   timestamp: 1791286177020
@@ -10953,7 +10953,7 @@ packages:
   - python_abi 3.12.* *_cp312
   license: Python-2.0
   purls:
-  - pkg:pypi/backports-zstd?source=hash-mapping
+  - pkg:pypi/backports-zstd?source=compressed-mapping
   run_exports: {}
   size: 243393
   timestamp: 1792690570534
@@ -11071,7 +11071,7 @@ packages:
   license: MIT
   license_family: MIT
   purls:
-  - pkg:pypi/brotli?source=hash-mapping
+  - pkg:pypi/brotli?source=compressed-mapping
   run_exports: {}
   size: 367519
   timestamp: 1792653730441
@@ -11157,7 +11157,7 @@ packages:
   license: MIT
   license_family: MIT
   purls:
-  - pkg:pypi/cffi?source=hash-mapping
+  - pkg:pypi/cffi?source=compressed-mapping
   run_exports: {}
   size: 325201
   timestamp: 1788485261662
@@ -14722,7 +14722,7 @@ packages:
   license: BSD-3-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/pyzmq?source=compressed-mapping
+  - pkg:pypi/pyzmq?source=hash-mapping
   run_exports: {}
   size: 218047
   timestamp: 1793791650026
@@ -15014,7 +15014,7 @@ packages:
   license: BSD-3-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/scipy?source=hash-mapping
+  - pkg:pypi/scipy?source=compressed-mapping
   run_exports: {}
   size: 17026642
   timestamp: 1792930351294
@@ -15838,7 +15838,7 @@ packages:
   license: BSD-2-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/appnope?source=compressed-mapping
+  - pkg:pypi/appnope?source=hash-mapping
   run_exports: {}
   size: 12232
   timestamp: 1787337124448
@@ -15977,7 +15977,7 @@ packages:
   - python >=3.11
   license: BSD-3-Clause
   purls:
-  - pkg:pypi/astropy-iers-data?source=compressed-mapping
+  - pkg:pypi/astropy-iers-data?source=hash-mapping
   run_exports: {}
   size: 1252834
   timestamp: 1794198748212
@@ -16398,7 +16398,7 @@ packages:
   license: BSD-3-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/dateparser?source=compressed-mapping
+  - pkg:pypi/dateparser?source=hash-mapping
   run_exports: {}
   size: 248110
   timestamp: 1793813938101
@@ -16533,8 +16533,7 @@ packages:
   - python-multipart
   - uvicorn-standard
   license: MIT
-  purls:
-  - pkg:pypi/fastapi?source=compressed-mapping
+  purls: []
   run_exports: {}
   size: 4955
   timestamp: 1794081739199
@@ -16582,7 +16581,7 @@ packages:
   - uvicorn-standard >=0.12.0
   license: MIT
   purls:
-  - pkg:pypi/fastapi?source=compressed-mapping
+  - pkg:pypi/fastapi?source=hash-mapping
   run_exports: {}
   size: 120255
   timestamp: 1794081739199
@@ -17022,7 +17021,7 @@ packages:
   license: Apache-2.0
   license_family: APACHE
   purls:
-  - pkg:pypi/googleapis-common-protos?source=compressed-mapping
+  - pkg:pypi/googleapis-common-protos?source=hash-mapping
   run_exports: {}
   size: 149823
   timestamp: 1792736802671
@@ -17064,7 +17063,7 @@ packages:
   license: Apache-2.0
   license_family: APACHE
   purls:
-  - pkg:pypi/grpc-google-iam-v1?source=compressed-mapping
+  - pkg:pypi/grpc-google-iam-v1?source=hash-mapping
   run_exports: {}
   size: 31363
   timestamp: 1792736869836
@@ -17159,7 +17158,7 @@ packages:
   license: BSD-3-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/httpcore2?source=compressed-mapping
+  - pkg:pypi/httpcore2?source=hash-mapping
   run_exports: {}
   size: 55805
   timestamp: 1792598507037
@@ -17174,7 +17173,7 @@ packages:
   license: MIT
   license_family: MIT
   purls:
-  - pkg:pypi/httplib2?source=compressed-mapping
+  - pkg:pypi/httplib2?source=hash-mapping
   run_exports: {}
   size: 134960
   timestamp: 1793542392304
@@ -17216,7 +17215,7 @@ packages:
   license: BSD-3-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/httpx2?source=compressed-mapping
+  - pkg:pypi/httpx2?source=hash-mapping
   run_exports: {}
   size: 88292
   timestamp: 1792598507037
@@ -17398,7 +17397,7 @@ packages:
   license: BSD-3-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/ipython?source=compressed-mapping
+  - pkg:pypi/ipython?source=hash-mapping
   run_exports: {}
   size: 751660
   timestamp: 1793618917896
@@ -17544,7 +17543,7 @@ packages:
   license: BSD-3-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/jsonpointer?source=compressed-mapping
+  - pkg:pypi/jsonpointer?source=hash-mapping
   run_exports: {}
   size: 16310
   timestamp: 1794002562267
@@ -17612,7 +17611,7 @@ packages:
   - nodejs >=22
   license: Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND ISC AND MIT
   purls:
-  - pkg:pypi/jupyter-builder?source=compressed-mapping
+  - pkg:pypi/jupyter-builder?source=hash-mapping
   run_exports: {}
   size: 888217
   timestamp: 1793170401976
@@ -17776,7 +17775,7 @@ packages:
   license: BSD-3-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/jupyterlab?source=compressed-mapping
+  - pkg:pypi/jupyterlab?source=hash-mapping
   run_exports: {}
   size: 13298360
   timestamp: 1793975777861
@@ -18227,7 +18226,7 @@ packages:
   license: BSD-2-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/nest-asyncio2?source=compressed-mapping
+  - pkg:pypi/nest-asyncio2?source=hash-mapping
   run_exports: {}
   size: 16323
   timestamp: 1793096318209
@@ -18371,7 +18370,7 @@ packages:
   license: Apache-2.0
   license_family: APACHE
   purls:
-  - pkg:pypi/opentelemetry-exporter-otlp-proto-http?source=compressed-mapping
+  - pkg:pypi/opentelemetry-exporter-otlp-proto-http?source=hash-mapping
   run_exports: {}
   size: 27425
   timestamp: 1792423023697
@@ -18418,7 +18417,7 @@ packages:
   license: Apache-2.0
   license_family: APACHE
   purls:
-  - pkg:pypi/opentelemetry-sdk?source=compressed-mapping
+  - pkg:pypi/opentelemetry-sdk?source=hash-mapping
   run_exports: {}
   size: 104354
   timestamp: 1793329531504
@@ -18698,7 +18697,7 @@ packages:
   license: BSD-2-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/pyasn1?source=compressed-mapping
+  - pkg:pypi/pyasn1?source=hash-mapping
   run_exports: {}
   size: 67126
   timestamp: 1793089118986
@@ -19105,7 +19104,7 @@ packages:
   license: BSD-2-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/python-json-logger?source=hash-mapping
+  - pkg:pypi/python-json-logger?source=compressed-mapping
   run_exports: {}
   size: 19367
   timestamp: 1786872772907
@@ -19118,7 +19117,7 @@ packages:
   license: Apache-2.0
   license_family: APACHE
   purls:
-  - pkg:pypi/python-multipart?source=compressed-mapping
+  - pkg:pypi/python-multipart?source=hash-mapping
   run_exports: {}
   size: 40033
   timestamp: 1793464843791
@@ -19167,7 +19166,7 @@ packages:
   license: MIT
   license_family: MIT
   purls:
-  - pkg:pypi/pytz?source=compressed-mapping
+  - pkg:pypi/pytz?source=hash-mapping
   run_exports: {}
   size: 201878
   timestamp: 1793296577148
@@ -19286,7 +19285,7 @@ packages:
   license: MIT
   license_family: MIT
   purls:
-  - pkg:pypi/rich-toolkit?source=compressed-mapping
+  - pkg:pypi/rich-toolkit?source=hash-mapping
   run_exports: {}
   size: 37377
   timestamp: 1791458547400
@@ -19436,7 +19435,7 @@ packages:
   license: MIT
   license_family: MIT
   purls:
-  - pkg:pypi/soupsieve?source=compressed-mapping
+  - pkg:pypi/soupsieve?source=hash-mapping
   run_exports: {}
   size: 50561
   timestamp: 1793849723725
@@ -19589,7 +19588,7 @@ packages:
   license: LGPL-3.0-only
   license_family: LGPL
   purls:
-  - pkg:pypi/texttable?source=compressed-mapping
+  - pkg:pypi/texttable?source=hash-mapping
   run_exports: {}
   size: 18763
   timestamp: 1792383281791
@@ -19616,7 +19615,7 @@ packages:
   - matplotlib-base >=3.3
   license: BSD-3-Clause
   purls:
-  - pkg:pypi/tifffile?source=compressed-mapping
+  - pkg:pypi/tifffile?source=hash-mapping
   run_exports: {}
   size: 235840
   timestamp: 1794219451983
@@ -24470,7 +24469,7 @@ packages:
   license: BSD-3-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/pyzmq?source=compressed-mapping
+  - pkg:pypi/pyzmq?source=hash-mapping
   run_exports: {}
   size: 202161
   timestamp: 1793791839063
@@ -25267,7 +25266,7 @@ packages:
   - python_abi 3.12.* *_cp312
   license: MIT AND Apache-2.0
   purls:
-  - pkg:pypi/aiohttp?source=compressed-mapping
+  - pkg:pypi/aiohttp?source=hash-mapping
   run_exports: {}
   size: 1189132
   timestamp: 1791734315908
@@ -25721,7 +25720,7 @@ packages:
   - python_abi 3.12.* *_cp312
   license: Python-2.0
   purls:
-  - pkg:pypi/backports-zstd?source=compressed-mapping
+  - pkg:pypi/backports-zstd?source=hash-mapping
   run_exports: {}
   size: 239858
   timestamp: 1792690563794
@@ -25825,7 +25824,7 @@ packages:
   license: MIT
   license_family: MIT
   purls:
-  - pkg:pypi/brotli?source=compressed-mapping
+  - pkg:pypi/brotli?source=hash-mapping
   run_exports: {}
   size: 365090
   timestamp: 1792653757125
@@ -26235,7 +26234,7 @@ packages:
   license: MIT
   license_family: MIT
   purls:
-  - pkg:pypi/fonttools?source=compressed-mapping
+  - pkg:pypi/fonttools?source=hash-mapping
   run_exports: {}
   size: 3136736
   timestamp: 1793164575241
@@ -26292,7 +26291,7 @@ packages:
   license: Apache-2.0
   license_family: APACHE
   purls:
-  - pkg:pypi/frozenlist?source=compressed-mapping
+  - pkg:pypi/frozenlist?source=hash-mapping
   run_exports: {}
   size: 56239
   timestamp: 1792669230826
@@ -28552,7 +28551,7 @@ packages:
   license: BSD-3-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/markupsafe?source=compressed-mapping
+  - pkg:pypi/markupsafe?source=hash-mapping
   run_exports: {}
   size: 27896
   timestamp: 1793707140477
@@ -28629,7 +28628,7 @@ packages:
   license: Apache-2.0
   license_family: APACHE
   purls:
-  - pkg:pypi/multidict?source=compressed-mapping
+  - pkg:pypi/multidict?source=hash-mapping
   run_exports: {}
   size: 246842
   timestamp: 1793017724345
@@ -28970,7 +28969,7 @@ packages:
   - libwebp-base >=1.6.0,<2.0a0
   license: HPND
   purls:
-  - pkg:pypi/pillow?source=compressed-mapping
+  - pkg:pypi/pillow?source=hash-mapping
   run_exports: {}
   size: 1002173
   timestamp: 1792425751727
@@ -29391,7 +29390,7 @@ packages:
   - numpy >=1.25,<3
   license: BSD-3-Clause
   purls:
-  - pkg:pypi/pytensor?source=compressed-mapping
+  - pkg:pypi/pytensor?source=hash-mapping
   run_exports: {}
   size: 3265832
   timestamp: 1794089455955
@@ -29496,7 +29495,7 @@ packages:
   license: MIT
   license_family: MIT
   purls:
-  - pkg:pypi/pyyaml?source=compressed-mapping
+  - pkg:pypi/pyyaml?source=hash-mapping
   run_exports: {}
   size: 203014
   timestamp: 1793655121615
@@ -29528,7 +29527,7 @@ packages:
   license: BSD-3-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/pyzmq?source=compressed-mapping
+  - pkg:pypi/pyzmq?source=hash-mapping
   run_exports: {}
   size: 197890
   timestamp: 1793791664963
@@ -29821,7 +29820,7 @@ packages:
   license: BSD-3-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/scipy?source=compressed-mapping
+  - pkg:pypi/scipy?source=hash-mapping
   run_exports: {}
   size: 14039669
   timestamp: 1792930126548
@@ -30128,7 +30127,7 @@ packages:
   license: BSD-2-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/wrapt?source=compressed-mapping
+  - pkg:pypi/wrapt?source=hash-mapping
   run_exports: {}
   size: 148115
   timestamp: 1793358819791
@@ -30211,7 +30210,7 @@ packages:
   license: Apache-2.0
   license_family: Apache
   purls:
-  - pkg:pypi/yarl?source=compressed-mapping
+  - pkg:pypi/yarl?source=hash-mapping
   run_exports: {}
   size: 178013
   timestamp: 1791286121523
@@ -30747,7 +30746,7 @@ packages:
   - python_abi 3.12.* *_cp312
   license: Python-2.0
   purls:
-  - pkg:pypi/backports-zstd?source=compressed-mapping
+  - pkg:pypi/backports-zstd?source=hash-mapping
   run_exports: {}
   size: 240703
   timestamp: 1792695583873
@@ -30874,7 +30873,7 @@ packages:
   license: MIT
   license_family: MIT
   purls:
-  - pkg:pypi/brotli?source=compressed-mapping
+  - pkg:pypi/brotli?source=hash-mapping
   run_exports: {}
   size: 336620
   timestamp: 1792653954597
@@ -30961,7 +30960,7 @@ packages:
   license: MIT
   license_family: MIT
   purls:
-  - pkg:pypi/cffi?source=compressed-mapping
+  - pkg:pypi/cffi?source=hash-mapping
   run_exports: {}
   size: 344044
   timestamp: 1788485380019
@@ -33255,7 +33254,7 @@ packages:
   license: BSD-3-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/markupsafe?source=compressed-mapping
+  - pkg:pypi/markupsafe?source=hash-mapping
   run_exports: {}
   size: 28548
   timestamp: 1793707107194
@@ -33463,7 +33462,7 @@ packages:
   license: BSD-3-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/numpy?source=compressed-mapping
+  - pkg:pypi/numpy?source=hash-mapping
   run_exports:
     weak:
     - numpy >=1.25,<3
@@ -34138,7 +34137,7 @@ packages:
   - python_abi 3.12.* *_cp312
   license: BSD-3-Clause
   purls:
-  - pkg:pypi/pytensor?source=compressed-mapping
+  - pkg:pypi/pytensor?source=hash-mapping
   run_exports: {}
   size: 3283538
   timestamp: 1794089434425
@@ -34315,7 +34314,7 @@ packages:
   license: BSD-3-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/pyzmq?source=compressed-mapping
+  - pkg:pypi/pyzmq?source=hash-mapping
   run_exports: {}
   size: 192016
   timestamp: 1793791729750
@@ -34403,7 +34402,7 @@ packages:
   license: MIT
   license_family: MIT
   purls:
-  - pkg:pypi/rpds-py?source=compressed-mapping
+  - pkg:pypi/rpds-py?source=hash-mapping
   run_exports: {}
   size: 222019
   timestamp: 1791202445742
@@ -34587,7 +34586,7 @@ packages:
   license: BSD-3-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/scipy?source=compressed-mapping
+  - pkg:pypi/scipy?source=hash-mapping
   run_exports: {}
   size: 14853101
   timestamp: 1792930962900
@@ -34946,7 +34945,7 @@ packages:
   license: BSD-2-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/wrapt?source=compressed-mapping
+  - pkg:pypi/wrapt?source=hash-mapping
   run_exports: {}
   size: 147718
   timestamp: 1793358800247
@@ -35301,9 +35300,9 @@ packages:
   license: Apache-2.0
   size: 25300
   timestamp: 1725938421487
-- conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-2.28.0-pyh4616a5c_5.conda
-  sha256: 32f511d2551b15df81eaf46ce1ab3cd97b3cd827e9ce846e34db2d20c4be9beb
-  md5: 57412c56fa80343b5a09a345b37fe465
+- conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-2.31.0-pyh4616a5c_5.conda
+  sha256: a94ee4001f229fe39456075f3548138ac89d91304f03adecf5ddd2a1848a0a74
+  md5: 1661186153a9cdbbd9c5894021f55b72
   depends:
   - python
   - backoff
@@ -35333,8 +35332,8 @@ packages:
   - pandasql
   license: BSD-3-Clause
   run_exports: {}
-  size: 3321926
-  timestamp: 1793620290779
+  size: 3337629
+  timestamp: 1794240054432
 - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-earthranger-io-core-0.0.28-pyh4616a5c_0.conda
   sha256: 3516b6daea43359db47cae25436d1bb84b0f06e5835e9680c613a0330142b918
   md5: 75cb2aff0d44778b01f6d130d900a3fa
@@ -35362,23 +35361,24 @@ packages:
   run_exports: {}
   size: 8354
   timestamp: 1781575844263
-- conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-platform-2.28.0-pyh4616a5c_0.conda
-  sha256: 24faaa8832d328fb42020087880378319a247d501eef3049fccc1f3fd5dec732
-  md5: bfa8cb7f966b350db3077ad8ed29d0ed
+- conda: https://repo.prefix.dev/ecoscope-workflows/noarch/ecoscope-platform-2.31.0-pyh4616a5c_0.conda
+  sha256: 2730c01bd5002a778414398e1aebe6beac5c6bc0215d816cb31109f1831f2dac
+  md5: b7100be60f0c9105917c825f822afd54
   depends:
-  - ecoscope ==2.28.0
+  - ecoscope ==2.31.0
   - pandera >=0.28,<0.29
   - pydantic
   - pydantic-settings
   - cloudpathlib-gs
-  - wt-registry >=0.2.0,<0.3.0
-  - wt-task >=0.1.0,<0.2.0
+  - wt-contracts >=0.3.0,<0.4.0
+  - wt-registry >=0.3.0,<0.4.0
+  - wt-task >=0.2.0,<0.4.0
   - pydeck ==0.9.2
   - ecoscope-earthranger-io-core >=0.0.28,<0.1.0
   license: BSD-3-Clause
   run_exports: {}
-  size: 3772
-  timestamp: 1793620290779
+  size: 3799
+  timestamp: 1794240054432
 - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/lonboard-0.0.8-pyh4616a5c_0.conda
   sha256: edaf1debf3f2bdbffa07b8813c8dee03db9772621910581f4552c7bb0618a62c
   depends:
@@ -35449,21 +35449,22 @@ packages:
   run_exports: {}
   size: 3273
   timestamp: 1793730549574
-- conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-registry-0.2.2-pyh4616a5c_0.conda
-  sha256: 65873a7af47107b0676985ecdda8ef0a9707524c7b55ebf6a97ea1778e1c5684
-  md5: 59ffaf95ce6d469b9a2c7a8dcb437bf5
+- conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-registry-0.3.1-pyh4616a5c_0.conda
+  sha256: b154adba1d357d18e6e94675149e51d5840c9ab41e908612c20ed0c94438ebf1
+  md5: 071f923982d9845d49576ecd11f7e381
   depends:
   - python >=3.10,<3.16
+  - python >=3.10
   - python *
   - pydantic >=2.0.0,<3.0.0
-  - wt-contracts >=0.1.0,<1.0.0
+  - wt-contracts >=0.3.0,<1.0.0
   license: BSD-3-Clause
   run_exports: {}
-  size: 14594
-  timestamp: 1778689066571
-- conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-0.3.2-pyh4616a5c_0.conda
-  sha256: 4b4ad3fee7c0047b2ed5a1c8b8073fb64d4f73eb420cccc14bba2a88c548cc3e
-  md5: 47f6ad9c81f7f8c5c77fdea12f76335d
+  size: 15384
+  timestamp: 1793800185267
+- conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-0.3.3-pyh4616a5c_0.conda
+  sha256: 7741ab89000bbb108f6ad86ebc7eb80710efa710a7ea2084cd2c7f1e597ea9f9
+  md5: 276cf4647d0c6571e991004926aa6e11
   depends:
   - python >=3.13,<3.14
   - python *
@@ -35480,15 +35481,15 @@ packages:
   - wt-invokers >=0.1.0,<1.0.0
   license: BSD-3-Clause
   run_exports: {}
-  size: 13308
-  timestamp: 1793730622889
-- conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-gcp-0.3.2-pyh4616a5c_0.conda
-  sha256: ccc492c29a2c0fc059eab8e6cee260081fdd1edaee092d778e35bdf698a32ab4
-  md5: e16430ba40b8c5c736585f41c3d23960
+  size: 13783
+  timestamp: 1794234298022
+- conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-runner-gcp-0.3.3-pyh4616a5c_0.conda
+  sha256: 0f6fd77eee502244cc5bf870dd1fabdab186fa4458e1a1475230f492dd39b297
+  md5: fa4550e45102f18369f4df3b0a422170
   depends:
   - python >=3.13,<3.14
   - python *
-  - wt-runner >=0.3.2,<1.0.0
+  - wt-runner >=0.3.3,<1.0.0
   - ecoscope-eda-core >=0.2.0
   - opentelemetry-sdk >=1.37.0,<2
   - opentelemetry-exporter-gcp-trace >=1.9.0,<2
@@ -35499,34 +35500,38 @@ packages:
   - stamina >=25.1.0,<26
   license: BSD-3-Clause
   run_exports: {}
-  size: 3512
-  timestamp: 1793730691366
-- conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-0.1.3-pyh4616a5c_0.conda
-  sha256: 6ab551b2fc9bc5838376093b815acd6c6df19297e190b6dd57d1a3fdba1ce0fb
-  md5: 59103432a267bca87f1d91ac0e4cd9a9
+  size: 3504
+  timestamp: 1794234359538
+- conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-0.3.0-pyh4616a5c_0.conda
+  sha256: 546bb74e49ca6b1c14bdafc9fa4b4af90d8df9c02fa430cab194673c707050f1
+  md5: b80a6a7cc70de5c25830cb29a2db96c7
   depends:
   - python >=3.10,<3.16
+  - python >=3.10
   - python *
   - pydantic >=2.0.0,<3.0.0
-  - wt-contracts >=0.1.0,<1.0.0
+  - packaging >=23.0
+  - pydantic-settings >=2.3.0,<3.0.0
+  - wt-contracts >=0.3.0,<1.0.0
   license: BSD-3-Clause
   run_exports: {}
-  size: 19936
-  timestamp: 1778689104831
-- conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-gcp-0.1.3-pyh4616a5c_0.conda
-  sha256: 1cd64b6cb1c7c8bc9be6b07734913c9e48b7bde003d11ac5657c9830cf6e44b3
-  md5: 0c8cdc9e3c9230be2f24ca58184559be
+  size: 47757
+  timestamp: 1794232572480
+- conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-task-gcp-0.3.0-pyh4616a5c_0.conda
+  sha256: dced3cb9da44b167d1043c24fdc08f75a5a249c154b8ce7e2fdd0bd45e49aea8
+  md5: 2698cf95a34bbb1146010464e6230f9a
   depends:
   - python >=3.10,<3.16
+  - python >=3.10
   - python *
-  - wt-task >=0.1.0,<1.0.0
+  - wt-task >=0.3.0,<1.0.0
   - opentelemetry-api >=1.20.0
   - opentelemetry-sdk >=1.20.0
   - opentelemetry-exporter-gcp-trace >=1.6.0
   license: BSD-3-Clause
   run_exports: {}
-  size: 3027
-  timestamp: 1778689139938
+  size: 3226
+  timestamp: 1794234257769
 - conda: https://repo.prefix.dev/ecoscope-workflows/win-64/astropy-base-7.2.0-strip_manifest_h196c9fc_0.conda
   sha256: 0cf2abfc96b9ebe05019330ad277adc9a188063301e7436fb5e78dac6fc483a5
   md5: 24a653af12e5c3ee301cde49ead2aa20
@@ -35564,9 +35569,9 @@ packages:
   - pytest-asyncio ; extra == 'test'
   - respx ; extra == 'test'
   requires_python: '>=3.7'
-- pypi: git+https://github.com/wildlife-dynamics/ecoscope.git?branch=feat%2Ftraj-filter-presets#cf007ff961042286b95ea30e9a1ec91f59c9d309
+- pypi: git+https://github.com/wildlife-dynamics/ecoscope.git?branch=feat%2Ftraj-filter-presets#eef267a58d349b430b3a9e0f31d667aeaf34c3da
   name: ecoscope
-  version: 2.28.1.dev5+gcf007ff
+  version: 2.32.1.dev7+geef267a
   requires_dist:
   - backoff>=2
   - earthengine-api>=1.4,<1.7.13
@@ -35603,8 +35608,9 @@ packages:
   - pydantic ; extra == 'platform'
   - pydantic-settings ; extra == 'platform'
   - cloudpathlib[gs] ; extra == 'platform'
-  - wt-registry>=0.2.0,<0.3.0 ; extra == 'platform'
-  - wt-task>=0.1.0,<0.2.0 ; extra == 'platform'
+  - wt-contracts>=0.3.0,<0.4.0 ; extra == 'platform'
+  - wt-registry>=0.3.0,<0.4.0 ; extra == 'platform'
+  - wt-task>=0.2.0,<0.4.0 ; extra == 'platform'
   - ecoscope-earthranger-io-core @ git+https://github.com/wildlife-dynamics/ecoscope-earthranger-io-core.git@v0.0.28 ; extra == 'platform'
   - fastapi ; extra == 'platform'
   - pyarrow>=20 ; extra == 'platform'
