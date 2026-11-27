@@ -1,7 +1,7 @@
 id: subject_tracking
 requirements:
   - name: ecoscope-platform
-    version: 2.31.0
+    version: 2.39.4
     channel: https://repo.prefix.dev/ecoscope-workflows/
   # ecoscope-platform already declares this exact pydeck dependency. it is
   # re-stated here as a workaround for a known issue. for further detail, see:
@@ -16,6 +16,14 @@ rjsf-overrides:
         transformer_kws:
           type: subject_group_name
           depends_on: properties.er_client_name.properties.data_source.properties.name
+    subject_traj.properties.trajectory_segment_filter.ecoscope:transform:
+      - transformer: TrajectoryFilterPresetResolver
+        transformer_kws: {}
+    subject_traj.properties.trajectory_segment_filter_overrides.ecoscope:transform:
+      - transformer: TrajectoryFilterOverrideSuggester
+        transformer_kws:
+          kind: subject_subtype
+          depends_on: properties.Subject Group.properties.subject_obs.properties.subject_group_name
     groupers.properties.groupers.ecoscope:transform:
       - transformer: EarthRangerEnumResolver
         transformer_kws:
@@ -23,6 +31,9 @@ rjsf-overrides:
           depends_on: properties.er_client_name.properties.data_source.properties.name
     Time Density Map.properties.set_etd_args.properties.opacity.default: 0.700000
   $defs:
+    TrajectorySegmentFilterOverride.properties.filter.ecoscope:transform:
+      - transformer: TrajectoryFilterPresetResolver
+        transformer_kws: {}
     ValueGrouper.properties.index_name.oneOf:
       - const: subject_name
         title: Subject Name
@@ -157,6 +168,7 @@ workflow:
     task: relocations_to_trajectory
     partial:
       relocations: ${{ workflow.day_night_labels.return }}
+      trajectory_segment_filter_override_column: subject_subtype
   - name: Add temporal index to Subject Trajectories
     id: traj_add_temporal_index
     task: add_temporal_index

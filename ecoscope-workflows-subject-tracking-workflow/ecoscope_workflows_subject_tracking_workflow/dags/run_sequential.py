@@ -393,7 +393,11 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             ],
             unpack_depth=1,
         )
-        .partial(relocations=day_night_labels, **(params.get("subject_traj") or {}))
+        .partial(
+            relocations=day_night_labels,
+            trajectory_segment_filter_override_column="subject_subtype",
+            **(params.get("subject_traj") or {}),
+        )
         .call()
     )
 
